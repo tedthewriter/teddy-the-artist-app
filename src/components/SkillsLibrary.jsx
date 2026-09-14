@@ -3,6 +3,7 @@ import Icon from './Icon'
 
 const typeLabels = {
   overview: 'Start here',
+  practice: 'Guided practice',
   saboteur: 'Saboteur',
   sage_power: 'Sage power',
 }
@@ -93,6 +94,7 @@ export default function SkillsLibrary({ items, favorites, loading, error, initia
   const [selected, setSelected] = useState(initialItem || null)
   const groups = useMemo(() => [
     { key: 'overview', label: 'Begin here', items: items.filter((item) => item.content_type === 'overview') },
+    { key: 'practice', label: 'Try a guided practice', items: items.filter((item) => item.content_type === 'practice') },
     { key: 'saboteur', label: 'Meet the Saboteurs', items: items.filter((item) => item.content_type === 'saboteur') },
     { key: 'sage_power', label: 'Practice the Sage powers', items: items.filter((item) => item.content_type === 'sage_power') },
   ], [items])
