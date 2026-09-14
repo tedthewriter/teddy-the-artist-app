@@ -1,16 +1,115 @@
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import Icon from './Icon'
+import SkillsLibrary from './SkillsLibrary'
+import { supabase } from '../lib/supabase'
 import { affirmation, dailyPlan, pathways } from '../data/homeContent'
 
 const dismissKey = () => `teddy-plan-dismissed-${new Date().toISOString().slice(0, 10)}`
 
-export default function HomeScreen({ onSignOut }) {
+export default function HomeScreen({ userId, onSignOut }) {
   const [planVisible, setPlanVisible] = useState(() => localStorage.getItem(dismissKey()) !== 'true')
   const [favorite, setFavorite] = useState(false)
+  const [view, setView] = useState('home')
+  const [initialItem, setInitialItem] = useState(null)
+  const [content, setContent] = useState([])
+  const [favorites, setFavorites] = useState(new Set())
+  const [contentState, setContentState] = useState({ loading: Boolean(userId), error: '' })
+  const [notice, setNotice] = useState('')
   const today = useMemo(
     () => new Intl.DateTimeFormat('en-US', { weekday: 'long', month: 'long', day: 'numeric' }).format(new Date()),
     [],
   )
+
+  useEffect(() => {
+    let active = true
+
+    async function loadLibrary() {
+      if (!supabase || !userId) return
+      setContentState({ loading: true, error: '' })
+
+      const [contentResult, favoritesResult] = await Promise.all([
+        supabase
+          .from('content_items')
+          .select('id, slug, category, framework, content_type, title, short_description, body, reflection_prompt, faith_reflection, source_title, estimated_minutes, energy_level, sort_order')
+          .eq('approved', true)
+          .eq('active', true)
+          .order('sort_order'),
+        supabase.from('user_favorites').select('content_id').eq('user_id', userId),
+      ])
+
+      if (!active) return
+      if (contentResult.error || favoritesResult.error) {
+        setContentState({ loading: false, error: 'The skills library could not be opened. Please try again.' })
+        return
+      }
+
+      setContent(contentResult.data || [])
+      setFavorites(new Set((favoritesResult.data || []).map((entry) => entry.content_id)))
+      setContentState({ loading: false, error: '' })
+    }
+
+    loadLibrary()
+    return () => { active = false }
+  }, [userId])
+
+  async function toggleContentFavorite(contentId) {
+    if (!supabase || !userId) return
+    const isFavorite = favorites.has(contentId)
+    const result = isFavorite
+      ? await supabase.from('user_favorites').delete().eq('user_id', userId).eq('content_id', contentId)
+      : await supabase.from('user_favorites').insert({ user_id: userId, content_id: contentId })
+
+    if (result.error) {
+      setNotice('That item could not be saved. Please try again.')
+      return
+    }
+
+    setFavorites((current) => {
+      const next = new Set(current)
+      if (isFavorite) next.delete(contentId)
+      else next.add(contentId)
+      return next
+    })
+  }
+
+  function openSkills(item = null) {
+    setInitialItem(item)
+    setView('skills')
+    window.scrollTo({ top: 0, behavior: 'smooth' })
+  }
+
+  function choosePath(pathway) {
+    setNotice('')
+    if (pathway.title === 'Skills') {
+      openSkills()
+      return
+    }
+
+    if (pathway.title === 'Surprise Me') {
+      if (content.length === 0) {
+        setNotice(contentState.loading ? 'The library is still opening…' : 'There is not an available activity yet.')
+        return
+      }
+      openSkills(content[Math.floor(Math.random() * content.length)])
+      return
+    }
+
+    setNotice(`${pathway.title} is ready for its content in the next build.`)
+  }
+
+  if (view === 'skills') {
+    return (
+      <SkillsLibrary
+        items={content}
+        favorites={favorites}
+        loading={contentState.loading}
+        error={contentState.error}
+        initialItem={initialItem}
+        onBack={() => { setView('home'); setInitialItem(null) }}
+        onToggleFavorite={toggleContentFavorite}
+      />
+    )
+  }
 
   function hidePlan() {
     localStorage.setItem(dismissKey(), 'true')
@@ -34,7 +133,7 @@ export default function HomeScreen({ onSignOut }) {
           aria-label={onSignOut ? 'Sign out' : 'Preview profile'}
           title={onSignOut ? 'Sign out' : 'Profile'}
           onClick={onSignOut}
-        >J</button>
+        ><Icon name="user" size={21} /></button>
       </header>
 
       <section className="affirmation-card" aria-labelledby="affirmation-title">
@@ -48,7 +147,7 @@ export default function HomeScreen({ onSignOut }) {
           <p className="eyebrow" id="affirmation-title">Today’s affirmation</p>
           <p className="affirmation-text">{affirmation.text}</p>
           <div className="affirmation-actions">
-            <button className="soft-button"><Icon name="play" size={18} /> Listen</button>
+            <button className="soft-button" onClick={() => setNotice('Affirmation audio will appear here after the recordings are added.')}><Icon name="play" size={18} /> Listen</button>
             <button
               className={`icon-button ${favorite ? 'is-favorite' : ''}`}
               aria-label={favorite ? 'Remove from favorites' : 'Add to favorites'}
@@ -78,7 +177,9 @@ export default function HomeScreen({ onSignOut }) {
               </div>
             ))}
           </div>
-          <button className="primary-button">Start today’s plan <Icon name="arrow" size={18} /></button>
+          <button className="primary-button" onClick={() => setNotice('Begin with whichever part of the plan feels useful. Nothing needs to be completed in order.')}>
+            Start today’s plan <Icon name="arrow" size={18} />
+          </button>
           <button className="text-button" onClick={hidePlan}>Not right now</button>
         </section>
       ) : (
@@ -90,7 +191,7 @@ export default function HomeScreen({ onSignOut }) {
         <h2 id="pathway-title">What do you want to do today?</h2>
         <div className="pathway-grid">
           {pathways.map((pathway) => (
-            <button className={`pathway-card ${pathway.tone}`} key={pathway.title}>
+            <button className={`pathway-card ${pathway.tone}`} key={pathway.title} onClick={() => choosePath(pathway)}>
               <span className="pathway-icon"><Icon name={pathway.icon} size={25} /></span>
               <span className="pathway-title">{pathway.title}</span>
               <span className="pathway-subtitle">{pathway.subtitle}</span>
@@ -99,6 +200,7 @@ export default function HomeScreen({ onSignOut }) {
         </div>
       </section>
 
+      {notice && <p className="home-notice" role="status">{notice}</p>}
       <p className="support-note">Choose what feels useful. You can always come back later.</p>
     </main>
   )

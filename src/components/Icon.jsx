@@ -14,6 +14,8 @@ const icons = {
   play: '<path d="m9 7 8 5-8 5V7Z"/>',
   bookmark: '<path d="M6 4h12v17l-6-4-6 4V4Z"/>',
   arrow: '<path d="M5 12h14M14 7l5 5-5 5"/>',
+  back: '<path d="M19 12H5M10 17l-5-5 5-5"/>',
+  user: '<circle cx="12" cy="8" r="4"/><path d="M4.5 21a7.5 7.5 0 0 1 15 0"/>',
   close: '<path d="m7 7 10 10M17 7 7 17"/>',
 }
 
