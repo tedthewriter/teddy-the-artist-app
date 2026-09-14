@@ -1,19 +1,20 @@
 import { useEffect, useMemo, useState } from 'react'
 import Icon from './Icon'
 import SkillsLibrary from './SkillsLibrary'
+import AffirmationsLibrary from './AffirmationsLibrary'
 import { supabase } from '../lib/supabase'
-import { affirmation, dailyPlan, pathways } from '../data/homeContent'
+import { dailyPlan, pathways } from '../data/homeContent'
 
 const dismissKey = () => `teddy-plan-dismissed-${new Date().toISOString().slice(0, 10)}`
 
 export default function HomeScreen({ userId, onSignOut }) {
   const [planVisible, setPlanVisible] = useState(() => localStorage.getItem(dismissKey()) !== 'true')
-  const [favorite, setFavorite] = useState(false)
   const [view, setView] = useState('home')
   const [initialItem, setInitialItem] = useState(null)
   const [content, setContent] = useState([])
   const [favorites, setFavorites] = useState(new Set())
   const [contentState, setContentState] = useState({ loading: Boolean(userId), error: '' })
+  const [imageUrls, setImageUrls] = useState({})
   const [notice, setNotice] = useState('')
   const today = useMemo(
     () => new Intl.DateTimeFormat('en-US', { weekday: 'long', month: 'long', day: 'numeric' }).format(new Date()),
@@ -30,7 +31,7 @@ export default function HomeScreen({ userId, onSignOut }) {
       const [contentResult, favoritesResult] = await Promise.all([
         supabase
           .from('content_items')
-          .select('id, slug, category, framework, content_type, title, short_description, body, reflection_prompt, faith_reflection, source_title, estimated_minutes, energy_level, sort_order')
+          .select('id, slug, category, framework, content_type, title, short_description, body, reflection_prompt, faith_reflection, source_title, estimated_minutes, energy_level, sort_order, affirmation_number, asset_path')
           .eq('approved', true)
           .eq('active', true)
           .order('sort_order'),
@@ -51,6 +52,28 @@ export default function HomeScreen({ userId, onSignOut }) {
     loadLibrary()
     return () => { active = false }
   }, [userId])
+
+  const affirmationItems = useMemo(
+    () => content.filter((item) => item.content_type === 'affirmation').sort((a, b) => a.affirmation_number - b.affirmation_number),
+    [content],
+  )
+  const skillItems = useMemo(() => content.filter((item) => item.content_type !== 'affirmation'), [content])
+  const dailyAffirmation = useMemo(() => {
+    if (!affirmationItems.length) return null
+    const now = new Date()
+    const dayNumber = Math.floor(new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime() / 86400000)
+    return affirmationItems[dayNumber % affirmationItems.length]
+  }, [affirmationItems])
+
+  async function loadAffirmationImages() {
+    if (!supabase || affirmationItems.length === 0) return
+    const paths = affirmationItems.map((item) => item.asset_path).filter(Boolean)
+    const { data, error: imageError } = await supabase.storage.from('affirmation-pins').createSignedUrls(paths, 3600)
+    if (imageError) return
+    setImageUrls(Object.fromEntries((data || []).filter((entry) => entry.signedUrl).map((entry) => [entry.path, entry.signedUrl])))
+  }
+
+  useEffect(() => { loadAffirmationImages() }, [affirmationItems])
 
   async function toggleContentFavorite(contentId) {
     if (!supabase || !userId) return
@@ -85,12 +108,18 @@ export default function HomeScreen({ userId, onSignOut }) {
       return
     }
 
+    if (pathway.title === 'Affirmations') {
+      setView('affirmations')
+      window.scrollTo({ top: 0, behavior: 'smooth' })
+      return
+    }
+
     if (pathway.title === 'Surprise Me') {
-      if (content.length === 0) {
+      if (skillItems.length === 0) {
         setNotice(contentState.loading ? 'The library is still opening…' : 'There is not an available activity yet.')
         return
       }
-      openSkills(content[Math.floor(Math.random() * content.length)])
+      openSkills(skillItems[Math.floor(Math.random() * skillItems.length)])
       return
     }
 
@@ -100,13 +129,28 @@ export default function HomeScreen({ userId, onSignOut }) {
   if (view === 'skills') {
     return (
       <SkillsLibrary
-        items={content}
+        items={skillItems}
         favorites={favorites}
         loading={contentState.loading}
         error={contentState.error}
         initialItem={initialItem}
         onBack={() => { setView('home'); setInitialItem(null) }}
         onToggleFavorite={toggleContentFavorite}
+      />
+    )
+  }
+
+  if (view === 'affirmations') {
+    return (
+      <AffirmationsLibrary
+        items={affirmationItems}
+        favorites={favorites}
+        loading={contentState.loading}
+        error={contentState.error}
+        imageUrls={imageUrls}
+        onBack={() => setView('home')}
+        onToggleFavorite={toggleContentFavorite}
+        onImagesChanged={loadAffirmationImages}
       />
     )
   }
@@ -136,23 +180,30 @@ export default function HomeScreen({ userId, onSignOut }) {
         ><Icon name="user" size={21} /></button>
       </header>
 
-      <section className="affirmation-card" aria-labelledby="affirmation-title">
-        <div className="affirmation-art" aria-hidden="true">
-          <span className="sun-shape" />
-          <span className="paint-stroke stroke-one" />
-          <span className="paint-stroke stroke-two" />
-          <span className="affirmation-number">{affirmation.number}</span>
-        </div>
+      <section className={`affirmation-card ${dailyAffirmation && imageUrls[dailyAffirmation.asset_path] ? 'has-pin' : ''}`} aria-labelledby="affirmation-title">
+        {dailyAffirmation && imageUrls[dailyAffirmation.asset_path] ? (
+          <button className="daily-pin-button" onClick={() => setView('affirmations')} aria-label="Open the affirmation collection">
+            <img className="daily-pin-image" src={imageUrls[dailyAffirmation.asset_path]} alt={dailyAffirmation.title} />
+          </button>
+        ) : (
+          <div className="affirmation-art" aria-hidden="true">
+            <span className="sun-shape" />
+            <span className="paint-stroke stroke-one" />
+            <span className="paint-stroke stroke-two" />
+            <span className="affirmation-number">{dailyAffirmation?.affirmation_number || 1}</span>
+          </div>
+        )}
         <div className="affirmation-content">
           <p className="eyebrow" id="affirmation-title">Today’s affirmation</p>
-          <p className="affirmation-text">{affirmation.text}</p>
+          <p className="affirmation-text">{dailyAffirmation?.title || 'you are smart'}</p>
           <div className="affirmation-actions">
             <button className="soft-button" onClick={() => setNotice('Affirmation audio will appear here after the recordings are added.')}><Icon name="play" size={18} /> Listen</button>
             <button
-              className={`icon-button ${favorite ? 'is-favorite' : ''}`}
-              aria-label={favorite ? 'Remove from favorites' : 'Add to favorites'}
-              aria-pressed={favorite}
-              onClick={() => setFavorite((value) => !value)}
+              className={`icon-button ${dailyAffirmation && favorites.has(dailyAffirmation.id) ? 'is-favorite' : ''}`}
+              aria-label={dailyAffirmation && favorites.has(dailyAffirmation.id) ? 'Remove from favorites' : 'Add to favorites'}
+              aria-pressed={Boolean(dailyAffirmation && favorites.has(dailyAffirmation.id))}
+              disabled={!dailyAffirmation}
+              onClick={() => dailyAffirmation && toggleContentFavorite(dailyAffirmation.id)}
             >
               <Icon name="bookmark" size={19} />
             </button>

@@ -27,6 +27,11 @@ button { color: inherit; }
 .avatar-button { display: grid; place-items: center; }
 
 .affirmation-card { position: relative; display: grid; grid-template-columns: 112px 1fr; min-height: 190px; overflow: hidden; border-radius: 28px; background: #e8d8c2; box-shadow: var(--shadow); }
+.affirmation-card.has-pin { display: block; background: var(--card); }
+.daily-pin-button { display: block; width: 100%; padding: 0; border: 0; background: #efe6da; cursor: pointer; }
+.daily-pin-image { display: block; width: 100%; aspect-ratio: 1; object-fit: cover; }
+.affirmation-card.has-pin .affirmation-content { padding: 19px 20px 20px; }
+.affirmation-card.has-pin .affirmation-text { font-size: 1.42rem; }
 .affirmation-art { position: relative; overflow: hidden; background: linear-gradient(155deg, #f4cf8d 0%, #deb889 50%, #b87c68 100%); }
 .sun-shape { position: absolute; width: 78px; height: 78px; top: 25px; left: 17px; border-radius: 50%; background: rgba(255, 240, 181, .86); box-shadow: 0 0 0 13px rgba(255,255,255,.10); }
 .paint-stroke { position: absolute; width: 145px; height: 54px; border-radius: 50%; transform: rotate(-35deg); }
@@ -83,6 +88,7 @@ button { color: inherit; }
 .library-intro { max-width: 410px; margin: 11px 0 25px; color: var(--muted); font-size: .86rem; line-height: 1.5; }
 .library-status { padding: 18px; border-radius: 16px; background: var(--card); color: var(--muted); font-size: .84rem; }
 .library-status.error { background: #faecec; color: #8b4545; }
+.library-status.success { background: #e5eee9; color: var(--sage-dark); }
 .content-group { margin-top: 28px; }
 .content-group h2 { margin: 0 0 12px; font-family: Georgia, "Times New Roman", serif; font-size: 1.28rem; font-weight: 600; }
 .content-list { display: grid; gap: 10px; }
@@ -109,6 +115,24 @@ button { color: inherit; }
 .reflection-prompt { background: #e8eee9; }
 .record-reminder { margin-top: 11px !important; color: var(--muted); font-size: .75rem !important; }
 .source-note { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 8px; padding-top: 18px; border-top: 1px solid var(--line); color: var(--muted); font-size: .68rem; }
+
+.import-card { margin: 0 0 24px; padding: 21px 18px; border: 1px solid rgba(95,129,119,.18); border-radius: 22px; background: #e7eee9; }
+.import-card h2 { margin: 0; font-family: Georgia, "Times New Roman", serif; font-size: 1.35rem; font-weight: 600; }
+.import-card > p:not(.eyebrow) { margin: 8px 0 18px; color: #566762; font-size: .82rem; line-height: 1.48; }
+.import-progress { display: block; width: 100%; height: 8px; margin-top: 15px; accent-color: var(--sage-dark); }
+.import-message { margin-bottom: 0 !important; color: var(--sage-dark) !important; font-weight: 700; }
+.visually-hidden { position: absolute !important; width: 1px !important; height: 1px !important; padding: 0 !important; margin: -1px !important; overflow: hidden !important; clip: rect(0, 0, 0, 0) !important; white-space: nowrap !important; border: 0 !important; }
+
+.affirmation-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 11px; }
+.affirmation-tile { min-width: 0; overflow: hidden; padding: 0; border: 1px solid var(--line); border-radius: 19px; background: var(--card); text-align: left; box-shadow: 0 7px 20px rgba(44,62,55,.04); cursor: pointer; }
+.affirmation-tile img, .affirmation-tile .pin-placeholder { display: grid; place-items: center; width: 100%; aspect-ratio: 1; object-fit: cover; background: #eee5d8; color: #8d7668; font-family: Georgia, serif; font-size: 1.4rem; }
+.affirmation-tile-copy { display: flex; justify-content: space-between; gap: 8px; min-height: 64px; padding: 11px 12px 12px; color: #40534e; font-size: .73rem; font-weight: 700; line-height: 1.32; }
+.affirmation-tile-copy svg { flex: 0 0 auto; color: #8d4f57; }
+.affirmation-detail-card { padding: 0 0 23px; overflow: hidden; border: 1px solid var(--line); border-radius: 26px; background: var(--card); box-shadow: var(--shadow); }
+.affirmation-detail-card img, .affirmation-detail-card > .pin-placeholder { display: grid; place-items: center; width: 100%; aspect-ratio: 1; object-fit: cover; background: #eee5d8; color: #8d7668; font-family: Georgia, serif; font-size: 2rem; }
+.affirmation-detail-card > .eyebrow { margin: 21px 21px 8px; }
+.affirmation-detail-card h1 { margin: 0 21px; font-family: Georgia, "Times New Roman", serif; font-size: 1.75rem; line-height: 1.12; letter-spacing: -.025em; font-weight: 600; }
+.affirmation-reflection { margin: 16px 21px 0; padding: 14px; border-radius: 15px; background: #e8eee9; color: #566762; font-size: .8rem; line-height: 1.5; }
 
 .login-shell, .loading-screen { min-height: 100vh; display: grid; place-items: center; padding: 24px; background: radial-gradient(circle at top, #e3ece7 0, var(--cream) 44%); }
 .login-card { width: min(100%, 390px); padding: 34px 27px 29px; border-radius: 28px; background: var(--card); box-shadow: var(--shadow); }
