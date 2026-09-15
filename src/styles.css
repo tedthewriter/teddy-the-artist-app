@@ -57,6 +57,13 @@ button { color: inherit; }
 .plan-icon { display: grid; place-items: center; width: 34px; height: 34px; border-radius: 11px; background: #e5eee9; color: var(--sage-dark); }
 .plan-item p { margin: 0 0 2px; font-size: .78rem; font-weight: 800; color: var(--sage-dark); }
 .plan-item span { color: #5f6e69; font-size: .82rem; line-height: 1.35; }
+.plan-item-action { width: 100%; grid-template-columns: 36px 1fr 18px; border-right: 0; border-bottom: 0; border-left: 0; background: transparent; text-align: left; cursor: pointer; }
+.plan-item-action:last-child { border-bottom: 1px solid var(--line); }
+.plan-item-action > svg { color: var(--sage-dark); }
+.plan-item-copy { min-width: 0; display: flex; flex-direction: column; }
+.plan-item-copy strong { margin-bottom: 2px; color: var(--sage-dark); font-size: .78rem; font-weight: 800; }
+.plan-item-copy > span { font-size: .82rem; }
+.plan-error { margin: 10px 4px 0; color: #8b4545; text-align: center; font-size: .74rem; line-height: 1.4; }
 .primary-button { display: flex; justify-content: center; align-items: center; gap: 8px; width: 100%; min-height: 48px; border: 0; border-radius: 15px; background: var(--sage-dark); color: white; font-weight: 750; cursor: pointer; }
 .primary-button:disabled { opacity: .65; }
 .text-button { display: block; margin: 11px auto 0; border: 0; background: none; color: var(--muted); font-size: .78rem; font-weight: 700; cursor: pointer; }
