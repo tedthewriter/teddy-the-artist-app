@@ -25,6 +25,7 @@ export default function HomeScreen({ userId, onSignOut }) {
   const [initialItem, setInitialItem] = useState(null)
   const [content, setContent] = useState([])
   const [favorites, setFavorites] = useState(new Set())
+  const [completedItems, setCompletedItems] = useState(new Set())
   const [contentState, setContentState] = useState({ loading: Boolean(userId), error: '' })
   const [todayPlan, setTodayPlan] = useState(null)
   const [planState, setPlanState] = useState({ loading: Boolean(userId), error: '' })
@@ -43,7 +44,7 @@ export default function HomeScreen({ userId, onSignOut }) {
       if (!supabase || !userId) return
       setContentState({ loading: true, error: '' })
 
-      const [contentResult, favoritesResult, preferenceResult] = await Promise.all([
+      const [contentResult, favoritesResult, preferenceResult, completionsResult] = await Promise.all([
         supabase
           .from('content_items')
           .select('id, slug, category, framework, content_type, title, short_description, body, reflection_prompt, faith_reflection, source_title, estimated_minutes, energy_level, sort_order, affirmation_number, asset_path')
@@ -56,6 +57,10 @@ export default function HomeScreen({ userId, onSignOut }) {
           .select('vision_board_chat_url')
           .eq('user_id', userId)
           .maybeSingle(),
+        supabase
+          .from('user_content_completions')
+          .select('content_id')
+          .eq('user_id', userId),
       ])
 
       if (!active) return
@@ -66,6 +71,7 @@ export default function HomeScreen({ userId, onSignOut }) {
 
       setContent(contentResult.data || [])
       setFavorites(new Set((favoritesResult.data || []).map((entry) => entry.content_id)))
+      if (!completionsResult.error) setCompletedItems(new Set((completionsResult.data || []).map((entry) => entry.content_id)))
       if (!preferenceResult.error) setVisionBoardChatUrl(preferenceResult.data?.vision_board_chat_url || '')
       setContentState({ loading: false, error: '' })
     }
@@ -199,6 +205,24 @@ export default function HomeScreen({ userId, onSignOut }) {
     })
   }
 
+  async function toggleContentComplete(contentId) {
+    if (!supabase || !userId) return false
+    const isCompleted = completedItems.has(contentId)
+    const result = isCompleted
+      ? await supabase.from('user_content_completions').delete().eq('user_id', userId).eq('content_id', contentId)
+      : await supabase.from('user_content_completions').insert({ user_id: userId, content_id: contentId })
+
+    if (result.error) return false
+
+    setCompletedItems((current) => {
+      const next = new Set(current)
+      if (isCompleted) next.delete(contentId)
+      else next.add(contentId)
+      return next
+    })
+    return true
+  }
+
   function openSkills(item = null) {
     setInitialItem(item)
     setView('skills')
@@ -235,11 +259,13 @@ export default function HomeScreen({ userId, onSignOut }) {
       <SkillsLibrary
         items={skillItems}
         favorites={favorites}
+        completedItems={completedItems}
         loading={contentState.loading}
         error={contentState.error}
         initialItem={initialItem}
         onBack={() => { setView('home'); setInitialItem(null) }}
         onToggleFavorite={toggleContentFavorite}
+        onToggleComplete={toggleContentComplete}
       />
     )
   }
