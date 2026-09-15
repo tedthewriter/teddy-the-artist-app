@@ -143,11 +143,21 @@ button { color: inherit; }
 .content-card-title { font-family: Georgia, "Times New Roman", serif; font-size: 1.06rem; font-weight: 650; }
 .content-card-description { margin-top: 3px; color: #5f6e69; font-size: .76rem; line-height: 1.35; }
 .content-card-meta { margin-top: 8px; color: var(--sage-dark); font-size: .68rem; font-weight: 750; text-transform: uppercase; letter-spacing: .045em; }
+.completion-check { display: grid; place-items: center; width: 28px; height: 28px; margin-left: -4px; border-radius: 50%; background: #dcecdf; color: #327047; }
 
 .content-detail-card { padding: 25px 21px 23px; border: 1px solid var(--line); border-radius: 26px; background: var(--card); box-shadow: var(--shadow); }
 .content-kind { margin: 0 0 8px; color: var(--sage-dark); font-size: .68rem; font-weight: 800; letter-spacing: .085em; text-transform: uppercase; }
 .content-detail-card h1 { margin: 0; font-family: Georgia, "Times New Roman", serif; font-size: 2rem; line-height: 1.05; letter-spacing: -.035em; font-weight: 600; }
 .detail-lead { margin: 10px 0 25px; color: #566762; font-size: .95rem; line-height: 1.5; }
+.completion-panel { margin: -7px 0 24px; padding: 12px; border: 1px solid var(--line); border-radius: 16px; background: #f5f2ec; }
+.completion-panel.is-complete { border-color: rgba(50,112,71,.18); background: #e7f1e9; }
+.completion-button { display: inline-flex; align-items: center; gap: 9px; min-height: 42px; padding: 8px 14px 8px 9px; border: 0; border-radius: 13px; background: white; color: var(--sage-dark); font-size: .82rem; font-weight: 800; box-shadow: 0 4px 12px rgba(44,62,55,.06); cursor: pointer; }
+.completion-button:disabled { opacity: .65; cursor: wait; }
+.completion-panel.is-complete .completion-button { background: #327047; color: white; }
+.completion-button-icon { display: grid; place-items: center; width: 27px; height: 27px; border-radius: 9px; background: #e5eee9; color: #327047; }
+.completion-panel.is-complete .completion-button-icon { background: rgba(255,255,255,.18); color: white; }
+.completion-panel p { margin: 8px 2px 0; color: #577060; font-size: .7rem; line-height: 1.4; }
+.completion-panel .completion-error { color: #8b4545; }
 .detail-section { padding: 20px 0; border-top: 1px solid var(--line); }
 .detail-section h3 { margin: 0 0 9px; color: var(--sage-dark); font-size: .75rem; font-weight: 800; letter-spacing: .07em; text-transform: uppercase; }
 .detail-section p { margin: 0; font-size: .9rem; line-height: 1.58; }
