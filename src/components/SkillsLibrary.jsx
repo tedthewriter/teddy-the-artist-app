@@ -7,6 +7,16 @@ const typeLabels = {
   practice: 'Guided practice',
   saboteur: 'Saboteur',
   sage_power: 'Sage power',
+  cbt_intro: 'CBT foundation',
+  cbt_week_1: 'Week 1',
+  self_love_foundation: 'Self-love foundation',
+}
+
+function contentKindLabel(item) {
+  if (item.content_type === 'cbt_week_1' && item.body?.day_number) {
+    return `Week 1 · Day ${item.body.day_number}`
+  }
+  return typeLabels[item.content_type] || item.content_type
 }
 
 function DetailSection({ title, children }) {
@@ -35,7 +45,7 @@ function ContentDetail({ item, favorite, onBack, onToggleFavorite }) {
       </header>
 
       <article className="content-detail-card">
-        <p className="content-kind">{typeLabels[item.content_type] || item.content_type}</p>
+        <p className="content-kind">{contentKindLabel(item)}</p>
         <h1>{item.title}</h1>
         <p className="detail-lead">{item.short_description}</p>
 
@@ -63,11 +73,15 @@ function ContentDetail({ item, favorite, onBack, onToggleFavorite }) {
           </DetailSection>
         )}
 
-        <DetailSection title="One small practice">
+        <DetailSection title={body.activity_title || 'One small practice'}>
           {body.practice_steps && (
             <ol>{body.practice_steps.map((step) => <li key={step}>{step}</li>)}</ol>
           )}
         </DetailSection>
+
+        {body.repeat_note && (
+          <p className="gentle-callout">{body.repeat_note}</p>
+        )}
 
         {item.reflection_prompt && (
           <DetailSection title="Reflect">
@@ -94,11 +108,14 @@ function ContentDetail({ item, favorite, onBack, onToggleFavorite }) {
 export default function SkillsLibrary({ items, favorites, loading, error, initialItem, onBack, onToggleFavorite }) {
   const [selected, setSelected] = useState(initialItem || null)
   const groups = useMemo(() => [
-    { key: 'overview', label: 'Begin here', items: items.filter((item) => item.content_type === 'overview') },
-    { key: 'foundation', label: 'Build the foundation', items: items.filter((item) => item.content_type === 'foundation') },
-    { key: 'practice', label: 'Try a guided practice', items: items.filter((item) => item.content_type === 'practice') },
-    { key: 'saboteur', label: 'Meet the Saboteurs', items: items.filter((item) => item.content_type === 'saboteur') },
-    { key: 'sage_power', label: 'Practice the Sage powers', items: items.filter((item) => item.content_type === 'sage_power') },
+    { key: 'cbt-week-1', label: 'CBT · Week 1', items: items.filter((item) => item.content_type === 'cbt_week_1') },
+    { key: 'cbt-intro', label: 'CBT foundations', items: items.filter((item) => item.content_type === 'cbt_intro') },
+    { key: 'self-love', label: 'Self-love foundations', items: items.filter((item) => item.content_type === 'self_love_foundation') },
+    { key: 'overview', label: 'Positive Intelligence · Begin here', items: items.filter((item) => item.content_type === 'overview') },
+    { key: 'foundation', label: 'Positive Intelligence · Foundations', items: items.filter((item) => item.content_type === 'foundation') },
+    { key: 'practice', label: 'Positive Intelligence · Guided practice', items: items.filter((item) => item.content_type === 'practice') },
+    { key: 'saboteur', label: 'Positive Intelligence · Saboteurs', items: items.filter((item) => item.content_type === 'saboteur') },
+    { key: 'sage_power', label: 'Positive Intelligence · Sage powers', items: items.filter((item) => item.content_type === 'sage_power') },
   ], [items])
 
   if (selected) {
@@ -119,7 +136,7 @@ export default function SkillsLibrary({ items, favorites, loading, error, initia
       </header>
       <p className="eyebrow">Skills library</p>
       <h1 className="library-title">Choose something helpful.</h1>
-      <p className="library-intro">Browse the approved Positive Intelligence collection. There is nothing to finish or keep up with.</p>
+      <p className="library-intro">Browse the approved CBT, self-love, and Positive Intelligence collection. There is nothing to finish or keep up with.</p>
 
       {loading && <div className="library-status">Opening the library…</div>}
       {error && <div className="library-status error" role="alert">{error}</div>}
