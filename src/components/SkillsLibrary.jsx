@@ -107,16 +107,18 @@ function ContentDetail({ item, favorite, onBack, onToggleFavorite }) {
 
 export default function SkillsLibrary({ items, favorites, loading, error, initialItem, onBack, onToggleFavorite }) {
   const [selected, setSelected] = useState(initialItem || null)
+  const [selectedGroupKey, setSelectedGroupKey] = useState(null)
   const groups = useMemo(() => [
-    { key: 'cbt-week-1', label: 'CBT · Week 1', items: items.filter((item) => item.content_type === 'cbt_week_1') },
-    { key: 'cbt-intro', label: 'CBT foundations', items: items.filter((item) => item.content_type === 'cbt_intro') },
-    { key: 'self-love', label: 'Self-love foundations', items: items.filter((item) => item.content_type === 'self_love_foundation') },
-    { key: 'overview', label: 'Positive Intelligence · Begin here', items: items.filter((item) => item.content_type === 'overview') },
-    { key: 'foundation', label: 'Positive Intelligence · Foundations', items: items.filter((item) => item.content_type === 'foundation') },
-    { key: 'practice', label: 'Positive Intelligence · Guided practice', items: items.filter((item) => item.content_type === 'practice') },
-    { key: 'saboteur', label: 'Positive Intelligence · Saboteurs', items: items.filter((item) => item.content_type === 'saboteur') },
-    { key: 'sage_power', label: 'Positive Intelligence · Sage powers', items: items.filter((item) => item.content_type === 'sage_power') },
+    { key: 'cbt-week-1', label: 'CBT · Week 1', shortLabel: 'Week 1', description: 'Seven gentle daily lessons', icon: 'journal', tone: 'sage', items: items.filter((item) => item.content_type === 'cbt_week_1') },
+    { key: 'cbt-intro', label: 'CBT Foundations', shortLabel: 'CBT Foundations', description: 'Understand thoughts, feelings, and actions', icon: 'thought', tone: 'blue', items: items.filter((item) => item.content_type === 'cbt_intro') },
+    { key: 'self-love', label: 'Self-Love Foundations', shortLabel: 'Self-Love', description: 'Practice care without pressure', icon: 'heart', tone: 'rose', items: items.filter((item) => item.content_type === 'self_love_foundation') },
+    { key: 'overview', label: 'Positive Intelligence · Begin Here', shortLabel: 'Begin Here', description: 'A simple introduction to PQ', icon: 'compass', tone: 'gold', items: items.filter((item) => item.content_type === 'overview') },
+    { key: 'foundation', label: 'Positive Intelligence · Foundations', shortLabel: 'PQ Foundations', description: 'Build the basic mental model', icon: 'sun', tone: 'peach', items: items.filter((item) => item.content_type === 'foundation') },
+    { key: 'practice', label: 'Positive Intelligence · Guided Practice', shortLabel: 'PQ Practice', description: 'Short skills for the moment', icon: 'spark', tone: 'mint', items: items.filter((item) => item.content_type === 'practice') },
+    { key: 'saboteur', label: 'Positive Intelligence · Saboteurs', shortLabel: 'Saboteurs', description: 'Recognize unhelpful patterns', icon: 'toolbox', tone: 'plum', items: items.filter((item) => item.content_type === 'saboteur') },
+    { key: 'sage_power', label: 'Positive Intelligence · Sage Powers', shortLabel: 'Sage Powers', description: 'Explore five helpful responses', icon: 'star', tone: 'lilac', items: items.filter((item) => item.content_type === 'sage_power') },
   ], [items])
+  const selectedGroup = groups.find((group) => group.key === selectedGroupKey)
 
   if (selected) {
     return (
@@ -126,6 +128,40 @@ export default function SkillsLibrary({ items, favorites, loading, error, initia
         onBack={() => setSelected(null)}
         onToggleFavorite={onToggleFavorite}
       />
+    )
+  }
+
+  if (selectedGroup) {
+    return (
+      <main className="app-shell library-shell">
+        <header className="library-header">
+          <button className="back-button" onClick={() => setSelectedGroupKey(null)}><Icon name="back" size={19} /> Skills</button>
+        </header>
+
+        <div className={`category-heading-icon ${selectedGroup.tone}`} aria-hidden="true">
+          <Icon name={selectedGroup.icon} size={27} />
+        </div>
+        <p className="eyebrow">Skills library</p>
+        <h1 className="library-title">{selectedGroup.label}</h1>
+        <p className="library-intro">{selectedGroup.description}. Open whichever lesson feels useful today.</p>
+
+        <div className="content-list">
+          {selectedGroup.items.map((item) => (
+            <button className="content-card" key={item.id} onClick={() => setSelected(item)}>
+              <span className={`content-dot ${item.content_type}`} aria-hidden="true" />
+              <span className="content-card-copy">
+                <span className="content-card-title">{item.title}</span>
+                <span className="content-card-description">{item.short_description}</span>
+                <span className="content-card-meta">
+                  {item.estimated_minutes ? `${item.estimated_minutes} min` : 'Open'}
+                  {favorites.has(item.id) && <> · Saved</>}
+                </span>
+              </span>
+              <Icon name="arrow" size={18} />
+            </button>
+          ))}
+        </div>
+      </main>
     )
   }
 
@@ -141,27 +177,22 @@ export default function SkillsLibrary({ items, favorites, loading, error, initia
       {loading && <div className="library-status">Opening the library…</div>}
       {error && <div className="library-status error" role="alert">{error}</div>}
 
-      {!loading && !error && groups.map((group) => group.items.length > 0 && (
-        <section className="content-group" key={group.key}>
-          <h2>{group.label}</h2>
-          <div className="content-list">
-            {group.items.map((item) => (
-              <button className="content-card" key={item.id} onClick={() => setSelected(item)}>
-                <span className={`content-dot ${item.content_type}`} aria-hidden="true" />
-                <span className="content-card-copy">
-                  <span className="content-card-title">{item.title}</span>
-                  <span className="content-card-description">{item.short_description}</span>
-                  <span className="content-card-meta">
-                    {item.estimated_minutes ? `${item.estimated_minutes} min` : 'Open'}
-                    {favorites.has(item.id) && <> · Saved</>}
-                  </span>
-                </span>
-                <Icon name="arrow" size={18} />
-              </button>
-            ))}
-          </div>
-        </section>
-      ))}
+      {!loading && !error && (
+        <div className="skill-category-grid">
+          {groups.map((group) => group.items.length > 0 && (
+            <button
+              className={`skill-category-card ${group.tone}`}
+              key={group.key}
+              onClick={() => setSelectedGroupKey(group.key)}
+            >
+              <span className="skill-category-icon" aria-hidden="true"><Icon name={group.icon} size={26} /></span>
+              <span className="skill-category-title">{group.shortLabel}</span>
+              <span className="skill-category-description">{group.description}</span>
+              <span className="skill-category-count">{group.items.length} {group.items.length === 1 ? 'lesson' : 'lessons'}</span>
+            </button>
+          ))}
+        </div>
+      )}
     </main>
   )
 }
