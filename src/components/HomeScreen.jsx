@@ -28,6 +28,7 @@ export default function HomeScreen({ userId, onSignOut }) {
   const [contentState, setContentState] = useState({ loading: Boolean(userId), error: '' })
   const [todayPlan, setTodayPlan] = useState(null)
   const [planState, setPlanState] = useState({ loading: Boolean(userId), error: '' })
+  const [visionBoardChatUrl, setVisionBoardChatUrl] = useState('')
   const [imageUrls, setImageUrls] = useState({})
   const [notice, setNotice] = useState('')
   const today = useMemo(
@@ -42,7 +43,7 @@ export default function HomeScreen({ userId, onSignOut }) {
       if (!supabase || !userId) return
       setContentState({ loading: true, error: '' })
 
-      const [contentResult, favoritesResult] = await Promise.all([
+      const [contentResult, favoritesResult, preferenceResult] = await Promise.all([
         supabase
           .from('content_items')
           .select('id, slug, category, framework, content_type, title, short_description, body, reflection_prompt, faith_reflection, source_title, estimated_minutes, energy_level, sort_order, affirmation_number, asset_path')
@@ -50,6 +51,11 @@ export default function HomeScreen({ userId, onSignOut }) {
           .eq('active', true)
           .order('sort_order'),
         supabase.from('user_favorites').select('content_id').eq('user_id', userId),
+        supabase
+          .from('user_preferences')
+          .select('vision_board_chat_url')
+          .eq('user_id', userId)
+          .maybeSingle(),
       ])
 
       if (!active) return
@@ -60,6 +66,7 @@ export default function HomeScreen({ userId, onSignOut }) {
 
       setContent(contentResult.data || [])
       setFavorites(new Set((favoritesResult.data || []).map((entry) => entry.content_id)))
+      if (!preferenceResult.error) setVisionBoardChatUrl(preferenceResult.data?.vision_board_chat_url || '')
       setContentState({ loading: false, error: '' })
     }
 
@@ -343,6 +350,18 @@ export default function HomeScreen({ userId, onSignOut }) {
         </section>
       ) : (
         <button className="reopen-plan" onClick={showPlan}><Icon name="spark" size={18} /> View today’s suggested plan</button>
+      )}
+
+      {visionBoardChatUrl && (
+        <a className="vision-board-card" href={visionBoardChatUrl} aria-label="Build My Vision Board in ChatGPT">
+          <span className="vision-board-icon" aria-hidden="true"><Icon name="palette" size={25} /></span>
+          <span className="vision-board-copy">
+            <span className="vision-board-label">Guided reflection</span>
+            <strong>Build My Vision Board</strong>
+            <span>Continue your vision conversation in ChatGPT.</span>
+          </span>
+          <Icon name="arrow" size={19} />
+        </a>
       )}
 
       <section className="pathway-section" aria-labelledby="pathway-title">
