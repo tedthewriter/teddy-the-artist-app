@@ -5,7 +5,19 @@ import AffirmationsLibrary from './AffirmationsLibrary'
 import { supabase } from '../lib/supabase'
 import { dailyPlan, pathways } from '../data/homeContent'
 
-const dismissKey = () => `teddy-plan-dismissed-${new Date().toISOString().slice(0, 10)}`
+function localDateKey(date = new Date()) {
+  const year = date.getFullYear()
+  const month = String(date.getMonth() + 1).padStart(2, '0')
+  const day = String(date.getDate()).padStart(2, '0')
+  return `${year}-${month}-${day}`
+}
+
+function dateNumber(dateKey) {
+  const [year, month, day] = dateKey.split('-').map(Number)
+  return Math.floor(Date.UTC(year, month - 1, day) / 86400000)
+}
+
+const dismissKey = () => `teddy-plan-dismissed-${localDateKey()}`
 
 export default function HomeScreen({ userId, onSignOut }) {
   const [planVisible, setPlanVisible] = useState(() => localStorage.getItem(dismissKey()) !== 'true')
@@ -14,6 +26,8 @@ export default function HomeScreen({ userId, onSignOut }) {
   const [content, setContent] = useState([])
   const [favorites, setFavorites] = useState(new Set())
   const [contentState, setContentState] = useState({ loading: Boolean(userId), error: '' })
+  const [todayPlan, setTodayPlan] = useState(null)
+  const [planState, setPlanState] = useState({ loading: Boolean(userId), error: '' })
   const [imageUrls, setImageUrls] = useState({})
   const [notice, setNotice] = useState('')
   const today = useMemo(
@@ -58,12 +72,95 @@ export default function HomeScreen({ userId, onSignOut }) {
     [content],
   )
   const skillItems = useMemo(() => content.filter((item) => item.content_type !== 'affirmation'), [content])
+  const weekOneItems = useMemo(
+    () => content
+      .filter((item) => item.content_type === 'cbt_week_1')
+      .sort((a, b) => Number(a.body?.day_number || 0) - Number(b.body?.day_number || 0)),
+    [content],
+  )
   const dailyAffirmation = useMemo(() => {
     if (!affirmationItems.length) return null
     const now = new Date()
     const dayNumber = Math.floor(new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime() / 86400000)
     return affirmationItems[dayNumber % affirmationItems.length]
   }, [affirmationItems])
+
+  useEffect(() => {
+    let active = true
+
+    async function loadTodayPlan() {
+      if (!supabase || !userId || weekOneItems.length === 0) return
+      setPlanState({ loading: true, error: '' })
+      const planDate = localDateKey()
+
+      const { data: existing, error: existingError } = await supabase
+        .from('daily_plans')
+        .select('id, plan_date, plan_items, dismissed_at')
+        .eq('user_id', userId)
+        .eq('plan_date', planDate)
+        .maybeSingle()
+
+      if (!active) return
+      if (existingError) {
+        setPlanState({ loading: false, error: 'Today’s CBT lesson could not be opened.' })
+        return
+      }
+
+      if (existing) {
+        setTodayPlan(existing)
+        setPlanState({ loading: false, error: '' })
+        return
+      }
+
+      const { data: priorPlans, error: priorError } = await supabase
+        .from('daily_plans')
+        .select('plan_date, plan_items')
+        .eq('user_id', userId)
+        .lte('plan_date', planDate)
+        .order('plan_date', { ascending: true })
+
+      if (!active) return
+      if (priorError) {
+        setPlanState({ loading: false, error: 'Today’s CBT lesson could not be opened.' })
+        return
+      }
+
+      const weekOnePlans = (priorPlans || []).filter((plan) =>
+        Array.isArray(plan.plan_items)
+        && plan.plan_items.some((item) => item.cbt_week === 1),
+      )
+      const weekStart = weekOnePlans[0]?.plan_date || planDate
+      const cbtDay = Math.min(7, Math.max(1, dateNumber(planDate) - dateNumber(weekStart) + 1))
+      const lesson = weekOneItems.find((item) => Number(item.body?.day_number) === cbtDay) || weekOneItems[0]
+      const planItems = dailyPlan.map((item) => item.label === 'CBT'
+        ? { ...item, title: lesson.title, content_id: lesson.id, cbt_week: 1, cbt_day: cbtDay }
+        : item)
+
+      const { data: created, error: createError } = await supabase
+        .from('daily_plans')
+        .upsert({ user_id: userId, plan_date: planDate, plan_items: planItems }, { onConflict: 'user_id,plan_date' })
+        .select('id, plan_date, plan_items, dismissed_at')
+        .single()
+
+      if (!active) return
+      if (createError) {
+        setPlanState({ loading: false, error: 'Today’s CBT lesson could not be saved.' })
+        return
+      }
+
+      setTodayPlan(created)
+      setPlanState({ loading: false, error: '' })
+    }
+
+    loadTodayPlan()
+    return () => { active = false }
+  }, [userId, weekOneItems])
+
+  const planItemsForToday = Array.isArray(todayPlan?.plan_items) ? todayPlan.plan_items : dailyPlan
+  const dailyCbtPlanItem = planItemsForToday.find((item) => item.label === 'CBT')
+  const dailyCbtLesson = dailyCbtPlanItem?.content_id
+    ? weekOneItems.find((item) => item.id === dailyCbtPlanItem.content_id)
+    : null
 
   async function loadAffirmationImages() {
     if (!supabase || affirmationItems.length === 0) return
@@ -221,16 +318,27 @@ export default function HomeScreen({ userId, onSignOut }) {
             <button className="icon-button quiet" aria-label="Close today’s plan" onClick={hidePlan}><Icon name="close" size={19} /></button>
           </div>
           <div className="plan-list">
-            {dailyPlan.map((item) => (
+            {planItemsForToday.map((item) => item.label === 'CBT' && dailyCbtLesson ? (
+              <button className="plan-item plan-item-action" key={item.label} onClick={() => openSkills(dailyCbtLesson)}>
+                <span className="plan-icon"><Icon name={item.icon} size={19} /></span>
+                <span className="plan-item-copy"><strong>{item.label}</strong><span>{item.title}</span></span>
+                <Icon name="arrow" size={17} />
+              </button>
+            ) : (
               <div className="plan-item" key={item.label}>
                 <span className="plan-icon"><Icon name={item.icon} size={19} /></span>
                 <div><p>{item.label}</p><span>{item.title}</span></div>
               </div>
             ))}
           </div>
-          <button className="primary-button" onClick={() => setNotice('Begin with whichever part of the plan feels useful. Nothing needs to be completed in order.')}>
-            Start today’s plan <Icon name="arrow" size={18} />
+          <button
+            className="primary-button"
+            disabled={!dailyCbtLesson || planState.loading}
+            onClick={() => dailyCbtLesson && openSkills(dailyCbtLesson)}
+          >
+            {planState.loading ? 'Finding today’s lesson…' : 'Open today’s CBT lesson'} <Icon name="arrow" size={18} />
           </button>
+          {planState.error && <p className="plan-error" role="alert">{planState.error}</p>}
           <button className="text-button" onClick={hidePlan}>Not right now</button>
         </section>
       ) : (
