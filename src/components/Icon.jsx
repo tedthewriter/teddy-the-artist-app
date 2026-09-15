@@ -13,6 +13,7 @@ const icons = {
   dice: '<rect x="4" y="4" width="16" height="16" rx="4"/><circle cx="9" cy="9" r=".8"/><circle cx="15" cy="9" r=".8"/><circle cx="12" cy="12" r=".8"/><circle cx="9" cy="15" r=".8"/><circle cx="15" cy="15" r=".8"/>',
   play: '<path d="m9 7 8 5-8 5V7Z"/>',
   bookmark: '<path d="M6 4h12v17l-6-4-6 4V4Z"/>',
+  check: '<path d="m5 12.5 4.2 4.2L19 7"/>',
   arrow: '<path d="M5 12h14M14 7l5 5-5 5"/>',
   back: '<path d="M19 12H5M10 17l-5-5 5-5"/>',
   user: '<circle cx="12" cy="8" r="4"/><path d="M4.5 21a7.5 7.5 0 0 1 15 0"/>',
