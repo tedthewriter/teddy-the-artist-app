@@ -29,8 +29,19 @@ function DetailSection({ title, children }) {
   )
 }
 
-function ContentDetail({ item, favorite, onBack, onToggleFavorite }) {
+function ContentDetail({ item, favorite, completed, onBack, onToggleFavorite, onToggleComplete }) {
   const body = item.body || {}
+  const canMarkDone = ['cbt', 'positive-intelligence'].includes(frameworkKey(item))
+  const [savingCompletion, setSavingCompletion] = useState(false)
+  const [completionError, setCompletionError] = useState('')
+
+  async function handleCompletion() {
+    setSavingCompletion(true)
+    setCompletionError('')
+    const saved = await onToggleComplete(item.id)
+    setSavingCompletion(false)
+    if (!saved) setCompletionError('That change could not be saved. Please try again.')
+  }
 
   return (
     <main className="app-shell library-shell">
@@ -48,6 +59,17 @@ function ContentDetail({ item, favorite, onBack, onToggleFavorite }) {
         <p className="content-kind">{contentKindLabel(item)}</p>
         <h1>{item.title}</h1>
         <p className="detail-lead">{item.short_description}</p>
+
+        {canMarkDone && (
+          <div className={`completion-panel ${completed ? 'is-complete' : ''}`}>
+            <button className="completion-button" disabled={savingCompletion} onClick={handleCompletion}>
+              <span className="completion-button-icon"><Icon name="check" size={19} /></span>
+              {savingCompletion ? 'Saving…' : completed ? 'Done' : 'Mark done'}
+            </button>
+            {completed && <p>You can tap again to mark this not done.</p>}
+            {completionError && <p className="completion-error" role="alert">{completionError}</p>}
+          </div>
+        )}
 
         {body.sections?.map((section) => (
           <DetailSection title={section.heading} key={section.heading}>
@@ -113,7 +135,7 @@ function frameworkKey(item) {
   return null
 }
 
-function LessonList({ items, favorites, onSelect }) {
+function LessonList({ items, favorites, completedItems, onSelect }) {
   return (
     <div className="content-list">
       {items.map((item) => (
@@ -127,14 +149,18 @@ function LessonList({ items, favorites, onSelect }) {
               {favorites.has(item.id) && <> · Saved</>}
             </span>
           </span>
-          <Icon name="arrow" size={18} />
+          {completedItems.has(item.id) ? (
+            <span className="completion-check" aria-label="Done" title="Done"><Icon name="check" size={18} /></span>
+          ) : (
+            <Icon name="arrow" size={18} />
+          )}
         </button>
       ))}
     </div>
   )
 }
 
-export default function SkillsLibrary({ items, favorites, loading, error, initialItem, onBack, onToggleFavorite }) {
+export default function SkillsLibrary({ items, favorites, completedItems, loading, error, initialItem, onBack, onToggleFavorite, onToggleComplete }) {
   const [selected, setSelected] = useState(initialItem || null)
   const [selectedCategoryKey, setSelectedCategoryKey] = useState(initialItem ? frameworkKey(initialItem) : null)
   const categories = useMemo(() => {
@@ -178,8 +204,10 @@ export default function SkillsLibrary({ items, favorites, loading, error, initia
       <ContentDetail
         item={selected}
         favorite={favorites.has(selected.id)}
+        completed={completedItems.has(selected.id)}
         onBack={() => setSelected(null)}
         onToggleFavorite={onToggleFavorite}
+        onToggleComplete={onToggleComplete}
       />
     )
   }
@@ -207,7 +235,7 @@ export default function SkillsLibrary({ items, favorites, loading, error, initia
         ) : selectedCategory.sections.map((section) => section.items.length > 0 && (
           <section className="content-group" key={section.key}>
             <h2>{section.label}</h2>
-            <LessonList items={section.items} favorites={favorites} onSelect={setSelected} />
+            <LessonList items={section.items} favorites={favorites} completedItems={completedItems} onSelect={setSelected} />
           </section>
         ))}
       </main>
