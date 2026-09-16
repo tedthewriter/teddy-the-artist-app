@@ -120,6 +120,29 @@ button { color: inherit; }
 .skill-category-description { margin-top: 5px; color: rgba(38,59,55,.72); font-size: .7rem; line-height: 1.34; }
 .skill-category-count { margin-top: auto; padding-top: 12px; color: var(--sage-dark); font-size: .65rem; font-weight: 800; text-transform: uppercase; letter-spacing: .045em; }
 .category-heading-icon { width: 54px; height: 54px; margin-bottom: 18px; border-radius: 17px; }
+.assessment-results-button { display: grid; grid-template-columns: 48px 1fr 18px; gap: 12px; align-items: center; width: 100%; margin: -7px 0 25px; padding: 15px; border: 1px solid rgba(124,98,40,.15); border-radius: 19px; background: #efe3bb; color: var(--ink); text-align: left; box-shadow: 0 7px 20px rgba(44,62,55,.045); cursor: pointer; }
+.assessment-results-button:active { transform: scale(.99); }
+.assessment-results-icon, .assessment-waiting-icon { display: grid; place-items: center; width: 48px; height: 48px; border-radius: 15px; background: rgba(255,255,255,.62); color: #78652d; }
+.assessment-results-copy { min-width: 0; display: flex; flex-direction: column; }
+.assessment-results-label, .assessment-label { color: #78652d; font-size: .61rem; font-weight: 850; letter-spacing: .075em; text-transform: uppercase; }
+.assessment-results-copy strong { margin-top: 2px; font-family: Georgia, "Times New Roman", serif; font-size: 1.04rem; line-height: 1.18; }
+.assessment-results-copy > span:last-child { margin-top: 3px; color: #6c6656; font-size: .69rem; }
+.assessment-results-button > svg { color: #78652d; }
+.assessment-waiting-card, .assessment-summary-card, .assessment-notes { margin-top: 24px; padding: 21px 19px; border: 1px solid var(--line); border-radius: 21px; background: var(--card); box-shadow: 0 7px 20px rgba(44,62,55,.04); }
+.assessment-waiting-icon { margin-bottom: 15px; background: #efe3bb; }
+.assessment-waiting-card h2, .assessment-summary-card h2, .assessment-notes h2 { margin: 0; font-family: Georgia, "Times New Roman", serif; font-size: 1.3rem; font-weight: 600; }
+.assessment-waiting-card p, .assessment-summary, .assessment-notes p { margin: 8px 0 0; color: var(--muted); font-size: .82rem; line-height: 1.52; }
+.assessment-summary-card { background: #faf6e8; }
+.assessment-date { margin: 5px 0 0; color: var(--muted); font-size: .69rem; }
+.assessment-results-list { display: grid; gap: 10px; margin-top: 14px; }
+.assessment-result-row { padding: 15px; border: 1px solid var(--line); border-radius: 17px; background: var(--card); }
+.assessment-result-heading { display: flex; justify-content: space-between; gap: 12px; align-items: baseline; }
+.assessment-result-heading strong { font-family: Georgia, "Times New Roman", serif; font-size: 1.02rem; }
+.assessment-result-heading span { color: #78652d; font-weight: 850; }
+.assessment-score-track { height: 8px; margin-top: 10px; overflow: hidden; border-radius: 999px; background: #e8e2d3; }
+.assessment-score-track span { display: block; height: 100%; border-radius: inherit; background: #a88f49; }
+.assessment-result-row p { margin: 9px 0 0; color: var(--muted); font-size: .77rem; line-height: 1.46; }
+.assessment-gentle-note { margin: 20px 12px 0; color: var(--muted); font-size: .75rem; line-height: 1.5; text-align: center; }
 .empty-category-card { padding: 22px 19px; border: 1px solid var(--line); border-radius: 21px; background: var(--card); box-shadow: 0 7px 20px rgba(44,62,55,.04); }
 .empty-category-card .skill-category-icon { margin-bottom: 14px; background: #e5eee9; }
 .empty-category-card h2 { margin: 0; font-family: Georgia, "Times New Roman", serif; font-size: 1.25rem; font-weight: 600; }
@@ -233,4 +256,3 @@ button { color: inherit; }
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { scroll-behavior: auto !important; transition: none !important; }
 }
-
