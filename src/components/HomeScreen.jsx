@@ -38,6 +38,7 @@ export default function HomeScreen({ userId, onSignOut }) {
   const [content, setContent] = useState([])
   const [favorites, setFavorites] = useState(new Set())
   const [completedItems, setCompletedItems] = useState(new Set())
+  const [responses, setResponses] = useState(new Map())
   const [contentState, setContentState] = useState({ loading: Boolean(userId), error: '' })
   const [todayPlan, setTodayPlan] = useState(null)
   const [planState, setPlanState] = useState({ loading: Boolean(userId), error: '' })
@@ -56,7 +57,7 @@ export default function HomeScreen({ userId, onSignOut }) {
       if (!supabase || !userId) return
       setContentState({ loading: true, error: '' })
 
-      const [contentResult, favoritesResult, preferenceResult, completionsResult] = await Promise.all([
+      const [contentResult, favoritesResult, preferenceResult, completionsResult, responsesResult] = await Promise.all([
         supabase
           .from('content_items')
           .select('id, slug, category, framework, content_type, title, short_description, body, reflection_prompt, faith_reflection, source_title, estimated_minutes, energy_level, sort_order, affirmation_number, asset_path')
@@ -73,6 +74,10 @@ export default function HomeScreen({ userId, onSignOut }) {
           .from('user_content_completions')
           .select('content_id')
           .eq('user_id', userId),
+        supabase
+          .from('user_responses')
+          .select('context_type, context_id, response_key, content_id, response_kind, prompt_snapshot, response_value, updated_at')
+          .eq('user_id', userId),
       ])
 
       if (!active) return
@@ -84,6 +89,12 @@ export default function HomeScreen({ userId, onSignOut }) {
       setContent(contentResult.data || [])
       setFavorites(new Set((favoritesResult.data || []).map((entry) => entry.content_id)))
       if (!completionsResult.error) setCompletedItems(new Set((completionsResult.data || []).map((entry) => entry.content_id)))
+      if (!responsesResult.error) {
+        setResponses(new Map((responsesResult.data || []).map((entry) => [
+          `${entry.context_type}:${entry.context_id}:${entry.response_key}`,
+          entry,
+        ])))
+      }
       if (!preferenceResult.error) setVisionBoardChatUrl(preferenceResult.data?.vision_board_chat_url || '')
       setContentState({ loading: false, error: '' })
     }
@@ -235,6 +246,61 @@ export default function HomeScreen({ userId, onSignOut }) {
     return true
   }
 
+  async function saveResponse({
+    contextType,
+    contextId,
+    contentId,
+    responseKey,
+    responseKind,
+    prompt,
+    responseValue,
+  }) {
+    if (!supabase || !userId) return false
+    const row = {
+      user_id: userId,
+      context_type: contextType,
+      context_id: contextId,
+      response_key: responseKey,
+      content_id: contextType === 'content' ? contentId : null,
+      response_kind: responseKind,
+      prompt_snapshot: prompt || '',
+      response_value: responseValue,
+      updated_at: new Date().toISOString(),
+    }
+    const { data, error: responseError } = await supabase
+      .from('user_responses')
+      .upsert(row, { onConflict: 'user_id,context_type,context_id,response_key' })
+      .select('context_type, context_id, response_key, content_id, response_kind, prompt_snapshot, response_value, updated_at')
+      .single()
+
+    if (responseError) return false
+    setResponses((current) => {
+      const next = new Map(current)
+      next.set(`${data.context_type}:${data.context_id}:${data.response_key}`, data)
+      return next
+    })
+    return true
+  }
+
+  async function deleteResponse({ contextType, contextId, responseKey }) {
+    if (!supabase || !userId) return false
+    const { error: responseError } = await supabase
+      .from('user_responses')
+      .delete()
+      .eq('user_id', userId)
+      .eq('context_type', contextType)
+      .eq('context_id', contextId)
+      .eq('response_key', responseKey)
+
+    if (responseError) return false
+    setResponses((current) => {
+      const next = new Map(current)
+      next.delete(`${contextType}:${contextId}:${responseKey}`)
+      return next
+    })
+    return true
+  }
+
   function openSkills(item = null) {
     setInitialItem(item)
     setView('skills')
@@ -278,12 +344,15 @@ export default function HomeScreen({ userId, onSignOut }) {
         items={skillItems}
         favorites={favorites}
         completedItems={completedItems}
+        responses={responses}
         loading={contentState.loading}
         error={contentState.error}
         initialItem={initialItem}
         onBack={() => { setView('home'); setInitialItem(null) }}
         onToggleFavorite={toggleContentFavorite}
         onToggleComplete={toggleContentComplete}
+        onSaveResponse={saveResponse}
+        onDeleteResponse={deleteResponse}
       />
     )
   }
@@ -296,9 +365,12 @@ export default function HomeScreen({ userId, onSignOut }) {
         loading={contentState.loading}
         error={contentState.error}
         imageUrls={imageUrls}
+        responses={responses}
         onBack={() => setView('home')}
         onToggleFavorite={toggleContentFavorite}
         onImagesChanged={loadAffirmationImages}
+        onSaveResponse={saveResponse}
+        onDeleteResponse={deleteResponse}
       />
     )
   }
