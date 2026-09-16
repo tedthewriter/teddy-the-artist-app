@@ -16,7 +16,7 @@
 
 * { box-sizing: border-box; }
 body { margin: 0; min-width: 320px; min-height: 100vh; background: var(--cream); }
-button, input { font: inherit; }
+button, input, textarea { font: inherit; }
 button { color: inherit; }
 
 .app-shell { width: min(100%, 480px); min-height: 100vh; margin: 0 auto; padding: max(22px, env(safe-area-inset-top)) 18px calc(42px + env(safe-area-inset-bottom)); }
@@ -231,6 +231,31 @@ button { color: inherit; }
 .gentle-callout, .reflection-prompt { padding: 15px; border-radius: 15px; background: #f1e9dc; font-family: Georgia, "Times New Roman", serif; font-size: 1.02rem !important; }
 .reflection-prompt { background: #e8eee9; }
 .record-reminder { margin-top: 11px !important; color: var(--muted); font-size: .75rem !important; }
+.response-field { margin-top: 15px; padding: 15px; border: 1px solid rgba(67,100,92,.15); border-radius: 16px; background: #f8f6f1; }
+.response-heading { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; margin-bottom: 8px; }
+.response-heading label { color: var(--sage-dark); font-size: .72rem; font-weight: 800; letter-spacing: .02em; }
+.save-status { min-height: 1em; color: var(--muted); font-size: .65rem; white-space: nowrap; }
+.save-status.saved { color: #327047; }
+.save-status.error { color: #8b4545; }
+.response-field textarea { display: block; width: 100%; min-height: 105px; resize: vertical; padding: 12px; border: 1px solid #cbd7d2; border-radius: 12px; background: white; color: var(--ink); font-size: .86rem; line-height: 1.5; }
+.response-field textarea::placeholder { color: #8b9692; }
+.response-field textarea:focus, .choice-option:focus-within { outline: 3px solid rgba(95,129,119,.18); border-color: var(--sage); }
+.choice-list { display: grid; gap: 8px; }
+.choice-option { display: flex; align-items: flex-start; gap: 10px; padding: 11px 12px; border: 1px solid #d7dfdb; border-radius: 12px; background: white; cursor: pointer; }
+.choice-option input { flex: 0 0 auto; margin-top: 2px; accent-color: var(--sage-dark); }
+.choice-option span { font-size: .82rem; line-height: 1.4; }
+.scale-options { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 6px; }
+.scale-options button { min-height: 39px; padding: 4px; border: 1px solid #ccd8d3; border-radius: 10px; background: white; color: var(--sage-dark); font-size: .76rem; font-weight: 800; cursor: pointer; }
+.scale-options button.selected { border-color: var(--sage-dark); background: var(--sage-dark); color: white; }
+.scale-labels { display: flex; justify-content: space-between; gap: 12px; margin-top: 7px; color: var(--muted); font-size: .64rem; }
+.response-error { margin: 9px 0 0 !important; color: #8b4545; font-size: .68rem !important; line-height: 1.4 !important; }
+.response-delete-row { display: flex; align-items: center; justify-content: flex-end; gap: 8px; min-height: 24px; margin-top: 9px; color: var(--muted); font-size: .65rem; }
+.response-delete-row button { padding: 4px 6px; border: 0; background: none; color: var(--muted); font-size: .65rem; font-weight: 750; text-decoration: underline; cursor: pointer; }
+.response-delete-row .confirm-delete { color: #8b4545; }
+.response-group { display: grid; gap: 16px; }
+.survey-question + .survey-question { padding-top: 16px; border-top: 1px solid var(--line); }
+.survey-prompt { color: var(--ink); font-family: Georgia, "Times New Roman", serif; font-size: 1.02rem !important; line-height: 1.45 !important; }
+.survey-help { margin-top: 6px !important; color: var(--muted); font-size: .74rem !important; }
 .source-note { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 8px; padding-top: 18px; border-top: 1px solid var(--line); color: var(--muted); font-size: .68rem; }
 
 .import-card { margin: 0 0 24px; padding: 21px 18px; border: 1px solid rgba(95,129,119,.18); border-radius: 22px; background: #e7eee9; }
@@ -250,6 +275,7 @@ button { color: inherit; }
 .affirmation-detail-card > .eyebrow { margin: 21px 21px 8px; }
 .affirmation-detail-card h1 { margin: 0 21px; font-family: Georgia, "Times New Roman", serif; font-size: 1.75rem; line-height: 1.12; letter-spacing: -.025em; font-weight: 600; }
 .affirmation-reflection { margin: 16px 21px 0; padding: 14px; border-radius: 15px; background: #e8eee9; color: #566762; font-size: .8rem; line-height: 1.5; }
+.affirmation-response { margin: 0 21px; }
 
 .login-shell, .loading-screen { min-height: 100vh; display: grid; place-items: center; padding: 24px; background: radial-gradient(circle at top, #e3ece7 0, var(--cream) 44%); }
 .login-card { width: min(100%, 390px); padding: 34px 27px 29px; border-radius: 28px; background: var(--card); box-shadow: var(--shadow); }
