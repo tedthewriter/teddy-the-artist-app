@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { unzip } from 'fflate'
 import Icon from './Icon'
+import ResponseField from './ResponseField'
 import { supabase } from '../lib/supabase'
 
 const BUCKET = 'affirmation-pins'
@@ -21,9 +22,12 @@ export default function AffirmationsLibrary({
   loading,
   error,
   imageUrls,
+  responses,
   onBack,
   onToggleFavorite,
   onImagesChanged,
+  onSaveResponse,
+  onDeleteResponse,
 }) {
   const inputRef = useRef(null)
   const [selected, setSelected] = useState(null)
@@ -113,7 +117,21 @@ export default function AffirmationsLibrary({
           {imageUrl ? <img src={imageUrl} alt={selected.title} /> : <div className="pin-placeholder">Pin {selected.affirmation_number}</div>}
           <p className="eyebrow">Affirmation {selected.affirmation_number}</p>
           <h1>{selected.title}</h1>
-          <p className="affirmation-reflection">Take a moment with it. If you want to reflect, record your thoughts in your notes app or journal.</p>
+          <p className="affirmation-reflection">Take a moment with it. If you want, save what this affirmation brings to mind.</p>
+          <div className="affirmation-response">
+            <ResponseField
+              contextType="content"
+              contextId={selected.id}
+              contentId={selected.id}
+              responseKey="reflection"
+              kind="text"
+              label="Your reflection"
+              prompt={`Reflection on affirmation ${selected.affirmation_number}: ${selected.title}`}
+              record={responses.get(`content:${selected.id}:reflection`)}
+              onSave={onSaveResponse}
+              onDelete={onDeleteResponse}
+            />
+          </div>
         </article>
       </main>
     )
