@@ -38,6 +38,7 @@ export default function HomeScreen({ userId, onSignOut }) {
   const [favorites, setFavorites] = useState(new Set())
   const [completedItems, setCompletedItems] = useState(new Set())
   const [responses, setResponses] = useState(new Map())
+  const [saboteurAssessmentResult, setSaboteurAssessmentResult] = useState(null)
   const [contentState, setContentState] = useState({ loading: Boolean(userId), error: '' })
   const [todayPlan, setTodayPlan] = useState(null)
   const [planState, setPlanState] = useState({ loading: Boolean(userId), error: '' })
@@ -56,7 +57,7 @@ export default function HomeScreen({ userId, onSignOut }) {
       if (!supabase || !userId) return
       setContentState({ loading: true, error: '' })
 
-      const [contentResult, favoritesResult, preferenceResult, completionsResult, responsesResult] = await Promise.all([
+      const [contentResult, favoritesResult, preferenceResult, completionsResult, responsesResult, assessmentResult] = await Promise.all([
         supabase
           .from('content_items')
           .select('id, slug, category, framework, content_type, title, short_description, body, reflection_prompt, faith_reflection, source_title, estimated_minutes, energy_level, sort_order, affirmation_number, asset_path')
@@ -77,6 +78,12 @@ export default function HomeScreen({ userId, onSignOut }) {
           .from('user_responses')
           .select('context_type, context_id, response_key, content_id, response_kind, prompt_snapshot, response_value, updated_at')
           .eq('user_id', userId),
+        supabase
+          .from('user_assessment_results')
+          .select('assessment_key, title, results, received_at, updated_at')
+          .eq('user_id', userId)
+          .eq('assessment_key', 'positive_intelligence_saboteurs')
+          .maybeSingle(),
       ])
 
       if (!active) return
@@ -94,6 +101,7 @@ export default function HomeScreen({ userId, onSignOut }) {
           entry,
         ])))
       }
+      if (!assessmentResult.error) setSaboteurAssessmentResult(assessmentResult.data || null)
       if (!preferenceResult.error) setVisionBoardChatUrl(preferenceResult.data?.vision_board_chat_url || '')
       setContentState({ loading: false, error: '' })
     }
@@ -338,6 +346,7 @@ export default function HomeScreen({ userId, onSignOut }) {
         favorites={favorites}
         completedItems={completedItems}
         responses={responses}
+        saboteurAssessmentResult={saboteurAssessmentResult}
         loading={contentState.loading}
         error={contentState.error}
         initialItem={initialItem}
