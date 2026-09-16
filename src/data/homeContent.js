@@ -18,7 +18,6 @@ export const pathways = [
   { title: 'Move', subtitle: 'Gentle movement', icon: 'sun', tone: 'gold' },
   { title: 'Reflect', subtitle: 'Pause and notice', icon: 'journal', tone: 'lilac' },
   { title: 'Connect', subtitle: 'Reach toward someone', icon: 'people', tone: 'blue' },
-  { title: 'Games', subtitle: 'Practice through play', icon: 'game', tone: 'plum' },
   { title: 'Affirmations', subtitle: 'See and listen', icon: 'star', tone: 'rose' },
   { title: 'Surprise Me', subtitle: 'Choose something for me', icon: 'dice', tone: 'mint' },
 ]
