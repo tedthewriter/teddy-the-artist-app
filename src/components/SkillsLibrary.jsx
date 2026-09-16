@@ -1,5 +1,6 @@
 import { useMemo, useState } from 'react'
 import Icon from './Icon'
+import ResponseField from './ResponseField'
 
 const typeLabels = {
   overview: 'Start here',
@@ -29,11 +30,52 @@ function DetailSection({ title, children }) {
   )
 }
 
-function ContentDetail({ item, favorite, completed, onBack, onToggleFavorite, onToggleComplete }) {
+function surveyKind(type) {
+  if (['single_choice', 'radio', 'select'].includes(type)) return 'single_choice'
+  if (['multi_choice', 'checkbox', 'checkboxes'].includes(type)) return 'multi_choice'
+  if (['scale', 'rating'].includes(type)) return 'scale'
+  return 'text'
+}
+
+function safeResponseKey(value, fallback) {
+  const normalized = String(value || fallback)
+    .toLowerCase()
+    .replace(/[^a-z0-9_-]+/g, '-')
+    .replace(/^-+|-+$/g, '')
+    .slice(0, 90)
+  return normalized || fallback
+}
+
+function ContentDetail({
+  item,
+  favorite,
+  completed,
+  responses,
+  onBack,
+  onToggleFavorite,
+  onToggleComplete,
+  onSaveResponse,
+  onDeleteResponse,
+}) {
   const body = item.body || {}
+  const surveyItems = Array.isArray(body.response_items)
+    ? body.response_items
+    : Array.isArray(body.survey?.questions) ? body.survey.questions : []
   const canMarkDone = ['cbt', 'positive-intelligence'].includes(frameworkKey(item))
   const [savingCompletion, setSavingCompletion] = useState(false)
   const [completionError, setCompletionError] = useState('')
+  const responseRecord = (responseKey) => responses.get(`content:${item.id}:${responseKey}`)
+  const responseProps = (responseKey, prompt, kind = 'text') => ({
+    contextType: 'content',
+    contextId: item.id,
+    contentId: item.id,
+    responseKey,
+    kind,
+    prompt,
+    record: responseRecord(responseKey),
+    onSave: onSaveResponse,
+    onDelete: onDeleteResponse,
+  })
 
   async function handleCompletion() {
     setSavingCompletion(true)
@@ -78,7 +120,13 @@ function ContentDetail({ item, favorite, completed, onBack, onToggleFavorite, on
         ))}
 
         {body.question && (
-          <blockquote className="sage-question">{body.question}</blockquote>
+          <>
+            <blockquote className="sage-question">{body.question}</blockquote>
+            <ResponseField
+              {...responseProps('guiding-question', body.question)}
+              label="Your response"
+            />
+          </>
         )}
 
         <DetailSection title="You might notice">
@@ -99,7 +147,41 @@ function ContentDetail({ item, favorite, completed, onBack, onToggleFavorite, on
           {body.practice_steps && (
             <ol>{body.practice_steps.map((step) => <li key={step}>{step}</li>)}</ol>
           )}
+          {body.practice_steps && (
+            <ResponseField
+              {...responseProps('activity-notes', `Notes for ${body.activity_title || 'this practice'}`)}
+              label="Your activity notes"
+              placeholder="Add notes, answers, or anything you want to remember…"
+            />
+          )}
         </DetailSection>
+
+        {surveyItems.length > 0 && (
+          <DetailSection title={body.survey?.title || 'Questions'}>
+            <div className="response-group">
+              {surveyItems.map((surveyItem, index) => {
+                const responseKey = `survey-${safeResponseKey(surveyItem.key || surveyItem.id, `question-${index + 1}`)}`
+                const kind = surveyKind(surveyItem.type)
+                return (
+                  <div className="survey-question" key={responseKey}>
+                    <p className="survey-prompt">{surveyItem.prompt || surveyItem.question}</p>
+                    {surveyItem.help_text && <p className="survey-help">{surveyItem.help_text}</p>}
+                    <ResponseField
+                      {...responseProps(responseKey, surveyItem.prompt || surveyItem.question, kind)}
+                      label={surveyItem.label || 'Your response'}
+                      placeholder={surveyItem.placeholder}
+                      options={surveyItem.options || []}
+                      min={Number.isFinite(surveyItem.min) ? surveyItem.min : 0}
+                      max={Number.isFinite(surveyItem.max) ? surveyItem.max : 10}
+                      minLabel={surveyItem.min_label}
+                      maxLabel={surveyItem.max_label}
+                    />
+                  </div>
+                )
+              })}
+            </div>
+          </DetailSection>
+        )}
 
         {body.repeat_note && (
           <p className="gentle-callout">{body.repeat_note}</p>
@@ -108,13 +190,21 @@ function ContentDetail({ item, favorite, completed, onBack, onToggleFavorite, on
         {item.reflection_prompt && (
           <DetailSection title="Reflect">
             <p className="reflection-prompt">{item.reflection_prompt}</p>
-            <p className="record-reminder">If you want to keep your thoughts, record them in your notes app or journal.</p>
+            <ResponseField
+              {...responseProps('reflection', item.reflection_prompt)}
+              label="Your reflection"
+            />
           </DetailSection>
         )}
 
         {item.faith_reflection && (
           <DetailSection title="Faith reflection">
             <p>{item.faith_reflection}</p>
+            <ResponseField
+              {...responseProps('faith-reflection', item.faith_reflection)}
+              label="Your faith reflection notes"
+              placeholder="Add any thoughts you want to remember…"
+            />
           </DetailSection>
         )}
 
@@ -160,7 +250,20 @@ function LessonList({ items, favorites, completedItems, onSelect }) {
   )
 }
 
-export default function SkillsLibrary({ items, favorites, completedItems, loading, error, initialItem, onBack, onToggleFavorite, onToggleComplete }) {
+export default function SkillsLibrary({
+  items,
+  favorites,
+  completedItems,
+  responses,
+  loading,
+  error,
+  initialItem,
+  onBack,
+  onToggleFavorite,
+  onToggleComplete,
+  onSaveResponse,
+  onDeleteResponse,
+}) {
   const [selected, setSelected] = useState(initialItem || null)
   const [selectedCategoryKey, setSelectedCategoryKey] = useState(initialItem ? frameworkKey(initialItem) : null)
   const categories = useMemo(() => {
@@ -205,9 +308,12 @@ export default function SkillsLibrary({ items, favorites, completedItems, loadin
         item={selected}
         favorite={favorites.has(selected.id)}
         completed={completedItems.has(selected.id)}
+        responses={responses}
         onBack={() => setSelected(null)}
         onToggleFavorite={onToggleFavorite}
         onToggleComplete={onToggleComplete}
+        onSaveResponse={onSaveResponse}
+        onDeleteResponse={onDeleteResponse}
       />
     )
   }
