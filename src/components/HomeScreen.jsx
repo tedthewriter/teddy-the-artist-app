@@ -2,7 +2,6 @@ import { useEffect, useMemo, useState } from 'react'
 import Icon from './Icon'
 import SkillsLibrary from './SkillsLibrary'
 import AffirmationsLibrary from './AffirmationsLibrary'
-import GameAdventure from './GameAdventure'
 import { supabase } from '../lib/supabase'
 import { dailyPlan, pathways } from '../data/homeContent'
 
@@ -320,12 +319,6 @@ export default function HomeScreen({ userId, onSignOut }) {
       return
     }
 
-    if (pathway.title === 'Games') {
-      setView('game')
-      window.scrollTo({ top: 0, behavior: 'smooth' })
-      return
-    }
-
     if (pathway.title === 'Surprise Me') {
       if (skillItems.length === 0) {
         setNotice(contentState.loading ? 'The library is still opening…' : 'There is not an available activity yet.')
@@ -371,16 +364,6 @@ export default function HomeScreen({ userId, onSignOut }) {
         onImagesChanged={loadAffirmationImages}
         onSaveResponse={saveResponse}
         onDeleteResponse={deleteResponse}
-      />
-    )
-  }
-
-  if (view === 'game') {
-    return (
-      <GameAdventure
-        items={skillItems}
-        onBack={() => setView('home')}
-        onOpenSkill={openSkills}
       />
     )
   }
