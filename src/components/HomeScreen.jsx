@@ -20,6 +20,17 @@ function dateNumber(dateKey) {
 
 const dismissKey = () => `teddy-plan-dismissed-${localDateKey()}`
 
+function mergePlanWithDefaults(planItems) {
+  const savedItems = new Map(
+    (Array.isArray(planItems) ? planItems : []).map((item) => [item.label, item]),
+  )
+
+  return dailyPlan.map((defaultItem) => ({
+    ...defaultItem,
+    ...(savedItems.get(defaultItem.label) || {}),
+  }))
+}
+
 export default function HomeScreen({ userId, onSignOut }) {
   const [planVisible, setPlanVisible] = useState(() => localStorage.getItem(dismissKey()) !== 'true')
   const [view, setView] = useState('home')
@@ -170,7 +181,7 @@ export default function HomeScreen({ userId, onSignOut }) {
     return () => { active = false }
   }, [userId, weekOneItems])
 
-  const planItemsForToday = Array.isArray(todayPlan?.plan_items) ? todayPlan.plan_items : dailyPlan
+  const planItemsForToday = mergePlanWithDefaults(todayPlan?.plan_items)
   const dailyCbtPlanItem = planItemsForToday.find((item) => item.label === 'CBT')
   const dailyCbtLesson = dailyCbtPlanItem?.content_id
     ? weekOneItems.find((item) => item.id === dailyCbtPlanItem.content_id)
