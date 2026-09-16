@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react'
 import Icon from './Icon'
 import ResponseField from './ResponseField'
+import SaboteurResults from './SaboteurResults'
 
 const typeLabels = {
   overview: 'Start here',
@@ -255,6 +256,7 @@ export default function SkillsLibrary({
   favorites,
   completedItems,
   responses,
+  saboteurAssessmentResult,
   loading,
   error,
   initialItem,
@@ -266,6 +268,7 @@ export default function SkillsLibrary({
 }) {
   const [selected, setSelected] = useState(initialItem || null)
   const [selectedCategoryKey, setSelectedCategoryKey] = useState(initialItem ? frameworkKey(initialItem) : null)
+  const [showSaboteurResults, setShowSaboteurResults] = useState(false)
   const categories = useMemo(() => {
     const cbtItems = items.filter((item) => frameworkKey(item) === 'cbt')
     const positiveIntelligenceItems = items.filter((item) => frameworkKey(item) === 'positive-intelligence')
@@ -302,6 +305,15 @@ export default function SkillsLibrary({
   }, [items])
   const selectedCategory = categories.find((category) => category.key === selectedCategoryKey)
 
+  if (showSaboteurResults) {
+    return (
+      <SaboteurResults
+        result={saboteurAssessmentResult}
+        onBack={() => setShowSaboteurResults(false)}
+      />
+    )
+  }
+
   if (selected) {
     return (
       <ContentDetail
@@ -331,6 +343,18 @@ export default function SkillsLibrary({
         <p className="eyebrow">Skills library</p>
         <h1 className="library-title">{selectedCategory.label}</h1>
         <p className="library-intro">{selectedCategory.description}. Open whichever lesson feels useful today.</p>
+
+        {selectedCategory.key === 'positive-intelligence' && (
+          <button className="assessment-results-button" onClick={() => setShowSaboteurResults(true)}>
+            <span className="assessment-results-icon" aria-hidden="true"><Icon name="journal" size={24} /></span>
+            <span className="assessment-results-copy">
+              <span className="assessment-results-label">Personal assessment</span>
+              <strong>Saboteur Assessment Results</strong>
+              <span>{saboteurAssessmentResult ? 'View your private results' : 'Ready when your results arrive'}</span>
+            </span>
+            <Icon name="arrow" size={18} />
+          </button>
+        )}
 
         {selectedCategory.items.length === 0 ? (
           <section className="empty-category-card">
