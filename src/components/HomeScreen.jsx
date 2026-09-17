@@ -490,7 +490,7 @@ export default function HomeScreen({ userId, onSignOut }) {
   }
 
   if (view === 'goals-vision') {
-    return <GoalsVision userId={userId} onBack={() => setView('home')} />
+    return <GoalsVision onBack={() => setView('home')} />
   }
 
   if (view === 'today-plan') {
