@@ -381,7 +381,15 @@ export default function SkillsLibrary({
       },
       {
         key: 'dbt', label: 'DBT', description: 'Build coping, regulation, and relationship skills', icon: 'toolbox', tone: 'blue', items: dbtItems,
-        sections: [{ key: 'dbt-skills', label: 'Skills', items: dbtItems }],
+        sections: [
+          { key: 'dbt-distress-tolerance', label: 'Distress Tolerance', description: 'Get through intense moments without making them worse', icon: 'toolbox', tone: 'blue', family: 'Distress Tolerance' },
+          { key: 'dbt-mindfulness', label: 'Mindfulness', description: 'Return attention to the present with openness', icon: 'spark', tone: 'mint', family: 'Mindfulness' },
+          { key: 'dbt-emotion-regulation', label: 'Emotion Regulation', description: 'Understand emotions and respond more effectively', icon: 'heart', tone: 'rose', family: 'Emotion Regulation' },
+          { key: 'dbt-interpersonal-effectiveness', label: 'Interpersonal Effectiveness', description: 'Ask, listen, set limits, and protect relationships', icon: 'people', tone: 'gold', family: 'Interpersonal Effectiveness' },
+        ].map((section) => ({
+          ...section,
+          items: dbtItems.filter((item) => item.body?.skill_family === section.family),
+        })),
       },
     ]
   }, [items])
@@ -416,7 +424,8 @@ export default function SkillsLibrary({
 
   if (selectedCategory) {
     const isPositiveIntelligence = selectedCategory.key === 'positive-intelligence'
-    const usesSectionNavigation = ['positive-intelligence', 'cbt'].includes(selectedCategory.key)
+    const isDbt = selectedCategory.key === 'dbt'
+    const usesSectionNavigation = ['positive-intelligence', 'cbt', 'dbt'].includes(selectedCategory.key)
     const leaveCategory = () => {
       if (selectedSubsectionKey) {
         setSelectedSubsectionKey(null)
@@ -450,6 +459,20 @@ export default function SkillsLibrary({
           </section>
         ) : usesSectionNavigation && !selectedSection ? (
           <div className="pi-section-grid" aria-label={`${selectedCategory.label} sections`}>
+            {isDbt && (
+              <button
+                className="pi-section-button assessment"
+                onClick={() => setSelected(selectedCategory.items[Math.floor(Math.random() * selectedCategory.items.length)])}
+              >
+                <span className="pi-section-icon" aria-hidden="true"><Icon name="dice" size={24} /></span>
+                <span className="pi-section-copy">
+                  <strong>Choose Randomly</strong>
+                  <span>Open one skill from anywhere in the DBT library</span>
+                  <small>{selectedCategory.items.length} possible skills</small>
+                </span>
+                <Icon name="arrow" size={17} />
+              </button>
+            )}
             {selectedCategory.sections.map((section) => (
               <button className={`pi-section-button ${section.tone}`} key={section.key} onClick={() => setSelectedSectionKey(section.key)}>
                 <span className="pi-section-icon" aria-hidden="true"><Icon name={section.icon} size={24} /></span>
