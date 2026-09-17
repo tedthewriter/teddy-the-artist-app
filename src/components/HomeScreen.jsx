@@ -30,6 +30,13 @@ function chooseHomeAffirmation(items, currentId = null) {
   return choice.id
 }
 
+function contentFramework(item) {
+  if (item.framework === 'positive_intelligence') return 'positive-intelligence'
+  if (item.framework === 'self_love' || item.content_type.startsWith('self_love')) return 'self-love'
+  if (item.framework === 'dbt' || item.content_type.startsWith('dbt')) return 'dbt'
+  return null
+}
+
 function mergePlanWithDefaults(planItems) {
   const savedItems = new Map(
     (Array.isArray(planItems) ? planItems : []).map((item) => [item.label, item]),
@@ -232,7 +239,35 @@ export default function HomeScreen({ userId, onSignOut }) {
     return () => { active = false }
   }, [userId, weekOneItems])
 
-  const planItemsForToday = mergePlanWithDefaults(todayPlan?.plan_items)
+  const nextLessons = useMemo(() => {
+    const nextFor = (framework) => {
+      const frameworkItems = content
+        .filter((item) => contentFramework(item) === framework)
+        .sort((a, b) => Number(a.sort_order || 0) - Number(b.sort_order || 0))
+      return {
+        hasContent: frameworkItems.length > 0,
+        lesson: frameworkItems.find((item) => !completedItems.has(item.id)) || null,
+      }
+    }
+
+    return {
+      'Positive Intelligence': nextFor('positive-intelligence'),
+      'Self-love': nextFor('self-love'),
+      DBT: nextFor('dbt'),
+    }
+  }, [content, completedItems])
+
+  const planItemsForToday = mergePlanWithDefaults(todayPlan?.plan_items).map((item) => {
+    const recommendation = nextLessons[item.label]
+    if (!recommendation) return item
+    if (recommendation.lesson) {
+      return { ...item, title: recommendation.lesson.title, content_id: recommendation.lesson.id }
+    }
+    if (recommendation.hasContent) {
+      return { ...item, title: `All current ${item.label} materials are complete.`, content_id: null }
+    }
+    return { ...item, title: `${item.label} materials will appear here when they are added.`, content_id: null }
+  })
   const dailyCbtPlanItem = planItemsForToday.find((item) => item.label === 'CBT')
   const dailyCbtLesson = dailyCbtPlanItem?.content_id
     ? weekOneItems.find((item) => item.id === dailyCbtPlanItem.content_id)
@@ -508,18 +543,23 @@ export default function HomeScreen({ userId, onSignOut }) {
             <button className="icon-button quiet" aria-label="Close today’s plan" onClick={hidePlan}><Icon name="close" size={19} /></button>
           </div>
           <div className="plan-list">
-            {planItemsForToday.map((item) => item.label === 'CBT' && dailyCbtLesson ? (
-              <button className="plan-item plan-item-action" key={item.label} onClick={() => openSkills(dailyCbtLesson)}>
-                <span className="plan-icon"><Icon name={item.icon} size={19} /></span>
-                <span className="plan-item-copy"><strong>{item.label}</strong><span>{item.title}</span></span>
-                <Icon name="arrow" size={17} />
-              </button>
-            ) : (
-              <div className="plan-item" key={item.label}>
-                <span className="plan-icon"><Icon name={item.icon} size={19} /></span>
-                <div><p>{item.label}</p><span>{item.title}</span></div>
-              </div>
-            ))}
+            {planItemsForToday.map((item) => {
+              const linkedLesson = item.content_id
+                ? skillItems.find((lesson) => lesson.id === item.content_id)
+                : null
+              return linkedLesson ? (
+                <button className="plan-item plan-item-action" key={item.label} onClick={() => openSkills(linkedLesson)}>
+                  <span className="plan-icon"><Icon name={item.icon} size={19} /></span>
+                  <span className="plan-item-copy"><strong>{item.label}</strong><span>{item.title}</span></span>
+                  <Icon name="arrow" size={17} />
+                </button>
+              ) : (
+                <div className="plan-item" key={item.label}>
+                  <span className="plan-icon"><Icon name={item.icon} size={19} /></span>
+                  <div><p>{item.label}</p><span>{item.title}</span></div>
+                </div>
+              )
+            })}
           </div>
           <button
             className="primary-button"
