@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import Icon from './Icon'
 import SkillsLibrary from './SkillsLibrary'
 import AffirmationsLibrary from './AffirmationsLibrary'
@@ -16,6 +16,17 @@ function localDateKey(date = new Date()) {
 function dateNumber(dateKey) {
   const [year, month, day] = dateKey.split('-').map(Number)
   return Math.floor(Date.UTC(year, month - 1, day) / 86400000)
+}
+
+const lastHomeAffirmationKey = 'teddy-last-home-affirmation'
+
+function chooseHomeAffirmation(items, currentId = null) {
+  if (!items.length) return null
+  const previousId = currentId || localStorage.getItem(lastHomeAffirmationKey)
+  const choices = items.length > 1 ? items.filter((item) => item.id !== previousId) : items
+  const choice = choices[Math.floor(Math.random() * choices.length)] || items[0]
+  localStorage.setItem(lastHomeAffirmationKey, choice.id)
+  return choice.id
 }
 
 function mergePlanWithDefaults(planItems) {
@@ -44,6 +55,8 @@ export default function HomeScreen({ userId, onSignOut }) {
   const [visionBoardChatUrl, setVisionBoardChatUrl] = useState('')
   const [imageUrls, setImageUrls] = useState({})
   const [notice, setNotice] = useState('')
+  const [dailyAffirmationId, setDailyAffirmationId] = useState(null)
+  const lastAffirmationShuffleRef = useRef(0)
   const today = useMemo(
     () => new Intl.DateTimeFormat('en-US', { weekday: 'long', month: 'long', day: 'numeric' }).format(new Date()),
     [],
@@ -127,11 +140,31 @@ export default function HomeScreen({ userId, onSignOut }) {
       .sort((a, b) => Number(a.body?.day_number || 0) - Number(b.body?.day_number || 0)),
     [content],
   )
-  const dailyAffirmation = useMemo(() => {
-    if (!affirmationItems.length) return null
-    const now = new Date()
-    const dayNumber = Math.floor(new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime() / 86400000)
-    return affirmationItems[dayNumber % affirmationItems.length]
+  const dailyAffirmation = useMemo(
+    () => affirmationItems.find((item) => item.id === dailyAffirmationId) || null,
+    [affirmationItems, dailyAffirmationId],
+  )
+
+  useEffect(() => {
+    if (!affirmationItems.length) return
+    setDailyAffirmationId((currentId) => chooseHomeAffirmation(affirmationItems, currentId))
+  }, [affirmationItems])
+
+  useEffect(() => {
+    function shuffleWhenOpened() {
+      if (document.visibilityState === 'hidden' || affirmationItems.length === 0) return
+      const now = Date.now()
+      if (now - lastAffirmationShuffleRef.current < 750) return
+      lastAffirmationShuffleRef.current = now
+      setDailyAffirmationId((currentId) => chooseHomeAffirmation(affirmationItems, currentId))
+    }
+
+    window.addEventListener('pageshow', shuffleWhenOpened)
+    document.addEventListener('visibilitychange', shuffleWhenOpened)
+    return () => {
+      window.removeEventListener('pageshow', shuffleWhenOpened)
+      document.removeEventListener('visibilitychange', shuffleWhenOpened)
+    }
   }, [affirmationItems])
 
   useEffect(() => {
