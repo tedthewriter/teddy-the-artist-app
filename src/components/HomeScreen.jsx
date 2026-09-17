@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react'
 import Icon from './Icon'
 import SkillsLibrary from './SkillsLibrary'
 import AffirmationsLibrary from './AffirmationsLibrary'
+import AlignmentsLibrary from './AlignmentsLibrary'
 import { supabase } from '../lib/supabase'
 import { dailyPlan, pathways } from '../data/homeContent'
 
@@ -114,7 +115,14 @@ export default function HomeScreen({ userId, onSignOut }) {
     () => content.filter((item) => item.content_type === 'affirmation').sort((a, b) => a.affirmation_number - b.affirmation_number),
     [content],
   )
-  const skillItems = useMemo(() => content.filter((item) => item.content_type !== 'affirmation'), [content])
+  const alignmentItems = useMemo(
+    () => content.filter((item) => item.framework === 'alignment'),
+    [content],
+  )
+  const skillItems = useMemo(
+    () => content.filter((item) => item.content_type !== 'affirmation' && item.framework !== 'alignment'),
+    [content],
+  )
   const weekOneItems = useMemo(
     () => content
       .filter((item) => item.content_type === 'cbt_week_1')
@@ -327,6 +335,12 @@ export default function HomeScreen({ userId, onSignOut }) {
       return
     }
 
+    if (pathway.title === 'Alignments') {
+      setView('alignments')
+      window.scrollTo({ top: 0, behavior: 'smooth' })
+      return
+    }
+
     if (pathway.title === 'Surprise Me') {
       if (skillItems.length === 0) {
         setNotice(contentState.loading ? 'The library is still opening…' : 'There is not an available activity yet.')
@@ -371,6 +385,20 @@ export default function HomeScreen({ userId, onSignOut }) {
         onBack={() => setView('home')}
         onToggleFavorite={toggleContentFavorite}
         onImagesChanged={loadAffirmationImages}
+        onSaveResponse={saveResponse}
+        onDeleteResponse={deleteResponse}
+      />
+    )
+  }
+
+  if (view === 'alignments') {
+    return (
+      <AlignmentsLibrary
+        items={alignmentItems}
+        responses={responses}
+        loading={contentState.loading}
+        error={contentState.error}
+        onBack={() => setView('home')}
         onSaveResponse={saveResponse}
         onDeleteResponse={deleteResponse}
       />
