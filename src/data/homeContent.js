@@ -17,6 +17,7 @@ export const pathways = [
   { title: 'Skills', subtitle: 'Find something helpful', icon: 'toolbox', tone: 'sage' },
   { title: 'Alignments', subtitle: 'Settle and realign', icon: 'compass', tone: 'gold' },
   { title: 'Mindfulness', subtitle: 'Breathe, ground, and settle', icon: 'mindfulness', tone: 'lilac' },
+  { title: 'Goals & Vision', subtitle: 'See the vision board and goals', icon: 'vision', tone: 'peach' },
   { title: 'Affirmations', subtitle: 'View the collection', icon: 'star', tone: 'rose' },
   { title: 'Listen', subtitle: 'Affirmations and calming audio', icon: 'headphones', tone: 'blue' },
   { title: 'Surprise Me', subtitle: 'Choose something for me', icon: 'dice', tone: 'mint' },
