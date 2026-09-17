@@ -12,6 +12,7 @@ const typeLabels = {
   cbt_intro: 'CBT foundation',
   cbt_week_1: 'Week 1',
   cbt_skill: 'CBT skill',
+  dbt_skill: 'DBT skill',
   self_love_foundation: 'Self-love foundation',
   self_love_reading: 'Self-love reading',
   self_love_practice: 'Guided reflection',
@@ -21,6 +22,9 @@ const typeLabels = {
 function contentKindLabel(item) {
   if (item.content_type === 'cbt_skill' && item.body?.skill_family) {
     return `${item.body.skill_family} · CBT skill`
+  }
+  if (item.content_type === 'dbt_skill' && item.body?.skill_family) {
+    return `${item.body.skill_family} · DBT skill`
   }
   if (item.content_type?.startsWith('cbt_week_') && item.body?.week_number && item.body?.day_number) {
     return `Week ${item.body.week_number} · Day ${item.body.day_number}`
