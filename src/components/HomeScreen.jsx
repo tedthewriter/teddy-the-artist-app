@@ -252,9 +252,16 @@ export default function HomeScreen({ userId, onSignOut }) {
 
     return {
       'Positive Intelligence': nextFor('positive-intelligence'),
-      'Self-love': nextFor('self-love'),
     }
   }, [content, completedItems])
+
+  const dailySelfLove = useMemo(() => {
+    const selfLoveItems = content
+      .filter((item) => contentFramework(item) === 'self-love')
+      .sort((a, b) => Number(a.sort_order || 0) - Number(b.sort_order || 0))
+    if (selfLoveItems.length === 0) return null
+    return selfLoveItems[dateNumber(localDateKey()) % selfLoveItems.length]
+  }, [content])
 
   const dailyDbtSkill = useMemo(() => {
     const dbtItems = content
@@ -269,6 +276,11 @@ export default function HomeScreen({ userId, onSignOut }) {
       return dailyDbtSkill
         ? { ...item, title: `Try a random skill: ${dailyDbtSkill.title}`, content_id: dailyDbtSkill.id }
         : { ...item, title: 'DBT skills will appear here when they are added.', content_id: null }
+    }
+    if (item.label === 'Self-love') {
+      return dailySelfLove
+        ? { ...item, title: dailySelfLove.title, content_id: dailySelfLove.id }
+        : { ...item, title: 'Self-love materials will appear here when they are added.', content_id: null }
     }
     const recommendation = nextLessons[item.label]
     if (!recommendation) return item
