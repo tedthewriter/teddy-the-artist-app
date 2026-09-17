@@ -21,5 +21,4 @@ export const pathways = [
   { title: 'Goals & Vision', subtitle: 'See the vision board and goals', icon: 'vision', tone: 'peach' },
   { title: 'Affirmations', subtitle: 'View the collection', icon: 'star', tone: 'rose' },
   { title: 'Listen', subtitle: 'Affirmations and calming audio', icon: 'headphones', tone: 'blue' },
-  { title: 'Surprise Me', subtitle: 'Choose something for me', icon: 'dice', tone: 'mint' },
 ]
