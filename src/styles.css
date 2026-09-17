@@ -120,6 +120,22 @@ button { color: inherit; }
 .skill-category-description { margin-top: 5px; color: rgba(38,59,55,.72); font-size: .7rem; line-height: 1.34; }
 .skill-category-count { margin-top: auto; padding-top: 12px; color: var(--sage-dark); font-size: .65rem; font-weight: 800; text-transform: uppercase; letter-spacing: .045em; }
 .category-heading-icon { width: 54px; height: 54px; margin-bottom: 18px; border-radius: 17px; }
+.pi-section-grid { display: grid; gap: 11px; }
+.pi-section-button { display: grid; grid-template-columns: 48px 1fr 18px; gap: 12px; align-items: center; width: 100%; min-height: 104px; padding: 15px; border: 1px solid rgba(44,62,55,.07); border-radius: 20px; background: var(--card); color: var(--ink); text-align: left; box-shadow: 0 7px 20px rgba(44,62,55,.04); cursor: pointer; }
+.pi-section-button:active { transform: scale(.99); }
+.pi-section-button.gold { background: #efe3bb; }
+.pi-section-button.sage { background: #dce9e3; }
+.pi-section-button.mint { background: #dcebe6; }
+.pi-section-button.peach { background: #f2dfd2; }
+.pi-section-button.lilac { background: #e7e0eb; }
+.pi-section-button.assessment { background: #faf6e8; border-color: rgba(124,98,40,.16); }
+.pi-section-icon { display: grid; place-items: center; width: 48px; height: 48px; border-radius: 15px; background: rgba(255,255,255,.62); color: var(--sage-dark); }
+.pi-section-copy { min-width: 0; display: flex; flex-direction: column; }
+.pi-section-copy strong { font-family: Georgia, "Times New Roman", serif; font-size: 1.06rem; line-height: 1.18; }
+.pi-section-copy > span { margin-top: 4px; color: #5f6e69; font-size: .72rem; line-height: 1.35; }
+.pi-section-copy small { margin-top: 7px; color: var(--sage-dark); font-size: .61rem; font-weight: 800; letter-spacing: .05em; text-transform: uppercase; }
+.pi-section-button > svg { color: var(--sage-dark); }
+.pi-selected-group { margin-top: 0; }
 .assessment-results-button { display: grid; grid-template-columns: 48px 1fr 18px; gap: 12px; align-items: center; width: 100%; margin: -7px 0 25px; padding: 15px; border: 1px solid rgba(124,98,40,.15); border-radius: 19px; background: #efe3bb; color: var(--ink); text-align: left; box-shadow: 0 7px 20px rgba(44,62,55,.045); cursor: pointer; }
 .assessment-results-button:active { transform: scale(.99); }
 .assessment-results-icon, .assessment-waiting-icon { display: grid; place-items: center; width: 48px; height: 48px; border-radius: 15px; background: rgba(255,255,255,.62); color: #78652d; }
