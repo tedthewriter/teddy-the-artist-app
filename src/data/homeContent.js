@@ -17,6 +17,7 @@ export const pathways = [
   { title: 'Alignments', subtitle: 'Settle and realign', icon: 'compass', tone: 'gold' },
   { title: 'Mindfulness', subtitle: 'Breathe, ground, and settle', icon: 'mindfulness', tone: 'lilac' },
   { title: 'Move', subtitle: 'Gentle movement', icon: 'sun', tone: 'gold' },
-  { title: 'Affirmations', subtitle: 'See and listen', icon: 'star', tone: 'rose' },
+  { title: 'Affirmations', subtitle: 'View the collection', icon: 'star', tone: 'rose' },
+  { title: 'Listen', subtitle: 'Affirmations and calming audio', icon: 'headphones', tone: 'blue' },
   { title: 'Surprise Me', subtitle: 'Choose something for me', icon: 'dice', tone: 'mint' },
 ]
