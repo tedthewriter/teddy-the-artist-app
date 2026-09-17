@@ -118,6 +118,8 @@ button { color: inherit; }
 .pi-section-button.mint { background: #dcebe6; }
 .pi-section-button.peach { background: #f2dfd2; }
 .pi-section-button.lilac { background: #e7e0eb; }
+.pi-section-button.blue { background: #dbe7ec; }
+.pi-section-button.rose { background: #f1dfe0; }
 .pi-section-button.assessment { background: #faf6e8; border-color: rgba(124,98,40,.16); }
 .pi-section-icon { display: grid; place-items: center; width: 48px; height: 48px; border-radius: 15px; background: rgba(255,255,255,.62); color: var(--sage-dark); }
 .pi-section-copy { min-width: 0; display: flex; flex-direction: column; }
