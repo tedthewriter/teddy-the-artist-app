@@ -18,8 +18,8 @@ const typeLabels = {
 }
 
 function contentKindLabel(item) {
-  if (item.content_type === 'cbt_week_1' && item.body?.day_number) {
-    return `Week 1 · Day ${item.body.day_number}`
+  if (item.content_type?.startsWith('cbt_week_') && item.body?.week_number && item.body?.day_number) {
+    return `Week ${item.body.week_number} · Day ${item.body.day_number}`
   }
   return typeLabels[item.content_type] || item.content_type
 }
@@ -139,6 +139,10 @@ function ContentDetail({
             <p>{section.text}</p>
           </DetailSection>
         ))}
+
+        {body.safety_note && (
+          <p className="gentle-callout">{body.safety_note}</p>
+        )}
 
         {body.question && (
           <>
@@ -314,8 +318,27 @@ export default function SkillsLibrary({
       {
         key: 'cbt', label: 'CBT', description: 'Work with thoughts, feelings, and actions', icon: 'thought', tone: 'sage', items: cbtItems,
         sections: [
-          { key: 'cbt-week-1', label: 'Week 1', items: cbtItems.filter((item) => item.content_type === 'cbt_week_1') },
-          { key: 'cbt-foundations', label: 'Foundations', items: cbtItems.filter((item) => item.content_type === 'cbt_intro') },
+          { key: 'cbt-foundations', label: 'Foundations', description: 'Learn the CBT approach', icon: 'thought', tone: 'sage', items: cbtItems.filter((item) => item.content_type === 'cbt_intro') },
+          ...Array.from({ length: 7 }, (_, index) => {
+            const week = index + 1
+            const weekDescriptions = [
+              'Begin with your story, strengths, and goals',
+              'Reconnect with values and meaningful activity',
+              'Recognize automatic thoughts and deeper beliefs',
+              'Examine patterns and build balanced thoughts',
+              'Make time and tasks more manageable',
+              'Approach fears safely and gradually',
+              'Gather the tools into a keep-going plan',
+            ]
+            return {
+              key: `cbt-week-${week}`,
+              label: `Week ${week}`,
+              description: weekDescriptions[index],
+              icon: week === 7 ? 'star' : 'journal',
+              tone: ['mint', 'gold', 'peach', 'lilac', 'blue', 'rose', 'sage'][index],
+              items: cbtItems.filter((item) => item.content_type === `cbt_week_${week}`),
+            }
+          }),
         ],
       },
       {
@@ -368,8 +391,9 @@ export default function SkillsLibrary({
 
   if (selectedCategory) {
     const isPositiveIntelligence = selectedCategory.key === 'positive-intelligence'
+    const usesSectionNavigation = ['positive-intelligence', 'cbt'].includes(selectedCategory.key)
     const leaveCategory = () => {
-      if (isPositiveIntelligence && selectedSectionKey) {
+      if (usesSectionNavigation && selectedSectionKey) {
         setSelectedSectionKey(null)
       } else {
         setSelectedCategoryKey(null)
@@ -379,7 +403,7 @@ export default function SkillsLibrary({
     return (
       <main className="app-shell library-shell">
         <header className="library-header">
-          <button className="back-button" onClick={leaveCategory}><Icon name="back" size={19} /> {isPositiveIntelligence && selectedSectionKey ? 'Positive Intelligence' : 'Skills'}</button>
+          <button className="back-button" onClick={leaveCategory}><Icon name="back" size={19} /> {usesSectionNavigation && selectedSectionKey ? selectedCategory.label : 'Skills'}</button>
         </header>
 
         <div className={`category-heading-icon ${selectedCategory.tone}`} aria-hidden="true">
@@ -397,8 +421,8 @@ export default function SkillsLibrary({
             <h2>Content will be added here.</h2>
             <p>This page is ready for approved {selectedCategory.label} lessons and activities when we add them.</p>
           </section>
-        ) : isPositiveIntelligence && !selectedSection ? (
-          <div className="pi-section-grid" aria-label="Positive Intelligence sections">
+        ) : usesSectionNavigation && !selectedSection ? (
+          <div className="pi-section-grid" aria-label={`${selectedCategory.label} sections`}>
             {selectedCategory.sections.map((section) => (
               <button className={`pi-section-button ${section.tone}`} key={section.key} onClick={() => setSelectedSectionKey(section.key)}>
                 <span className="pi-section-icon" aria-hidden="true"><Icon name={section.icon} size={24} /></span>
@@ -410,17 +434,19 @@ export default function SkillsLibrary({
                 <Icon name="arrow" size={17} />
               </button>
             ))}
-            <button className="pi-section-button assessment" onClick={() => setShowSaboteurResults(true)}>
-              <span className="pi-section-icon" aria-hidden="true"><Icon name="journal" size={24} /></span>
-              <span className="pi-section-copy">
-                <strong>Assessment Results</strong>
-                <span>{saboteurAssessmentResult ? 'View your private Saboteur scores' : 'Ready when your results arrive'}</span>
-                <small>Personal assessment</small>
-              </span>
-              <Icon name="arrow" size={17} />
-            </button>
+            {isPositiveIntelligence && (
+              <button className="pi-section-button assessment" onClick={() => setShowSaboteurResults(true)}>
+                <span className="pi-section-icon" aria-hidden="true"><Icon name="journal" size={24} /></span>
+                <span className="pi-section-copy">
+                  <strong>Assessment Results</strong>
+                  <span>{saboteurAssessmentResult ? 'View your private Saboteur scores' : 'Ready when your results arrive'}</span>
+                  <small>Personal assessment</small>
+                </span>
+                <Icon name="arrow" size={17} />
+              </button>
+            )}
           </div>
-        ) : isPositiveIntelligence && selectedSection ? (
+        ) : usesSectionNavigation && selectedSection ? (
           <section className="content-group pi-selected-group">
             <LessonList items={selectedSection.items} favorites={favorites} completedItems={completedItems} onSelect={setSelected} />
           </section>
