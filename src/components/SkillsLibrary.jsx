@@ -11,6 +11,7 @@ const typeLabels = {
   sage_power: 'Sage power',
   cbt_intro: 'CBT foundation',
   cbt_week_1: 'Week 1',
+  cbt_skill: 'CBT skill',
   self_love_foundation: 'Self-love foundation',
   self_love_reading: 'Self-love reading',
   self_love_practice: 'Guided reflection',
@@ -18,6 +19,9 @@ const typeLabels = {
 }
 
 function contentKindLabel(item) {
+  if (item.content_type === 'cbt_skill' && item.body?.skill_family) {
+    return `${item.body.skill_family} · CBT skill`
+  }
   if (item.content_type?.startsWith('cbt_week_') && item.body?.week_number && item.body?.day_number) {
     return `Week ${item.body.week_number} · Day ${item.body.day_number}`
   }
@@ -307,6 +311,7 @@ export default function SkillsLibrary({
   const [selected, setSelected] = useState(initialItem || null)
   const [selectedCategoryKey, setSelectedCategoryKey] = useState(initialItem ? frameworkKey(initialItem) : null)
   const [selectedSectionKey, setSelectedSectionKey] = useState(null)
+  const [selectedSubsectionKey, setSelectedSubsectionKey] = useState(null)
   const [showSaboteurResults, setShowSaboteurResults] = useState(false)
   const categories = useMemo(() => {
     const cbtItems = items.filter((item) => frameworkKey(item) === 'cbt')
@@ -318,27 +323,34 @@ export default function SkillsLibrary({
       {
         key: 'cbt', label: 'CBT', description: 'Work with thoughts, feelings, and actions', icon: 'thought', tone: 'sage', items: cbtItems,
         sections: [
-          { key: 'cbt-foundations', label: 'Foundations', description: 'Learn the CBT approach', icon: 'thought', tone: 'sage', items: cbtItems.filter((item) => item.content_type === 'cbt_intro') },
-          ...Array.from({ length: 7 }, (_, index) => {
-            const week = index + 1
-            const weekDescriptions = [
-              'Begin with your story, strengths, and goals',
-              'Reconnect with values and meaningful activity',
-              'Recognize automatic thoughts and deeper beliefs',
-              'Examine patterns and build balanced thoughts',
-              'Make time and tasks more manageable',
-              'Approach fears safely and gradually',
-              'Gather the tools into a keep-going plan',
-            ]
-            return {
-              key: `cbt-week-${week}`,
-              label: `Week ${week}`,
-              description: weekDescriptions[index],
-              icon: week === 7 ? 'star' : 'journal',
-              tone: ['mint', 'gold', 'peach', 'lilac', 'blue', 'rose', 'sage'][index],
-              items: cbtItems.filter((item) => item.content_type === `cbt_week_${week}`),
-            }
-          }),
+          {
+            key: 'cbt-program', label: '7-Week Program', description: 'Follow the workbook from Week 1 through Week 7', icon: 'journal', tone: 'sage',
+            items: cbtItems.filter((item) => item.content_type?.startsWith('cbt_week_')),
+            subsections: Array.from({ length: 7 }, (_, index) => {
+              const week = index + 1
+              const weekDescriptions = [
+                'Begin with your story, strengths, and goals',
+                'Reconnect with values and meaningful activity',
+                'Recognize automatic thoughts and deeper beliefs',
+                'Examine patterns and build balanced thoughts',
+                'Make time and tasks more manageable',
+                'Approach fears safely and gradually',
+                'Gather the tools into a keep-going plan',
+              ]
+              return {
+                key: `cbt-week-${week}`,
+                label: `Week ${week}`,
+                description: weekDescriptions[index],
+                icon: week === 7 ? 'star' : 'journal',
+                tone: ['mint', 'gold', 'peach', 'lilac', 'blue', 'rose', 'sage'][index],
+                items: cbtItems.filter((item) => item.content_type === `cbt_week_${week}`),
+              }
+            }),
+          },
+          {
+            key: 'cbt-library', label: 'CBT Skill Library', description: 'Practice any CBT skill whenever it feels useful', icon: 'toolbox', tone: 'gold',
+            items: cbtItems.filter((item) => item.content_type === 'cbt_skill'),
+          },
         ],
       },
       {
@@ -363,6 +375,7 @@ export default function SkillsLibrary({
   }, [items])
   const selectedCategory = categories.find((category) => category.key === selectedCategoryKey)
   const selectedSection = selectedCategory?.sections.find((section) => section.key === selectedSectionKey)
+  const selectedSubsection = selectedSection?.subsections?.find((section) => section.key === selectedSubsectionKey)
 
   if (showSaboteurResults) {
     return (
@@ -393,7 +406,9 @@ export default function SkillsLibrary({
     const isPositiveIntelligence = selectedCategory.key === 'positive-intelligence'
     const usesSectionNavigation = ['positive-intelligence', 'cbt'].includes(selectedCategory.key)
     const leaveCategory = () => {
-      if (usesSectionNavigation && selectedSectionKey) {
+      if (selectedSubsectionKey) {
+        setSelectedSubsectionKey(null)
+      } else if (usesSectionNavigation && selectedSectionKey) {
         setSelectedSectionKey(null)
       } else {
         setSelectedCategoryKey(null)
@@ -403,16 +418,16 @@ export default function SkillsLibrary({
     return (
       <main className="app-shell library-shell">
         <header className="library-header">
-          <button className="back-button" onClick={leaveCategory}><Icon name="back" size={19} /> {usesSectionNavigation && selectedSectionKey ? selectedCategory.label : 'Skills'}</button>
+          <button className="back-button" onClick={leaveCategory}><Icon name="back" size={19} /> {selectedSubsectionKey ? selectedSection.label : usesSectionNavigation && selectedSectionKey ? selectedCategory.label : 'Skills'}</button>
         </header>
 
         <div className={`category-heading-icon ${selectedCategory.tone}`} aria-hidden="true">
           <Icon name={selectedCategory.icon} size={27} />
         </div>
         <p className="eyebrow">Skills library</p>
-        <h1 className="library-title">{selectedSection?.label || selectedCategory.label}</h1>
+        <h1 className="library-title">{selectedSubsection?.label || selectedSection?.label || selectedCategory.label}</h1>
         <p className="library-intro">
-          {selectedSection?.description || `${selectedCategory.description}. Open whichever lesson feels useful today.`}
+          {selectedSubsection?.description || selectedSection?.description || `${selectedCategory.description}. Open whichever lesson feels useful today.`}
         </p>
 
         {selectedCategory.items.length === 0 ? (
@@ -446,9 +461,23 @@ export default function SkillsLibrary({
               </button>
             )}
           </div>
+        ) : selectedSection?.subsections && !selectedSubsection ? (
+          <div className="pi-section-grid" aria-label={`${selectedSection.label} weeks`}>
+            {selectedSection.subsections.map((section) => (
+              <button className={`pi-section-button ${section.tone}`} key={section.key} onClick={() => setSelectedSubsectionKey(section.key)}>
+                <span className="pi-section-icon" aria-hidden="true"><Icon name={section.icon} size={24} /></span>
+                <span className="pi-section-copy">
+                  <strong>{section.label}</strong>
+                  <span>{section.description}</span>
+                  <small>{section.items.length} {section.items.length === 1 ? 'lesson' : 'lessons'}</small>
+                </span>
+                <Icon name="arrow" size={17} />
+              </button>
+            ))}
+          </div>
         ) : usesSectionNavigation && selectedSection ? (
           <section className="content-group pi-selected-group">
-            <LessonList items={selectedSection.items} favorites={favorites} completedItems={completedItems} onSelect={setSelected} />
+            <LessonList items={selectedSubsection?.items || selectedSection.items} favorites={favorites} completedItems={completedItems} onSelect={setSelected} />
           </section>
         ) : selectedCategory.sections.map((section) => section.items.length > 0 && (
           <section className="content-group" key={section.key}>
