@@ -62,6 +62,34 @@ function surveyResponseKey(surveyItem, index) {
   return `survey-${safeResponseKey(surveyItem.key || surveyItem.id, `question-${index + 1}`)}`
 }
 
+function completionPresentation(item) {
+  if (item.content_type === 'cbt_skill') {
+    return {
+      action: 'Mark practiced',
+      complete: 'Practiced',
+      undo: 'Tap again if you want to remove the practiced mark.',
+    }
+  }
+
+  if (item.framework === 'cbt_7_weeks') {
+    return {
+      action: 'Complete lesson',
+      complete: 'Lesson complete',
+      undo: 'Tap again if you want to mark this lesson not complete.',
+    }
+  }
+
+  if (item.framework === 'positive_intelligence') {
+    return {
+      action: 'Complete',
+      complete: 'Complete',
+      undo: 'Tap again if you want to mark this not complete.',
+    }
+  }
+
+  return null
+}
+
 function ContentDetail({
   item,
   favorite,
@@ -77,7 +105,7 @@ function ContentDetail({
   const surveyItems = Array.isArray(body.response_items)
     ? body.response_items
     : Array.isArray(body.survey?.questions) ? body.survey.questions : []
-  const canMarkDone = ['cbt', 'positive-intelligence', 'self-love'].includes(frameworkKey(item))
+  const completionCopy = completionPresentation(item)
   const scoredSurveyItems = body.survey?.show_total
     ? surveyItems.map((surveyItem, index) => ({
         surveyItem,
@@ -131,13 +159,13 @@ function ContentDetail({
         <h1>{item.title}</h1>
         <p className="detail-lead">{item.short_description}</p>
 
-        {canMarkDone && (
+        {completionCopy && (
           <div className={`completion-panel ${completed ? 'is-complete' : ''}`}>
             <button className="completion-button" disabled={savingCompletion} onClick={handleCompletion}>
               <span className="completion-button-icon"><Icon name="check" size={19} /></span>
-              {savingCompletion ? 'Saving…' : completed ? 'Done' : 'Mark done'}
+              {savingCompletion ? 'Saving…' : completed ? completionCopy.complete : completionCopy.action}
             </button>
-            {completed && <p>You can tap again to mark this not done.</p>}
+            {completed && <p>{completionCopy.undo}</p>}
             {completionError && <p className="completion-error" role="alert">{completionError}</p>}
           </div>
         )}
@@ -286,8 +314,12 @@ function LessonList({ items, favorites, completedItems, onSelect }) {
               {favorites.has(item.id) && <> · Saved</>}
             </span>
           </span>
-          {completedItems.has(item.id) ? (
-            <span className="completion-check" aria-label="Done" title="Done"><Icon name="check" size={18} /></span>
+          {completedItems.has(item.id) && completionPresentation(item) ? (
+            <span
+              className="completion-check"
+              aria-label={completionPresentation(item).complete}
+              title={completionPresentation(item).complete}
+            ><Icon name="check" size={18} /></span>
           ) : (
             <Icon name="arrow" size={18} />
           )}
@@ -539,7 +571,7 @@ export default function SkillsLibrary({
       </header>
       <p className="eyebrow">Skills library</p>
       <h1 className="library-title">Choose something helpful.</h1>
-      <p className="library-intro">Choose a type of support. Everything related to it is organized together, with nothing to finish or keep up with.</p>
+      <p className="library-intro">Choose a structured program to continue or an as-needed library to use whenever it feels helpful.</p>
 
       {loading && <div className="library-status">Opening the library…</div>}
       {error && <div className="library-status error" role="alert">{error}</div>}
