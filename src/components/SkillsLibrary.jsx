@@ -350,6 +350,18 @@ export default function SkillsLibrary({
           {
             key: 'cbt-library', label: 'CBT Skill Library', description: 'Practice any CBT skill whenever it feels useful', icon: 'toolbox', tone: 'gold',
             items: cbtItems.filter((item) => item.content_type === 'cbt_skill'),
+            subsections: [
+              { key: 'cbt-foundations', label: 'CBT Foundations', description: 'Understand patterns, emotions, goals, and supports', icon: 'thought', tone: 'sage', family: 'CBT Foundations' },
+              { key: 'cbt-valued-action', label: 'Valued Action', description: 'Reconnect with meaning, pleasure, and forward movement', icon: 'heart', tone: 'rose', family: 'Valued Action' },
+              { key: 'cbt-thought-awareness', label: 'Thought Awareness', description: 'Notice automatic thoughts, themes, and deeper beliefs', icon: 'journal', tone: 'peach', family: 'Thought Awareness' },
+              { key: 'cbt-thought-reframing', label: 'Thought Reframing', description: 'Question patterns and build a fuller perspective', icon: 'spark', tone: 'lilac', family: 'Thought Reframing' },
+              { key: 'cbt-task-support', label: 'Task Support', description: 'Make priorities, starting, and focused work more manageable', icon: 'toolbox', tone: 'gold', family: 'Task Support' },
+              { key: 'cbt-facing-fears', label: 'Facing Fears', description: 'Reduce avoidance through safe, gradual practice', icon: 'compass', tone: 'blue', family: 'Facing Fears' },
+              { key: 'cbt-maintenance', label: 'Maintenance', description: 'Notice warning signs and keep helpful tools close', icon: 'star', tone: 'mint', family: 'Maintenance' },
+            ].map((section) => ({
+              ...section,
+              items: cbtItems.filter((item) => item.content_type === 'cbt_skill' && item.body?.skill_family === section.family),
+            })),
           },
         ],
       },
