@@ -253,11 +253,23 @@ export default function HomeScreen({ userId, onSignOut }) {
     return {
       'Positive Intelligence': nextFor('positive-intelligence'),
       'Self-love': nextFor('self-love'),
-      DBT: nextFor('dbt'),
     }
   }, [content, completedItems])
 
+  const dailyDbtSkill = useMemo(() => {
+    const dbtItems = content
+      .filter((item) => contentFramework(item) === 'dbt')
+      .sort((a, b) => Number(a.sort_order || 0) - Number(b.sort_order || 0))
+    if (dbtItems.length === 0) return null
+    return dbtItems[dateNumber(localDateKey()) % dbtItems.length]
+  }, [content])
+
   const planItemsForToday = mergePlanWithDefaults(todayPlan?.plan_items).map((item) => {
+    if (item.label === 'DBT') {
+      return dailyDbtSkill
+        ? { ...item, title: `Try a random skill: ${dailyDbtSkill.title}`, content_id: dailyDbtSkill.id }
+        : { ...item, title: 'DBT skills will appear here when they are added.', content_id: null }
+    }
     const recommendation = nextLessons[item.label]
     if (!recommendation) return item
     if (recommendation.lesson) {
