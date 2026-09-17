@@ -12,6 +12,9 @@ const typeLabels = {
   cbt_intro: 'CBT foundation',
   cbt_week_1: 'Week 1',
   self_love_foundation: 'Self-love foundation',
+  self_love_reading: 'Self-love reading',
+  self_love_practice: 'Guided reflection',
+  self_love_assessment: 'Self-assessment',
 }
 
 function contentKindLabel(item) {
@@ -47,6 +50,10 @@ function safeResponseKey(value, fallback) {
   return normalized || fallback
 }
 
+function surveyResponseKey(surveyItem, index) {
+  return `survey-${safeResponseKey(surveyItem.key || surveyItem.id, `question-${index + 1}`)}`
+}
+
 function ContentDetail({
   item,
   favorite,
@@ -62,7 +69,20 @@ function ContentDetail({
   const surveyItems = Array.isArray(body.response_items)
     ? body.response_items
     : Array.isArray(body.survey?.questions) ? body.survey.questions : []
-  const canMarkDone = ['cbt', 'positive-intelligence'].includes(frameworkKey(item))
+  const canMarkDone = ['cbt', 'positive-intelligence', 'self-love'].includes(frameworkKey(item))
+  const scoredSurveyItems = body.survey?.show_total
+    ? surveyItems.map((surveyItem, index) => ({
+        surveyItem,
+        responseKey: surveyResponseKey(surveyItem, index),
+      })).filter(({ surveyItem }) => surveyKind(surveyItem.type) === 'scale')
+    : []
+  const scoreValues = scoredSurveyItems
+    .map(({ responseKey }) => Number(responseRecord(responseKey)?.response_value?.value))
+    .filter(Number.isFinite)
+  const surveyScore = scoreValues.reduce((total, value) => total + value, 0)
+  const scoreRange = scoreValues.length === scoredSurveyItems.length
+    ? body.survey?.score_ranges?.find((range) => surveyScore >= range.min && surveyScore <= range.max)
+    : null
   const [savingCompletion, setSavingCompletion] = useState(false)
   const [completionError, setCompletionError] = useState('')
   const responseRecord = (responseKey) => responses.get(`content:${item.id}:${responseKey}`)
@@ -159,9 +179,10 @@ function ContentDetail({
 
         {surveyItems.length > 0 && (
           <DetailSection title={body.survey?.title || 'Questions'}>
+            {body.survey?.instructions && <p className="survey-instructions">{body.survey.instructions}</p>}
             <div className="response-group">
               {surveyItems.map((surveyItem, index) => {
-                const responseKey = `survey-${safeResponseKey(surveyItem.key || surveyItem.id, `question-${index + 1}`)}`
+                const responseKey = surveyResponseKey(surveyItem, index)
                 const kind = surveyKind(surveyItem.type)
                 return (
                   <div className="survey-question" key={responseKey}>
@@ -181,6 +202,19 @@ function ContentDetail({
                 )
               })}
             </div>
+            {scoredSurveyItems.length > 0 && (
+              <div className={`survey-score-card ${scoreRange ? 'complete' : ''}`} aria-live="polite">
+                {scoreValues.length === scoredSurveyItems.length ? (
+                  <>
+                    <span>Your current score</span>
+                    <strong>{surveyScore} / {scoredSurveyItems.reduce((total, { surveyItem }) => total + (surveyItem.max ?? 10), 0)}</strong>
+                    {scoreRange && <p>{scoreRange.text}</p>}
+                  </>
+                ) : (
+                  <p>Answer all {scoredSurveyItems.length} statements to see your score. {scoreValues.length} saved so far.</p>
+                )}
+              </div>
+            )}
           </DetailSection>
         )}
 
@@ -366,11 +400,7 @@ export default function SkillsLibrary({
         ) : isPositiveIntelligence && !selectedSection ? (
           <div className="pi-section-grid" aria-label="Positive Intelligence sections">
             {selectedCategory.sections.map((section) => (
-              <button
-                className={`pi-section-button ${section.tone}`}
-                key={section.key}
-                onClick={() => setSelectedSectionKey(section.key)}
-              >
+              <button className={`pi-section-button ${section.tone}`} key={section.key} onClick={() => setSelectedSectionKey(section.key)}>
                 <span className="pi-section-icon" aria-hidden="true"><Icon name={section.icon} size={24} /></span>
                 <span className="pi-section-copy">
                   <strong>{section.label}</strong>
@@ -380,7 +410,6 @@ export default function SkillsLibrary({
                 <Icon name="arrow" size={17} />
               </button>
             ))}
-
             <button className="pi-section-button assessment" onClick={() => setShowSaboteurResults(true)}>
               <span className="pi-section-icon" aria-hidden="true"><Icon name="journal" size={24} /></span>
               <span className="pi-section-copy">
