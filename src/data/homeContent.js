@@ -15,10 +15,8 @@ export const dailyPlan = [
 export const pathways = [
   { title: 'Skills', subtitle: 'Find something helpful', icon: 'toolbox', tone: 'sage' },
   { title: 'Alignments', subtitle: 'Settle and realign', icon: 'compass', tone: 'gold' },
-  { title: 'Art', subtitle: 'Make or keep creating', icon: 'palette', tone: 'peach' },
+  { title: 'Mindfulness', subtitle: 'Breathe, ground, and settle', icon: 'mindfulness', tone: 'lilac' },
   { title: 'Move', subtitle: 'Gentle movement', icon: 'sun', tone: 'gold' },
-  { title: 'Reflect', subtitle: 'Pause and notice', icon: 'journal', tone: 'lilac' },
-  { title: 'Connect', subtitle: 'Reach toward someone', icon: 'people', tone: 'blue' },
   { title: 'Affirmations', subtitle: 'See and listen', icon: 'star', tone: 'rose' },
   { title: 'Surprise Me', subtitle: 'Choose something for me', icon: 'dice', tone: 'mint' },
 ]
