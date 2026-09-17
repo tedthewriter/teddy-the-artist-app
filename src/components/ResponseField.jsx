@@ -10,14 +10,14 @@ function emptyValue(kind) {
 function readStoredValue(kind, responseValue) {
   if (kind === 'text') return typeof responseValue?.text === 'string' ? responseValue.text : ''
   if (kind === 'multi_choice') return Array.isArray(responseValue?.selected) ? responseValue.selected : []
-  if (kind === 'scale' || kind === 'rating') return responseValue?.value ?? ''
+  if (kind === 'scale') return responseValue?.value ?? ''
   return responseValue?.selected ?? ''
 }
 
 function toResponseValue(kind, value) {
   if (kind === 'text') return { text: value }
   if (kind === 'multi_choice') return { selected: value }
-  if (kind === 'scale' || kind === 'rating') return { value }
+  if (kind === 'scale') return { value }
   return { selected: value }
 }
 
@@ -197,25 +197,6 @@ export default function ResponseField({
               >{number}</button>
             ))}
           </div>
-          {(minLabel || maxLabel) && (
-            <div className="scale-labels"><span>{minLabel}</span><span>{maxLabel}</span></div>
-          )}
-        </div>
-      )}
-
-      {kind === 'rating' && (
-        <div className="rating-response">
-          <select
-            value={draft}
-            aria-label={label}
-            onChange={(event) => updateDraft(Number(event.target.value))}
-            onBlur={() => draft !== '' && persist(draft)}
-          >
-            <option value="">Choose a rating…</option>
-            {Array.from({ length: max - min + 1 }, (_, index) => min + index).map((number) => (
-              <option value={number} key={number}>{number > 0 ? `+${number}` : number}</option>
-            ))}
-          </select>
           {(minLabel || maxLabel) && (
             <div className="scale-labels"><span>{minLabel}</span><span>{maxLabel}</span></div>
           )}
