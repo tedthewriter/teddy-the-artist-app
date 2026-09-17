@@ -522,7 +522,7 @@ export default function HomeScreen({ userId, onSignOut }) {
         ><Icon name="user" size={21} /></button>
       </header>
 
-      <section className={`affirmation-card ${dailyAffirmation && imageUrls[dailyAffirmation.asset_path] ? 'has-pin' : ''}`} aria-labelledby="affirmation-title">
+      <section className={`affirmation-card ${dailyAffirmation && imageUrls[dailyAffirmation.asset_path] ? 'has-pin' : ''}`} aria-label="Affirmation">
         {dailyAffirmation && imageUrls[dailyAffirmation.asset_path] ? (
           <button className="daily-pin-button" onClick={() => setView('affirmations')} aria-label="Open the affirmation collection">
             <img className="daily-pin-image" src={imageUrls[dailyAffirmation.asset_path]} alt={dailyAffirmation.title} />
@@ -536,25 +536,11 @@ export default function HomeScreen({ userId, onSignOut }) {
           </div>
         )}
         <div className="affirmation-content">
-          <p className="eyebrow" id="affirmation-title">Today’s affirmation</p>
           <p className="affirmation-text">{dailyAffirmation?.title || 'you are smart'}</p>
-          <div className="affirmation-actions">
-            <button
-              className={`icon-button ${dailyAffirmation && favorites.has(dailyAffirmation.id) ? 'is-favorite' : ''}`}
-              aria-label={dailyAffirmation && favorites.has(dailyAffirmation.id) ? 'Remove from favorites' : 'Add to favorites'}
-              aria-pressed={Boolean(dailyAffirmation && favorites.has(dailyAffirmation.id))}
-              disabled={!dailyAffirmation}
-              onClick={() => dailyAffirmation && toggleContentFavorite(dailyAffirmation.id)}
-            >
-              <Icon name="bookmark" size={19} />
-            </button>
-          </div>
         </div>
       </section>
 
-      <section className="pathway-section" aria-labelledby="pathway-title">
-        <p className="eyebrow">Choose your own path</p>
-        <h2 id="pathway-title">What do you want to do today?</h2>
+      <section className="pathway-section home-buttons" aria-label="Home options">
         <div className="pathway-grid">
           {pathways.map((pathway) => (
             <button className={`pathway-card ${pathway.tone}`} key={pathway.title} onClick={() => choosePath(pathway)}>
@@ -567,7 +553,6 @@ export default function HomeScreen({ userId, onSignOut }) {
       </section>
 
       {notice && <p className="home-notice" role="status">{notice}</p>}
-      <p className="support-note">Choose what feels useful. You can always come back later.</p>
     </main>
   )
 }
