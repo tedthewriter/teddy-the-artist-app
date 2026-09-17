@@ -106,6 +106,7 @@ function ContentDetail({
     ? body.response_items
     : Array.isArray(body.survey?.questions) ? body.survey.questions : []
   const completionCopy = completionPresentation(item)
+  const responseRecord = (responseKey) => responses.get(`content:${item.id}:${responseKey}`)
   const scoredSurveyItems = body.survey?.show_total
     ? surveyItems.map((surveyItem, index) => ({
         surveyItem,
@@ -121,7 +122,6 @@ function ContentDetail({
     : null
   const [savingCompletion, setSavingCompletion] = useState(false)
   const [completionError, setCompletionError] = useState('')
-  const responseRecord = (responseKey) => responses.get(`content:${item.id}:${responseKey}`)
   const responseProps = (responseKey, prompt, kind = 'text') => ({
     contextType: 'content',
     contextId: item.id,
