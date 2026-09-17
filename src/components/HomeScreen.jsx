@@ -437,15 +437,6 @@ export default function HomeScreen({ userId, onSignOut }) {
       return
     }
 
-    if (pathway.title === 'Surprise Me') {
-      if (skillItems.length === 0) {
-        setNotice(contentState.loading ? 'The library is still opening…' : 'There is not an available activity yet.')
-        return
-      }
-      openSkills(skillItems[Math.floor(Math.random() * skillItems.length)])
-      return
-    }
-
     setNotice(`${pathway.title} is ready for its content in the next build.`)
   }
 
