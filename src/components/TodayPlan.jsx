@@ -20,7 +20,7 @@ export default function TodayPlan({
       <section>
         <p className="eyebrow">A gentle suggestion</p>
         <h1 className="library-title">Today’s Plan</h1>
-        <p className="library-intro">Choose what feels useful today. The linked lessons will adjust as materials are marked done.</p>
+        <p className="library-intro">Choose what feels useful today. Program lessons advance with completion, while DBT offers an optional skill from the library.</p>
       </section>
 
       <section className="plan-card" aria-label="Today’s suggested activities">
