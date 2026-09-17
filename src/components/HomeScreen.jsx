@@ -395,12 +395,9 @@ export default function HomeScreen({ userId, onSignOut }) {
     return (
       <AlignmentsLibrary
         items={alignmentItems}
-        responses={responses}
         loading={contentState.loading}
         error={contentState.error}
         onBack={() => setView('home')}
-        onSaveResponse={saveResponse}
-        onDeleteResponse={deleteResponse}
       />
     )
   }
