@@ -355,6 +355,11 @@ export default function HomeScreen({ userId, onSignOut }) {
 
   function choosePath(pathway) {
     setNotice('')
+    if (pathway.title === 'Today’s Plan') {
+      showPlan()
+      return
+    }
+
     if (pathway.title === 'Skills') {
       openSkills()
       return
@@ -439,6 +444,9 @@ export default function HomeScreen({ userId, onSignOut }) {
 
   function showPlan() {
     setPlanVisible(true)
+    window.requestAnimationFrame(() => {
+      document.getElementById('plan-title')?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+    })
   }
 
   return (
@@ -487,7 +495,7 @@ export default function HomeScreen({ userId, onSignOut }) {
         </div>
       </section>
 
-      {planVisible ? (
+      {planVisible && (
         <section className="plan-card" aria-labelledby="plan-title">
           <div className="section-heading">
             <div>
@@ -520,15 +528,6 @@ export default function HomeScreen({ userId, onSignOut }) {
           {planState.error && <p className="plan-error" role="alert">{planState.error}</p>}
           <button className="text-button" onClick={hidePlan}>Close plan</button>
         </section>
-      ) : (
-        <button className="today-plan-button" onClick={showPlan} aria-label="Open today’s plan">
-          <span className="today-plan-icon"><Icon name="spark" size={24} /></span>
-          <span className="today-plan-copy">
-            <strong>Today’s Plan</strong>
-            <span>See a gentle suggestion for today.</span>
-          </span>
-          <Icon name="arrow" size={19} />
-        </button>
       )}
 
       {visionBoardChatUrl && (
