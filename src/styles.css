@@ -192,31 +192,43 @@ button { color: inherit; }
 .completion-check { display: grid; place-items: center; width: 28px; height: 28px; margin-left: -4px; border-radius: 50%; background: #dcecdf; color: #327047; }
 
 .content-detail-card { padding: 25px 21px 23px; border: 1px solid var(--line); border-radius: 26px; background: var(--card); box-shadow: var(--shadow); }
-.vision-board-card { margin: 0; overflow: hidden; border: 1px solid var(--line); border-radius: 24px; background: #e8d650; box-shadow: var(--shadow); }
-.vision-board-card img { display: block; width: 100%; height: auto; }
-.vision-board-empty { display: flex; min-height: 280px; padding: 32px 26px; flex-direction: column; align-items: center; justify-content: center; background: linear-gradient(145deg, #f3df62, #e4ca42); color: #344d46; text-align: center; }
-.vision-board-empty-icon { display: grid; place-items: center; width: 55px; height: 55px; margin-bottom: 15px; border-radius: 18px; background: rgba(255,255,255,.55); }
-.vision-board-empty h2 { margin: 0; font-family: Georgia, "Times New Roman", serif; font-size: 1.35rem; font-weight: 650; }
-.vision-board-empty p { max-width: 290px; margin: 9px 0 0; font-size: .8rem; line-height: 1.5; }
-.vision-board-footer { padding: 14px 17px 16px; background: var(--card); text-align: center; }
-.vision-board-footer p { margin: 0; color: var(--sage-dark); font-family: Georgia, "Times New Roman", serif; font-size: .9rem; line-height: 1.45; }
-.vision-board-upload { display: inline-flex; align-items: center; justify-content: center; gap: 6px; min-height: 38px; margin-top: 11px; padding: 8px 13px; border: 1px solid var(--line); border-radius: 12px; background: #eef3ef; color: var(--sage-dark); font-size: .74rem; font-weight: 800; cursor: pointer; }
-.vision-board-upload:disabled { opacity: .65; cursor: wait; }
-.vision-board-footer > span { display: block; margin-top: 8px; color: var(--muted); font-size: .7rem; line-height: 1.4; }
-.vision-board-footer > span.error { color: #8b4545; }
-.vision-scripture-card { display: grid; grid-template-columns: 44px 1fr; gap: 13px; margin-top: 18px; padding: 18px; border-radius: 20px; background: #efe3bb; }
-.vision-scripture-icon { display: grid; place-items: center; width: 44px; height: 44px; border-radius: 14px; background: rgba(255,255,255,.62); color: #78652d; }
-.vision-scripture-card blockquote { margin: 0; color: var(--ink); font-family: Georgia, "Times New Roman", serif; font-size: 1.18rem; line-height: 1.35; }
-.vision-scripture-card cite { display: block; margin-top: 5px; color: #6c6656; font-size: .72rem; font-style: normal; font-weight: 750; }
-.vision-goals { margin-top: 31px; }
-.vision-goals h2 { margin: 0; font-family: Georgia, "Times New Roman", serif; font-size: 1.5rem; line-height: 1.15; font-weight: 600; }
-.vision-goal-list { display: grid; gap: 10px; margin-top: 15px; }
-.vision-goal-card { display: grid; grid-template-columns: 34px 1fr; gap: 12px; padding: 17px 16px; border: 1px solid var(--line); border-radius: 18px; background: var(--card); box-shadow: 0 6px 18px rgba(44,62,55,.04); }
-.vision-goal-number { display: grid; place-items: center; width: 32px; height: 32px; border-radius: 11px; background: var(--sage-dark); color: white; font-size: .76rem; font-weight: 850; }
-.vision-goal-card h3 { margin: 3px 0 0; font-family: Georgia, "Times New Roman", serif; font-size: 1.05rem; line-height: 1.22; font-weight: 650; }
-.vision-goal-card p { margin: 7px 0 0; color: var(--muted); font-size: .79rem; line-height: 1.5; }
-.vision-goal-card a { display: inline-flex; margin-top: 10px; color: var(--sage-dark); font-size: .74rem; font-weight: 800; text-underline-offset: 3px; }
-.vision-closing { margin: 25px 12px 0; color: var(--sage-dark); font-family: Georgia, "Times New Roman", serif; font-size: 1.05rem; line-height: 1.45; text-align: center; }
+.vision-hero { position: relative; overflow: hidden; margin: 0 -2px 18px; padding: 27px 25px 24px; border: 1px solid rgba(87,73,33,.16); border-radius: 25px; background: linear-gradient(145deg, #f7efd8 0%, #fbf7ec 58%, #e9dfba 100%); color: #133b48; text-align: center; box-shadow: var(--shadow); }
+.vision-hero::before, .vision-hero::after { position: absolute; content: ''; width: 118px; height: 15px; border-radius: 999px; background: #b88938; opacity: .62; }
+.vision-hero::before { top: 38px; left: -28px; transform: rotate(-27deg); }
+.vision-hero::after { right: -35px; bottom: 40px; transform: rotate(21deg); }
+.vision-hero-brushes { position: absolute; top: 12px; left: 15px; color: #8a6426; transform: rotate(-15deg); }
+.vision-hero-kicker, .vision-hero-motto, .vision-hero-caption { margin: 0; text-transform: uppercase; letter-spacing: .13em; font-weight: 850; }
+.vision-hero-kicker { font-family: Georgia, "Times New Roman", serif; font-size: 1.37rem; letter-spacing: .15em; }
+.vision-hero h1 { margin: 3px 0 10px; font-family: Georgia, "Times New Roman", serif; font-size: clamp(2rem, 9vw, 2.7rem); line-height: .98; letter-spacing: -.05em; font-style: italic; font-weight: 600; }
+.vision-hero-motto { color: #765d22; font-size: .87rem; }
+.vision-hero-caption { margin-top: 10px; color: #665942; font-size: .61rem; }
+.vision-infographic { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+.vision-tile { min-height: 212px; padding: 15px 14px 14px; border: 1px solid rgba(53,65,56,.1); border-radius: 20px; color: #263b37; box-shadow: 0 7px 20px rgba(44,62,55,.05); }
+.vision-tile:nth-child(11) { grid-column: span 2; min-height: 164px; }
+.vision-tile.teal { background: #dcebe6; }
+.vision-tile.gold { background: #f0e3b9; }
+.vision-tile.blue { background: #dce9ee; }
+.vision-tile.plum { background: #eae0e8; }
+.vision-tile.olive { background: #e1e7cf; }
+.vision-tile.rust { background: #f2ded2; }
+.vision-tile-top { display: flex; align-items: center; justify-content: space-between; }
+.vision-goal-number, .vision-tile-icon { display: grid; place-items: center; border-radius: 50%; }
+.vision-goal-number { width: 31px; height: 31px; background: #1d5360; color: white; font-size: .76rem; font-weight: 850; }
+.vision-tile.gold .vision-goal-number { background: #a8761c; }
+.vision-tile.plum .vision-goal-number { background: #684060; }
+.vision-tile.olive .vision-goal-number { background: #5d6722; }
+.vision-tile.rust .vision-goal-number { background: #9a5425; }
+.vision-tile-icon { width: 33px; height: 33px; background: rgba(255,255,255,.5); color: #3d5d53; }
+.vision-tile h2 { margin: 13px 0 0; font-family: Georgia, "Times New Roman", serif; font-size: 1.1rem; line-height: 1.08; font-weight: 650; }
+.vision-tile p { margin: 8px 0 0; font-size: .73rem; line-height: 1.4; }
+.vision-tile a { display: inline-flex; align-items: center; gap: 3px; margin-top: 10px; color: #244e59; font-size: .68rem; font-weight: 850; text-decoration: none; }
+.vision-tile a:hover { text-decoration: underline; }
+.vision-scripture-strip { display: flex; gap: 10px; align-items: flex-start; margin-top: 12px; padding: 16px; border-radius: 19px; background: #1d5360; color: #fff7e8; }
+.vision-scripture-strip svg { flex: 0 0 auto; margin-top: 2px; color: #e5b458; }
+.vision-scripture-strip p { margin: 0; font-family: Georgia, "Times New Roman", serif; font-size: .94rem; line-height: 1.42; }
+.vision-scripture-strip span { display: block; margin-top: 4px; color: #e8d79d; font-family: Inter, system-ui, sans-serif; font-size: .67rem; font-weight: 800; }
+.vision-closing { margin: 23px 12px 0; color: var(--sage-dark); font-family: Georgia, "Times New Roman", serif; font-size: 1.08rem; line-height: 1.4; text-align: center; }
+.vision-subclosing { margin: 6px 12px 0; color: #7d6a36; font-size: .73rem; font-style: italic; line-height: 1.4; text-align: center; }
 .content-kind { margin: 0 0 8px; color: var(--sage-dark); font-size: .68rem; font-weight: 800; letter-spacing: .085em; text-transform: uppercase; }
 .content-detail-card h1 { margin: 0; font-family: Georgia, "Times New Roman", serif; font-size: 2rem; line-height: 1.05; letter-spacing: -.035em; font-weight: 600; }
 .detail-lead { margin: 10px 0 25px; color: #566762; font-size: .95rem; line-height: 1.5; }
