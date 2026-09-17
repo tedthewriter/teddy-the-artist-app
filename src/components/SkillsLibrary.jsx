@@ -474,14 +474,18 @@ export default function SkillsLibrary({
             )}
           </div>
         ) : selectedSection?.subsections && !selectedSubsection ? (
-          <div className="pi-section-grid" aria-label={`${selectedSection.label} weeks`}>
+          <div className="pi-section-grid" aria-label={`${selectedSection.label} groups`}>
             {selectedSection.subsections.map((section) => (
               <button className={`pi-section-button ${section.tone}`} key={section.key} onClick={() => setSelectedSubsectionKey(section.key)}>
                 <span className="pi-section-icon" aria-hidden="true"><Icon name={section.icon} size={24} /></span>
                 <span className="pi-section-copy">
                   <strong>{section.label}</strong>
                   <span>{section.description}</span>
-                  <small>{section.items.length} {section.items.length === 1 ? 'lesson' : 'lessons'}</small>
+                  <small>
+                    {section.items.length} {selectedSection.key === 'cbt-library'
+                      ? section.items.length === 1 ? 'skill' : 'skills'
+                      : section.items.length === 1 ? 'lesson' : 'lessons'}
+                  </small>
                 </span>
                 <Icon name="arrow" size={17} />
               </button>
