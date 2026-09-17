@@ -135,13 +135,26 @@ button { color: inherit; }
 .assessment-summary-card { background: #faf6e8; }
 .assessment-date { margin: 5px 0 0; color: var(--muted); font-size: .69rem; }
 .assessment-results-list { display: grid; gap: 10px; margin-top: 14px; }
-.assessment-result-row { padding: 15px; border: 1px solid var(--line); border-radius: 17px; background: var(--card); }
+.assessment-result-row { width: 100%; padding: 15px; border: 1px solid var(--line); border-radius: 17px; background: var(--card); color: var(--ink); text-align: left; cursor: pointer; box-shadow: 0 5px 16px rgba(44,62,55,.035); }
+.assessment-result-row:active { transform: scale(.99); }
 .assessment-result-heading { display: flex; justify-content: space-between; gap: 12px; align-items: baseline; }
 .assessment-result-heading strong { font-family: Georgia, "Times New Roman", serif; font-size: 1.02rem; }
-.assessment-result-heading span { color: #78652d; font-weight: 850; }
+.assessment-result-action { display: inline-flex; align-items: center; gap: 8px; color: #78652d; }
+.assessment-result-action b { font-size: .95rem; font-weight: 850; }
 .assessment-score-track { height: 8px; margin-top: 10px; overflow: hidden; border-radius: 999px; background: #e8e2d3; }
 .assessment-score-track span { display: block; height: 100%; border-radius: inherit; background: #a88f49; }
 .assessment-result-row p { margin: 9px 0 0; color: var(--muted); font-size: .77rem; line-height: 1.46; }
+.assessment-detail { margin-top: 22px; }
+.assessment-detail-score { display: grid; place-items: center; width: 112px; min-height: 112px; margin: 0 auto 20px; padding: 14px; border-radius: 50%; background: #efe3bb; color: #78652d; text-align: center; box-shadow: inset 0 0 0 1px rgba(124,98,40,.1); }
+.assessment-detail-score span { font-size: .61rem; font-weight: 800; letter-spacing: .055em; text-transform: uppercase; }
+.assessment-detail-score strong { margin: -2px 0; font-family: Georgia, "Times New Roman", serif; color: var(--ink); font-size: 2.35rem; line-height: 1; }
+.assessment-detail-intro { margin: 0 0 14px; padding: 17px; border-radius: 18px; background: #faf6e8; color: var(--muted); font-size: .82rem; line-height: 1.52; }
+.assessment-detail-sections { display: grid; gap: 10px; }
+.assessment-detail-section { padding: 18px 17px; border: 1px solid var(--line); border-radius: 18px; background: var(--card); }
+.assessment-detail-section h2 { margin: 0; font-family: Georgia, "Times New Roman", serif; font-size: 1.08rem; font-weight: 600; }
+.assessment-detail-section p, .assessment-detail-section ul { margin: 9px 0 0; color: var(--muted); font-size: .78rem; line-height: 1.52; }
+.assessment-detail-section ul { padding-left: 19px; }
+.assessment-detail-section li + li { margin-top: 6px; }
 .assessment-gentle-note { margin: 20px 12px 0; color: var(--muted); font-size: .75rem; line-height: 1.5; text-align: center; }
 .empty-category-card { padding: 22px 19px; border: 1px solid var(--line); border-radius: 21px; background: var(--card); box-shadow: 0 7px 20px rgba(44,62,55,.04); }
 .empty-category-card .skill-category-icon { margin-bottom: 14px; background: #e5eee9; }
