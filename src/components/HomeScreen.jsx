@@ -3,6 +3,7 @@ import Icon from './Icon'
 import SkillsLibrary from './SkillsLibrary'
 import AffirmationsLibrary from './AffirmationsLibrary'
 import AlignmentsLibrary from './AlignmentsLibrary'
+import GoalsVision from './GoalsVision'
 import { supabase } from '../lib/supabase'
 import { dailyPlan, pathways } from '../data/homeContent'
 
@@ -52,7 +53,6 @@ export default function HomeScreen({ userId, onSignOut }) {
   const [contentState, setContentState] = useState({ loading: Boolean(userId), error: '' })
   const [todayPlan, setTodayPlan] = useState(null)
   const [planState, setPlanState] = useState({ loading: Boolean(userId), error: '' })
-  const [visionBoardChatUrl, setVisionBoardChatUrl] = useState('')
   const [imageUrls, setImageUrls] = useState({})
   const [notice, setNotice] = useState('')
   const [dailyAffirmationId, setDailyAffirmationId] = useState(null)
@@ -69,7 +69,7 @@ export default function HomeScreen({ userId, onSignOut }) {
       if (!supabase || !userId) return
       setContentState({ loading: true, error: '' })
 
-      const [contentResult, favoritesResult, preferenceResult, completionsResult, responsesResult, assessmentResult] = await Promise.all([
+      const [contentResult, favoritesResult, completionsResult, responsesResult, assessmentResult] = await Promise.all([
         supabase
           .from('content_items')
           .select('id, slug, category, framework, content_type, title, short_description, body, reflection_prompt, faith_reflection, source_title, estimated_minutes, energy_level, sort_order, affirmation_number, asset_path')
@@ -77,11 +77,6 @@ export default function HomeScreen({ userId, onSignOut }) {
           .eq('active', true)
           .order('sort_order'),
         supabase.from('user_favorites').select('content_id').eq('user_id', userId),
-        supabase
-          .from('user_preferences')
-          .select('vision_board_chat_url')
-          .eq('user_id', userId)
-          .maybeSingle(),
         supabase
           .from('user_content_completions')
           .select('content_id')
@@ -114,7 +109,6 @@ export default function HomeScreen({ userId, onSignOut }) {
         ])))
       }
       if (!assessmentResult.error) setSaboteurAssessmentResult(assessmentResult.data || null)
-      if (!preferenceResult.error) setVisionBoardChatUrl(preferenceResult.data?.vision_board_chat_url || '')
       setContentState({ loading: false, error: '' })
     }
 
@@ -377,6 +371,12 @@ export default function HomeScreen({ userId, onSignOut }) {
       return
     }
 
+    if (pathway.title === 'Goals & Vision') {
+      setView('goals-vision')
+      window.scrollTo({ top: 0, behavior: 'smooth' })
+      return
+    }
+
     if (pathway.title === 'Surprise Me') {
       if (skillItems.length === 0) {
         setNotice(contentState.loading ? 'The library is still opening…' : 'There is not an available activity yet.')
@@ -436,6 +436,10 @@ export default function HomeScreen({ userId, onSignOut }) {
         onBack={() => setView('home')}
       />
     )
+  }
+
+  if (view === 'goals-vision') {
+    return <GoalsVision onBack={() => setView('home')} />
   }
 
   function hidePlan() {
@@ -527,18 +531,6 @@ export default function HomeScreen({ userId, onSignOut }) {
           {planState.error && <p className="plan-error" role="alert">{planState.error}</p>}
           <button className="text-button" onClick={hidePlan}>Close plan</button>
         </section>
-      )}
-
-      {visionBoardChatUrl && (
-        <a className="vision-board-card" href={visionBoardChatUrl} aria-label="Build My Vision Board in ChatGPT">
-          <span className="vision-board-icon" aria-hidden="true"><Icon name="palette" size={25} /></span>
-          <span className="vision-board-copy">
-            <span className="vision-board-label">Guided reflection</span>
-            <strong>Build My Vision Board</strong>
-            <span>Continue your vision conversation in ChatGPT.</span>
-          </span>
-          <Icon name="arrow" size={19} />
-        </a>
       )}
 
       <section className="pathway-section" aria-labelledby="pathway-title">
