@@ -244,6 +244,12 @@ button { color: inherit; }
 .survey-question + .survey-question { padding-top: 16px; border-top: 1px solid var(--line); }
 .survey-prompt { color: var(--ink); font-family: Georgia, "Times New Roman", serif; font-size: 1.02rem !important; line-height: 1.45 !important; }
 .survey-help { margin-top: 6px !important; color: var(--muted); font-size: .74rem !important; }
+.survey-instructions { margin: 0 0 15px !important; color: var(--muted); font-size: .8rem !important; line-height: 1.5 !important; }
+.survey-score-card { margin-top: 16px; padding: 16px; border: 1px solid var(--line); border-radius: 15px; background: #f5f2ec; color: var(--muted); text-align: center; }
+.survey-score-card.complete { background: #e7f1e9; color: var(--sage-dark); }
+.survey-score-card > span { display: block; font-size: .65rem; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; }
+.survey-score-card strong { display: block; margin-top: 4px; font-family: Georgia, "Times New Roman", serif; color: var(--ink); font-size: 1.65rem; }
+.survey-score-card p { margin: 7px 0 0 !important; font-size: .75rem !important; line-height: 1.45 !important; }
 .source-note { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 8px; padding-top: 18px; border-top: 1px solid var(--line); color: var(--muted); font-size: .68rem; }
 
 .import-card { margin: 0 0 24px; padding: 21px 18px; border: 1px solid rgba(95,129,119,.18); border-radius: 22px; background: #e7eee9; }
