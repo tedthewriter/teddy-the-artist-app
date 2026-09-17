@@ -481,7 +481,6 @@ export default function HomeScreen({ userId, onSignOut }) {
           <p className="eyebrow" id="affirmation-title">Today’s affirmation</p>
           <p className="affirmation-text">{dailyAffirmation?.title || 'you are smart'}</p>
           <div className="affirmation-actions">
-            <button className="soft-button" onClick={() => setNotice('Affirmation audio will appear here after the recordings are added.')}><Icon name="play" size={18} /> Listen</button>
             <button
               className={`icon-button ${dailyAffirmation && favorites.has(dailyAffirmation.id) ? 'is-favorite' : ''}`}
               aria-label={dailyAffirmation && favorites.has(dailyAffirmation.id) ? 'Remove from favorites' : 'Add to favorites'}
