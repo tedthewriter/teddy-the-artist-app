@@ -1,41 +1,11 @@
 import { useState } from 'react'
 import Icon from './Icon'
-import ResponseField from './ResponseField'
-
-function responseRecord(responses, itemId, responseKey) {
-  return responses.get(`alignment:${itemId}:${responseKey}`)
-}
-
-function InputField({ field, item, responses, onSaveResponse, onDeleteResponse }) {
-  return (
-    <ResponseField
-      contextType="alignment"
-      contextId={item.id}
-      contentId={item.id}
-      responseKey={field.key}
-      kind={field.kind || 'text'}
-      label={field.label}
-      prompt={field.prompt || field.label}
-      placeholder={field.placeholder}
-      min={field.min ?? -10}
-      max={field.max ?? 10}
-      minLabel={field.min_label}
-      maxLabel={field.max_label}
-      record={responseRecord(responses, item.id, field.key)}
-      onSave={onSaveResponse}
-      onDelete={onDeleteResponse}
-    />
-  )
-}
 
 export default function AlignmentsLibrary({
   items,
-  responses,
   loading,
   error,
   onBack,
-  onSaveResponse,
-  onDeleteResponse,
 }) {
   const [selected, setSelected] = useState(null)
 
@@ -76,19 +46,6 @@ export default function AlignmentsLibrary({
             <p>{body.safety_note}</p>
           </aside>
 
-          <section className="alignment-inputs" aria-label="Before the alignment">
-            {(body.opening_fields || []).map((field) => (
-              <InputField
-                key={field.key}
-                field={field}
-                item={selected}
-                responses={responses}
-                onSaveResponse={onSaveResponse}
-                onDeleteResponse={onDeleteResponse}
-              />
-            ))}
-          </section>
-
           <div className="alignment-steps">
             {(body.steps || []).map((step, index) => (
               <section className="alignment-step" key={`${step.title}-${index}`}>
@@ -105,20 +62,6 @@ export default function AlignmentsLibrary({
             ))}
           </div>
 
-          <section className="alignment-inputs alignment-closing" aria-label="After the alignment">
-            <p className="eyebrow">Afterward</p>
-            {(body.closing_fields || []).map((field) => (
-              <InputField
-                key={field.key}
-                field={field}
-                item={selected}
-                responses={responses}
-                onSaveResponse={onSaveResponse}
-                onDeleteResponse={onDeleteResponse}
-              />
-            ))}
-          </section>
-
           <p className="alignment-support-note">If your distress increases or you do not feel safe, stop and reach out for help.</p>
         </article>
       </main>
@@ -134,7 +77,7 @@ export default function AlignmentsLibrary({
       <section className="library-heading">
         <p className="eyebrow">Guided practices</p>
         <h1>Alignments</h1>
-        <p>Choose the practice that fits what you are carrying right now. Your ratings and notes save privately as you enter them.</p>
+        <p>Choose the practice that fits what you are carrying right now, then follow the guide at your own pace.</p>
       </section>
 
       {loading && <p className="library-message">Opening the alignments…</p>}
