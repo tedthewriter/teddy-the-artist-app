@@ -18,8 +18,6 @@ function dateNumber(dateKey) {
   return Math.floor(Date.UTC(year, month - 1, day) / 86400000)
 }
 
-const dismissKey = () => `teddy-plan-dismissed-${localDateKey()}`
-
 function mergePlanWithDefaults(planItems) {
   const savedItems = new Map(
     (Array.isArray(planItems) ? planItems : []).map((item) => [item.label, item]),
@@ -32,7 +30,7 @@ function mergePlanWithDefaults(planItems) {
 }
 
 export default function HomeScreen({ userId, onSignOut }) {
-  const [planVisible, setPlanVisible] = useState(() => localStorage.getItem(dismissKey()) !== 'true')
+  const [planVisible, setPlanVisible] = useState(false)
   const [view, setView] = useState('home')
   const [initialItem, setInitialItem] = useState(null)
   const [content, setContent] = useState([])
@@ -403,12 +401,10 @@ export default function HomeScreen({ userId, onSignOut }) {
   }
 
   function hidePlan() {
-    localStorage.setItem(dismissKey(), 'true')
     setPlanVisible(false)
   }
 
   function showPlan() {
-    localStorage.removeItem(dismissKey())
     setPlanVisible(true)
   }
 
@@ -489,10 +485,17 @@ export default function HomeScreen({ userId, onSignOut }) {
             {planState.loading ? 'Finding today’s lesson…' : 'Open today’s CBT lesson'} <Icon name="arrow" size={18} />
           </button>
           {planState.error && <p className="plan-error" role="alert">{planState.error}</p>}
-          <button className="text-button" onClick={hidePlan}>Not right now</button>
+          <button className="text-button" onClick={hidePlan}>Close plan</button>
         </section>
       ) : (
-        <button className="reopen-plan" onClick={showPlan}><Icon name="spark" size={18} /> View today’s suggested plan</button>
+        <button className="today-plan-button" onClick={showPlan} aria-label="Open today’s plan">
+          <span className="today-plan-icon"><Icon name="spark" size={24} /></span>
+          <span className="today-plan-copy">
+            <strong>Today’s Plan</strong>
+            <span>See a gentle suggestion for today.</span>
+          </span>
+          <Icon name="arrow" size={19} />
+        </button>
       )}
 
       {visionBoardChatUrl && (
