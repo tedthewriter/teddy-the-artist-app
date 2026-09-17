@@ -13,6 +13,7 @@ export const dailyPlan = [
 ]
 
 export const pathways = [
+  { title: 'Today’s Plan', subtitle: 'See today’s suggestions', icon: 'spark', tone: 'sage' },
   { title: 'Skills', subtitle: 'Find something helpful', icon: 'toolbox', tone: 'sage' },
   { title: 'Alignments', subtitle: 'Settle and realign', icon: 'compass', tone: 'gold' },
   { title: 'Mindfulness', subtitle: 'Breathe, ground, and settle', icon: 'mindfulness', tone: 'lilac' },
