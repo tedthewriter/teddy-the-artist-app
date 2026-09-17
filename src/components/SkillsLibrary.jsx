@@ -268,6 +268,7 @@ export default function SkillsLibrary({
 }) {
   const [selected, setSelected] = useState(initialItem || null)
   const [selectedCategoryKey, setSelectedCategoryKey] = useState(initialItem ? frameworkKey(initialItem) : null)
+  const [selectedSectionKey, setSelectedSectionKey] = useState(null)
   const [showSaboteurResults, setShowSaboteurResults] = useState(false)
   const categories = useMemo(() => {
     const cbtItems = items.filter((item) => frameworkKey(item) === 'cbt')
@@ -286,11 +287,11 @@ export default function SkillsLibrary({
       {
         key: 'positive-intelligence', label: 'Positive Intelligence', description: 'Notice Saboteurs and practice Sage responses', icon: 'compass', tone: 'gold', items: positiveIntelligenceItems,
         sections: [
-          { key: 'pi-begin', label: 'Begin Here', items: positiveIntelligenceItems.filter((item) => item.content_type === 'overview') },
-          { key: 'pi-foundations', label: 'Foundations', items: positiveIntelligenceItems.filter((item) => item.content_type === 'foundation') },
-          { key: 'pi-practice', label: 'Guided Practice', items: positiveIntelligenceItems.filter((item) => item.content_type === 'practice') },
-          { key: 'pi-saboteurs', label: 'Saboteurs', items: positiveIntelligenceItems.filter((item) => item.content_type === 'saboteur') },
-          { key: 'pi-sage-powers', label: 'Sage Powers', items: positiveIntelligenceItems.filter((item) => item.content_type === 'sage_power') },
+          { key: 'pi-overview', label: 'Overview', description: 'Start with the big picture', icon: 'compass', tone: 'gold', items: positiveIntelligenceItems.filter((item) => item.content_type === 'overview') },
+          { key: 'pi-foundations', label: 'Foundations', description: 'Learn the core ideas', icon: 'thought', tone: 'sage', items: positiveIntelligenceItems.filter((item) => item.content_type === 'foundation') },
+          { key: 'pi-practice', label: 'Guided Practice', description: 'Try PQ reps and short activities', icon: 'spark', tone: 'mint', items: positiveIntelligenceItems.filter((item) => item.content_type === 'practice') },
+          { key: 'pi-saboteurs', label: 'Saboteurs', description: 'Recognize protective patterns', icon: 'people', tone: 'peach', items: positiveIntelligenceItems.filter((item) => item.content_type === 'saboteur') },
+          { key: 'pi-sage-powers', label: 'Sage Powers', description: 'Practice wiser responses', icon: 'star', tone: 'lilac', items: positiveIntelligenceItems.filter((item) => item.content_type === 'sage_power') },
         ],
       },
       {
@@ -304,6 +305,7 @@ export default function SkillsLibrary({
     ]
   }, [items])
   const selectedCategory = categories.find((category) => category.key === selectedCategoryKey)
+  const selectedSection = selectedCategory?.sections.find((section) => section.key === selectedSectionKey)
 
   if (showSaboteurResults) {
     return (
@@ -331,36 +333,67 @@ export default function SkillsLibrary({
   }
 
   if (selectedCategory) {
+    const isPositiveIntelligence = selectedCategory.key === 'positive-intelligence'
+    const leaveCategory = () => {
+      if (isPositiveIntelligence && selectedSectionKey) {
+        setSelectedSectionKey(null)
+      } else {
+        setSelectedCategoryKey(null)
+      }
+    }
+
     return (
       <main className="app-shell library-shell">
         <header className="library-header">
-          <button className="back-button" onClick={() => setSelectedCategoryKey(null)}><Icon name="back" size={19} /> Skills</button>
+          <button className="back-button" onClick={leaveCategory}><Icon name="back" size={19} /> {isPositiveIntelligence && selectedSectionKey ? 'Positive Intelligence' : 'Skills'}</button>
         </header>
 
         <div className={`category-heading-icon ${selectedCategory.tone}`} aria-hidden="true">
           <Icon name={selectedCategory.icon} size={27} />
         </div>
         <p className="eyebrow">Skills library</p>
-        <h1 className="library-title">{selectedCategory.label}</h1>
-        <p className="library-intro">{selectedCategory.description}. Open whichever lesson feels useful today.</p>
-
-        {selectedCategory.key === 'positive-intelligence' && (
-          <button className="assessment-results-button" onClick={() => setShowSaboteurResults(true)}>
-            <span className="assessment-results-icon" aria-hidden="true"><Icon name="journal" size={24} /></span>
-            <span className="assessment-results-copy">
-              <span className="assessment-results-label">Personal assessment</span>
-              <strong>Saboteur Assessment Results</strong>
-              <span>{saboteurAssessmentResult ? 'View your private results' : 'Ready when your results arrive'}</span>
-            </span>
-            <Icon name="arrow" size={18} />
-          </button>
-        )}
+        <h1 className="library-title">{selectedSection?.label || selectedCategory.label}</h1>
+        <p className="library-intro">
+          {selectedSection?.description || `${selectedCategory.description}. Open whichever lesson feels useful today.`}
+        </p>
 
         {selectedCategory.items.length === 0 ? (
           <section className="empty-category-card">
             <span className="skill-category-icon" aria-hidden="true"><Icon name={selectedCategory.icon} size={26} /></span>
             <h2>Content will be added here.</h2>
             <p>This page is ready for approved {selectedCategory.label} lessons and activities when we add them.</p>
+          </section>
+        ) : isPositiveIntelligence && !selectedSection ? (
+          <div className="pi-section-grid" aria-label="Positive Intelligence sections">
+            {selectedCategory.sections.map((section) => (
+              <button
+                className={`pi-section-button ${section.tone}`}
+                key={section.key}
+                onClick={() => setSelectedSectionKey(section.key)}
+              >
+                <span className="pi-section-icon" aria-hidden="true"><Icon name={section.icon} size={24} /></span>
+                <span className="pi-section-copy">
+                  <strong>{section.label}</strong>
+                  <span>{section.description}</span>
+                  <small>{section.items.length} {section.items.length === 1 ? 'item' : 'items'}</small>
+                </span>
+                <Icon name="arrow" size={17} />
+              </button>
+            ))}
+
+            <button className="pi-section-button assessment" onClick={() => setShowSaboteurResults(true)}>
+              <span className="pi-section-icon" aria-hidden="true"><Icon name="journal" size={24} /></span>
+              <span className="pi-section-copy">
+                <strong>Assessment Results</strong>
+                <span>{saboteurAssessmentResult ? 'View your private Saboteur scores' : 'Ready when your results arrive'}</span>
+                <small>Personal assessment</small>
+              </span>
+              <Icon name="arrow" size={17} />
+            </button>
+          </div>
+        ) : isPositiveIntelligence && selectedSection ? (
+          <section className="content-group pi-selected-group">
+            <LessonList items={selectedSection.items} favorites={favorites} completedItems={completedItems} onSelect={setSelected} />
           </section>
         ) : selectedCategory.sections.map((section) => section.items.length > 0 && (
           <section className="content-group" key={section.key}>
