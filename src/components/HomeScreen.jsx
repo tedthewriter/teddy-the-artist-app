@@ -4,6 +4,7 @@ import SkillsLibrary from './SkillsLibrary'
 import AffirmationsLibrary from './AffirmationsLibrary'
 import AlignmentsLibrary from './AlignmentsLibrary'
 import GoalsVision from './GoalsVision'
+import TodayPlan from './TodayPlan'
 import { supabase } from '../lib/supabase'
 import { dailyPlan, pathways } from '../data/homeContent'
 
@@ -49,7 +50,6 @@ function mergePlanWithDefaults(planItems) {
 }
 
 export default function HomeScreen({ userId, onSignOut }) {
-  const [planVisible, setPlanVisible] = useState(false)
   const [view, setView] = useState('home')
   const [initialItem, setInitialItem] = useState(null)
   const [content, setContent] = useState([])
@@ -385,7 +385,8 @@ export default function HomeScreen({ userId, onSignOut }) {
   function choosePath(pathway) {
     setNotice('')
     if (pathway.title === 'Today’s Plan') {
-      showPlan()
+      setView('today-plan')
+      window.scrollTo({ top: 0, behavior: 'smooth' })
       return
     }
 
@@ -477,15 +478,18 @@ export default function HomeScreen({ userId, onSignOut }) {
     return <GoalsVision onBack={() => setView('home')} />
   }
 
-  function hidePlan() {
-    setPlanVisible(false)
-  }
-
-  function showPlan() {
-    setPlanVisible(true)
-    window.requestAnimationFrame(() => {
-      document.getElementById('plan-title')?.scrollIntoView({ behavior: 'smooth', block: 'start' })
-    })
+  if (view === 'today-plan') {
+    return (
+      <TodayPlan
+        items={planItemsForToday}
+        skillItems={skillItems}
+        dailyCbtLesson={dailyCbtLesson}
+        loading={planState.loading}
+        error={planState.error}
+        onBack={() => setView('home')}
+        onOpenLesson={openSkills}
+      />
+    )
   }
 
   return (
@@ -532,46 +536,6 @@ export default function HomeScreen({ userId, onSignOut }) {
           </div>
         </div>
       </section>
-
-      {planVisible && (
-        <section className="plan-card" aria-labelledby="plan-title">
-          <div className="section-heading">
-            <div>
-              <p className="eyebrow">A gentle suggestion</p>
-              <h2 id="plan-title">Today’s plan</h2>
-            </div>
-            <button className="icon-button quiet" aria-label="Close today’s plan" onClick={hidePlan}><Icon name="close" size={19} /></button>
-          </div>
-          <div className="plan-list">
-            {planItemsForToday.map((item) => {
-              const linkedLesson = item.content_id
-                ? skillItems.find((lesson) => lesson.id === item.content_id)
-                : null
-              return linkedLesson ? (
-                <button className="plan-item plan-item-action" key={item.label} onClick={() => openSkills(linkedLesson)}>
-                  <span className="plan-icon"><Icon name={item.icon} size={19} /></span>
-                  <span className="plan-item-copy"><strong>{item.label}</strong><span>{item.title}</span></span>
-                  <Icon name="arrow" size={17} />
-                </button>
-              ) : (
-                <div className="plan-item" key={item.label}>
-                  <span className="plan-icon"><Icon name={item.icon} size={19} /></span>
-                  <div><p>{item.label}</p><span>{item.title}</span></div>
-                </div>
-              )
-            })}
-          </div>
-          <button
-            className="primary-button"
-            disabled={!dailyCbtLesson || planState.loading}
-            onClick={() => dailyCbtLesson && openSkills(dailyCbtLesson)}
-          >
-            {planState.loading ? 'Finding today’s lesson…' : 'Open today’s CBT lesson'} <Icon name="arrow" size={18} />
-          </button>
-          {planState.error && <p className="plan-error" role="alert">{planState.error}</p>}
-          <button className="text-button" onClick={hidePlan}>Close plan</button>
-        </section>
-      )}
 
       <section className="pathway-section" aria-labelledby="pathway-title">
         <p className="eyebrow">Choose your own path</p>
