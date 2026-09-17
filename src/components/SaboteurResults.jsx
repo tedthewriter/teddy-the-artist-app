@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import Icon from './Icon'
 
 function scoreEntries(results = {}) {
@@ -17,27 +18,81 @@ function readableDate(value) {
     .format(new Date(year, month - 1, day))
 }
 
+function detailSections(entry = {}) {
+  if (Array.isArray(entry.details)) return entry.details
+  if (Array.isArray(entry.sections)) return entry.sections
+  if (entry.sections && typeof entry.sections === 'object') {
+    return Object.entries(entry.sections).map(([title, content]) => ({ title, content }))
+  }
+  return []
+}
+
+function detailItems(section = {}) {
+  const content = section.items || section.content || section.text || []
+  return Array.isArray(content) ? content : [content]
+}
+
 export default function SaboteurResults({ result, onBack }) {
+  const [selectedEntry, setSelectedEntry] = useState(null)
   const results = result?.results || {}
   const entries = scoreEntries(results)
   const numericScores = entries.map((entry) => Number(entry.score)).filter(Number.isFinite)
   const maxScore = Math.max(10, ...numericScores)
 
+  const openEntry = (entry) => {
+    setSelectedEntry(entry)
+    window.scrollTo({ top: 0, behavior: 'smooth' })
+  }
+
+  const goBack = () => {
+    if (selectedEntry) {
+      setSelectedEntry(null)
+      window.scrollTo({ top: 0, behavior: 'smooth' })
+      return
+    }
+    onBack()
+  }
+
   return (
     <main className="app-shell library-shell">
       <header className="library-header">
-        <button className="back-button" onClick={onBack}><Icon name="back" size={19} /> Positive Intelligence</button>
+        <button className="back-button" onClick={goBack}><Icon name="back" size={19} /> {selectedEntry ? 'All results' : 'Positive Intelligence'}</button>
       </header>
 
       <div className="category-heading-icon gold" aria-hidden="true"><Icon name="compass" size={27} /></div>
       <p className="eyebrow">Positive Intelligence</p>
-      <h1 className="library-title">Your Saboteur Assessment Results</h1>
+      <h1 className="library-title">{selectedEntry ? selectedEntry.name : 'Your Saboteur Assessment Results'}</h1>
 
       {!result ? (
         <section className="assessment-waiting-card">
           <span className="assessment-waiting-icon" aria-hidden="true"><Icon name="journal" size={27} /></span>
           <h2>Your results will appear here.</h2>
           <p>When your assessment results arrive, they can be added to this private page.</p>
+        </section>
+      ) : selectedEntry ? (
+        <section className="assessment-detail" aria-label={`${selectedEntry.name} details`}>
+          <div className="assessment-detail-score">
+            <span>Score</span>
+            <strong>{selectedEntry.score}</strong>
+            <span>out of 10</span>
+          </div>
+
+          {selectedEntry.description && <p className="assessment-detail-intro">{selectedEntry.description}</p>}
+
+          <div className="assessment-detail-sections">
+            {detailSections(selectedEntry).map((section, index) => (
+              <section className="assessment-detail-section" key={`${section.title}-${index}`}>
+                <h2>{section.title}</h2>
+                {detailItems(section).length > 1 ? (
+                  <ul>
+                    {detailItems(section).map((item, itemIndex) => <li key={itemIndex}>{item}</li>)}
+                  </ul>
+                ) : (
+                  <p>{detailItems(section)[0]}</p>
+                )}
+              </section>
+            ))}
+          </div>
         </section>
       ) : (
         <>
@@ -54,18 +109,21 @@ export default function SaboteurResults({ result, onBack }) {
                 const score = Number(entry.score)
                 const hasScore = Number.isFinite(score)
                 return (
-                  <article className="assessment-result-row" key={`${entry.name}-${index}`}>
+                  <button className="assessment-result-row" key={`${entry.name}-${index}`} onClick={() => openEntry(entry)}>
                     <div className="assessment-result-heading">
                       <strong>{entry.name}</strong>
-                      {hasScore && <span>{score}</span>}
+                      <span className="assessment-result-action">
+                        {hasScore && <b>{score}</b>}
+                        <Icon name="arrow" size={17} />
+                      </span>
                     </div>
                     {hasScore && (
                       <div className="assessment-score-track" aria-label={`${entry.name}: ${score}`}>
                         <span style={{ width: `${Math.max(0, Math.min(100, (score / maxScore) * 100))}%` }} />
                       </div>
                     )}
-                    {entry.description && <p>{entry.description}</p>}
-                  </article>
+                    <p>Tap to see details</p>
+                  </button>
                 )
               })}
             </section>
@@ -75,7 +133,7 @@ export default function SaboteurResults({ result, onBack }) {
         </>
       )}
 
-      <p className="assessment-gentle-note">These results describe patterns you may notice. They are information—not your identity or a measure of your worth.</p>
+      {result && <p className="assessment-gentle-note">These results describe patterns you may notice. They are information—not your identity or a measure of your worth.</p>}
     </main>
   )
 }
