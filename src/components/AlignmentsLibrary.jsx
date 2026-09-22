@@ -63,6 +63,7 @@ export default function AlignmentsLibrary({
           </div>
 
           <p className="alignment-support-note">If your distress increases or you do not feel safe, stop and reach out for help.</p>
+          <p className="alignment-credit">Peak State Living™ · Dalynn Moore Balance Coaching</p>
         </article>
       </main>
     )
