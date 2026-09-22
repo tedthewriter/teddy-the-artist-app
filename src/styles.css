@@ -88,14 +88,14 @@ button { color: inherit; }
 .pathway-icon { display: grid; place-items: center; width: 42px; height: 42px; margin-bottom: 14px; border-radius: 14px; background: rgba(255,255,255,.58); }
 .pathway-title { font-family: Georgia, "Times New Roman", serif; font-size: 1.1rem; font-weight: 650; }
 .pathway-subtitle { margin-top: 3px; font-size: .72rem; color: rgba(38,59,55,.69); }
-.pathway-card.sage { background: #dce9e3; }
-.pathway-card.peach { background: #f2dfd2; }
-.pathway-card.gold { background: #efe3bb; }
-.pathway-card.lilac { background: #e7e0eb; }
-.pathway-card.blue { background: #dbe7ec; }
-.pathway-card.plum { background: #e5d9df; }
-.pathway-card.rose { background: #f1dfe0; }
-.pathway-card.mint { background: #dcebe6; }
+.pathway-card.sage { background: #dbead4; }
+.pathway-card.peach { background: #f3ddc9; }
+.pathway-card.gold { background: #f2e5ae; }
+.pathway-card.lilac { background: #e1daf0; }
+.pathway-card.blue { background: #d4e7f3; }
+.pathway-card.plum { background: #dfd5eb; }
+.pathway-card.rose { background: #f4d7dc; }
+.pathway-card.mint { background: #cfeae6; }
 .support-note { margin: 27px 15px 0; text-align: center; color: var(--muted); font-size: .76rem; line-height: 1.45; }
 .home-notice { margin: 20px 0 0; padding: 13px 15px; border-radius: 15px; background: #e8eee9; color: var(--sage-dark); font-size: .8rem; line-height: 1.45; }
 
