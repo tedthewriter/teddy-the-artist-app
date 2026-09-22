@@ -270,6 +270,12 @@ export default function HomeScreen({ userId, onSignOut }) {
     window.scrollTo({ top: 0, behavior: 'smooth' })
   }
 
+  function openSelfLove(item = null) {
+    setInitialItem(item)
+    setView('self-love')
+    window.scrollTo({ top: 0, behavior: 'smooth' })
+  }
+
   function choosePath(pathway) {
     setNotice('')
     if (pathway.title === 'Continue') {
@@ -280,6 +286,11 @@ export default function HomeScreen({ userId, onSignOut }) {
 
     if (pathway.title === 'Skills') {
       openSkills()
+      return
+    }
+
+    if (pathway.title === 'Self-love workbook') {
+      openSelfLove()
       return
     }
 
@@ -314,6 +325,29 @@ export default function HomeScreen({ userId, onSignOut }) {
         saboteurAssessmentResult={saboteurAssessmentResult}
         loading={contentState.loading}
         error={contentState.error}
+        initialItem={initialItem}
+        hiddenCategoryKeys={['self-love']}
+        onBack={() => { setView('home'); setInitialItem(null) }}
+        onToggleFavorite={toggleContentFavorite}
+        onToggleComplete={toggleContentComplete}
+        onSaveResponse={saveResponse}
+        onDeleteResponse={deleteResponse}
+      />
+    )
+  }
+
+  if (view === 'self-love') {
+    return (
+      <SkillsLibrary
+        items={skillItems}
+        favorites={favorites}
+        completedItems={completedItems}
+        responses={responses}
+        saboteurAssessmentResult={saboteurAssessmentResult}
+        loading={contentState.loading}
+        error={contentState.error}
+        initialCategoryKey="self-love"
+        sectionLabel="Self-love workbook"
         initialItem={initialItem}
         onBack={() => { setView('home'); setInitialItem(null) }}
         onToggleFavorite={toggleContentFavorite}
@@ -365,7 +399,8 @@ export default function HomeScreen({ userId, onSignOut }) {
         loading={contentState.loading}
         error={contentState.error}
         onBack={() => setView('home')}
-        onOpenLesson={openSkills}
+        onOpenCbtLesson={openSkills}
+        onOpenSelfLoveLesson={openSelfLove}
       />
     )
   }
