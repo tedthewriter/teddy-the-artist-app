@@ -87,6 +87,14 @@ function completionPresentation(item) {
     }
   }
 
+  if (item.framework === 'self_love' || item.content_type?.startsWith('self_love')) {
+    return {
+      action: 'Mark read',
+      complete: 'Read',
+      undo: 'Tap again if you want to mark this reading not read.',
+    }
+  }
+
   return null
 }
 
