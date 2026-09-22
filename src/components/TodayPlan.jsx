@@ -6,7 +6,8 @@ export default function TodayPlan({
   loading,
   error,
   onBack,
-  onOpenLesson,
+  onOpenCbtLesson,
+  onOpenSelfLoveLesson,
 }) {
   const continueCards = [
     {
@@ -19,11 +20,12 @@ export default function TodayPlan({
       complete: 'The current CBT program is complete.',
     },
     {
-      label: 'Self-Love Book',
+      label: 'Self-love workbook',
       lesson: selfLoveLesson,
       icon: 'heart',
       detail: 'Continue the next reading',
       complete: 'The current Self-Love book is complete.',
+      onOpen: onOpenSelfLoveLesson,
     },
   ]
 
@@ -44,7 +46,7 @@ export default function TodayPlan({
       <section className="plan-card" aria-label="Continue your programs">
         <div className="plan-list">
           {continueCards.map((card) => card.lesson ? (
-              <button className="plan-item plan-item-action" key={card.label} onClick={() => onOpenLesson(card.lesson)}>
+              <button className="plan-item plan-item-action" key={card.label} onClick={() => (card.onOpen || onOpenCbtLesson)(card.lesson)}>
                 <span className="plan-icon"><Icon name={card.icon} size={19} /></span>
                 <span className="plan-item-copy"><strong>{card.label}</strong><span>{card.detail} · {card.lesson.title}</span></span>
                 <Icon name="arrow" size={17} />
