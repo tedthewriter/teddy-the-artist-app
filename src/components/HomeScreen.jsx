@@ -276,6 +276,12 @@ export default function HomeScreen({ userId, onSignOut }) {
     window.scrollTo({ top: 0, behavior: 'smooth' })
   }
 
+  function openCbtWorkbook(item = null) {
+    setInitialItem(item)
+    setView('cbt-workbook')
+    window.scrollTo({ top: 0, behavior: 'smooth' })
+  }
+
   function choosePath(pathway) {
     setNotice('')
     if (pathway.title === 'Continue') {
@@ -286,6 +292,11 @@ export default function HomeScreen({ userId, onSignOut }) {
 
     if (pathway.title === 'Skills') {
       openSkills()
+      return
+    }
+
+    if (pathway.title === '7 Week CBT workbook') {
+      openCbtWorkbook()
       return
     }
 
@@ -327,6 +338,30 @@ export default function HomeScreen({ userId, onSignOut }) {
         error={contentState.error}
         initialItem={initialItem}
         hiddenCategoryKeys={['self-love']}
+        hiddenSectionKeys={['cbt-program']}
+        onBack={() => { setView('home'); setInitialItem(null) }}
+        onToggleFavorite={toggleContentFavorite}
+        onToggleComplete={toggleContentComplete}
+        onSaveResponse={saveResponse}
+        onDeleteResponse={deleteResponse}
+      />
+    )
+  }
+
+  if (view === 'cbt-workbook') {
+    return (
+      <SkillsLibrary
+        items={skillItems}
+        favorites={favorites}
+        completedItems={completedItems}
+        responses={responses}
+        saboteurAssessmentResult={saboteurAssessmentResult}
+        loading={contentState.loading}
+        error={contentState.error}
+        initialItem={initialItem}
+        initialCategoryKey="cbt"
+        initialSectionKey="cbt-program"
+        sectionLabel="7 Week CBT workbook"
         onBack={() => { setView('home'); setInitialItem(null) }}
         onToggleFavorite={toggleContentFavorite}
         onToggleComplete={toggleContentComplete}
@@ -399,7 +434,7 @@ export default function HomeScreen({ userId, onSignOut }) {
         loading={contentState.loading}
         error={contentState.error}
         onBack={() => setView('home')}
-        onOpenCbtLesson={openSkills}
+        onOpenCbtLesson={openCbtWorkbook}
         onOpenSelfLoveLesson={openSelfLove}
       />
     )
