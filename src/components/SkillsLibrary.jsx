@@ -419,7 +419,19 @@ export default function SkillsLibrary({
         key: 'dbt', label: 'DBT', description: 'Build coping, regulation, and relationship skills', icon: 'toolbox', tone: 'blue', items: dbtItems,
         sections: [
           { key: 'dbt-distress-tolerance', label: 'Distress Tolerance', description: 'Get through intense moments without making them worse', icon: 'toolbox', tone: 'blue', family: 'Distress Tolerance' },
-          { key: 'dbt-mindfulness', label: 'Mindfulness', description: 'Return attention to the present with openness', icon: 'spark', tone: 'mint', family: 'Mindfulness' },
+          {
+            key: 'dbt-mindfulness', label: 'Mindfulness', description: 'Return attention to the present with openness', icon: 'spark', tone: 'mint', family: 'Mindfulness',
+            subsections: [
+              {
+                key: 'dbt-mindfulness-essentials', label: 'Mindfulness Essentials', description: 'Notice, return, and meet the moment with openness', icon: 'spark', tone: 'mint',
+                items: dbtItems.filter((item) => item.body?.skill_family === 'Mindfulness' && item.body?.mindfulness_group !== 'Vagus Nerve & Regulation'),
+              },
+              {
+                key: 'dbt-vagus-regulation', label: 'Vagus Nerve & Regulation', description: 'Gentle body-based practices to help you settle', icon: 'mindfulness', tone: 'blue',
+                items: dbtItems.filter((item) => item.body?.mindfulness_group === 'Vagus Nerve & Regulation'),
+              },
+            ],
+          },
           { key: 'dbt-emotion-regulation', label: 'Emotion Regulation', description: 'Understand emotions and respond more effectively', icon: 'heart', tone: 'rose', family: 'Emotion Regulation' },
           { key: 'dbt-interpersonal-effectiveness', label: 'Interpersonal Effectiveness', description: 'Ask, listen, set limits, and protect relationships', icon: 'people', tone: 'gold', family: 'Interpersonal Effectiveness' },
         ].map((section) => ({
