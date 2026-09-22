@@ -477,9 +477,23 @@ export default function HomeScreen({ userId, onSignOut }) {
         </div>
       </section>
 
-      <section className="pathway-section home-buttons" aria-label="Home options">
+      <section className="pathway-section home-buttons" aria-labelledby="to-do-heading">
+        <h2 id="to-do-heading">To do</h2>
         <div className="pathway-grid">
-          {pathways.map((pathway) => (
+          {pathways.filter((pathway) => pathway.section === 'todo').map((pathway) => (
+            <button className={`pathway-card ${pathway.tone}`} key={pathway.title} onClick={() => choosePath(pathway)}>
+              <span className="pathway-icon"><Icon name={pathway.icon} size={25} /></span>
+              <span className="pathway-title">{pathway.title}</span>
+              <span className="pathway-subtitle">{pathway.subtitle}</span>
+            </button>
+          ))}
+        </div>
+      </section>
+
+      <section className="pathway-section home-buttons resources-section" aria-labelledby="resources-heading">
+        <h2 id="resources-heading">Resources</h2>
+        <div className="pathway-grid">
+          {pathways.filter((pathway) => pathway.section === 'resources').map((pathway) => (
             <button className={`pathway-card ${pathway.tone}`} key={pathway.title} onClick={() => choosePath(pathway)}>
               <span className="pathway-icon"><Icon name={pathway.icon} size={25} /></span>
               <span className="pathway-title">{pathway.title}</span>
