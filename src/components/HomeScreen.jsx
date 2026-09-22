@@ -6,19 +6,7 @@ import AlignmentsLibrary from './AlignmentsLibrary'
 import GoalsVision from './GoalsVision'
 import TodayPlan from './TodayPlan'
 import { supabase } from '../lib/supabase'
-import { dailyPlan, pathways } from '../data/homeContent'
-
-function localDateKey(date = new Date()) {
-  const year = date.getFullYear()
-  const month = String(date.getMonth() + 1).padStart(2, '0')
-  const day = String(date.getDate()).padStart(2, '0')
-  return `${year}-${month}-${day}`
-}
-
-function dateNumber(dateKey) {
-  const [year, month, day] = dateKey.split('-').map(Number)
-  return Math.floor(Date.UTC(year, month - 1, day) / 86400000)
-}
+import { pathways } from '../data/homeContent'
 
 const lastHomeAffirmationKey = 'teddy-last-home-affirmation'
 
@@ -38,17 +26,6 @@ function contentFramework(item) {
   return null
 }
 
-function mergePlanWithDefaults(planItems) {
-  const savedItems = new Map(
-    (Array.isArray(planItems) ? planItems : []).map((item) => [item.label, item]),
-  )
-
-  return dailyPlan.map((defaultItem) => ({
-    ...defaultItem,
-    ...(savedItems.get(defaultItem.label) || {}),
-  }))
-}
-
 export default function HomeScreen({ userId, onSignOut }) {
   const [view, setView] = useState('home')
   const [initialItem, setInitialItem] = useState(null)
@@ -58,8 +35,6 @@ export default function HomeScreen({ userId, onSignOut }) {
   const [responses, setResponses] = useState(new Map())
   const [saboteurAssessmentResult, setSaboteurAssessmentResult] = useState(null)
   const [contentState, setContentState] = useState({ loading: Boolean(userId), error: '' })
-  const [todayPlan, setTodayPlan] = useState(null)
-  const [planState, setPlanState] = useState({ loading: Boolean(userId), error: '' })
   const [imageUrls, setImageUrls] = useState({})
   const [notice, setNotice] = useState('')
   const [dailyAffirmationId, setDailyAffirmationId] = useState(null)
@@ -135,10 +110,12 @@ export default function HomeScreen({ userId, onSignOut }) {
     () => content.filter((item) => item.content_type !== 'affirmation' && item.framework !== 'alignment'),
     [content],
   )
-  const weekOneItems = useMemo(
+  const cbtProgramItems = useMemo(
     () => content
-      .filter((item) => item.content_type === 'cbt_week_1')
-      .sort((a, b) => Number(a.body?.day_number || 0) - Number(b.body?.day_number || 0)),
+      .filter((item) => item.content_type?.startsWith('cbt_week_'))
+      .sort((a, b) => Number(a.body?.week_number || 0) - Number(b.body?.week_number || 0)
+        || Number(a.body?.day_number || 0) - Number(b.body?.day_number || 0)
+        || Number(a.sort_order || 0) - Number(b.sort_order || 0)),
     [content],
   )
   const dailyAffirmation = useMemo(
@@ -168,134 +145,21 @@ export default function HomeScreen({ userId, onSignOut }) {
     }
   }, [affirmationItems])
 
-  useEffect(() => {
-    let active = true
-
-    async function loadTodayPlan() {
-      if (!supabase || !userId || weekOneItems.length === 0) return
-      setPlanState({ loading: true, error: '' })
-      const planDate = localDateKey()
-
-      const { data: existing, error: existingError } = await supabase
-        .from('daily_plans')
-        .select('id, plan_date, plan_items, dismissed_at')
-        .eq('user_id', userId)
-        .eq('plan_date', planDate)
-        .maybeSingle()
-
-      if (!active) return
-      if (existingError) {
-        setPlanState({ loading: false, error: 'Today’s CBT lesson could not be opened.' })
-        return
-      }
-
-      if (existing) {
-        setTodayPlan(existing)
-        setPlanState({ loading: false, error: '' })
-        return
-      }
-
-      const { data: priorPlans, error: priorError } = await supabase
-        .from('daily_plans')
-        .select('plan_date, plan_items')
-        .eq('user_id', userId)
-        .lte('plan_date', planDate)
-        .order('plan_date', { ascending: true })
-
-      if (!active) return
-      if (priorError) {
-        setPlanState({ loading: false, error: 'Today’s CBT lesson could not be opened.' })
-        return
-      }
-
-      const weekOnePlans = (priorPlans || []).filter((plan) =>
-        Array.isArray(plan.plan_items)
-        && plan.plan_items.some((item) => item.cbt_week === 1),
-      )
-      const weekStart = weekOnePlans[0]?.plan_date || planDate
-      const cbtDay = Math.min(7, Math.max(1, dateNumber(planDate) - dateNumber(weekStart) + 1))
-      const lesson = weekOneItems.find((item) => Number(item.body?.day_number) === cbtDay) || weekOneItems[0]
-      const planItems = dailyPlan.map((item) => item.label === 'CBT'
-        ? { ...item, title: lesson.title, content_id: lesson.id, cbt_week: 1, cbt_day: cbtDay }
-        : item)
-
-      const { data: created, error: createError } = await supabase
-        .from('daily_plans')
-        .upsert({ user_id: userId, plan_date: planDate, plan_items: planItems }, { onConflict: 'user_id,plan_date' })
-        .select('id, plan_date, plan_items, dismissed_at')
-        .single()
-
-      if (!active) return
-      if (createError) {
-        setPlanState({ loading: false, error: 'Today’s CBT lesson could not be saved.' })
-        return
-      }
-
-      setTodayPlan(created)
-      setPlanState({ loading: false, error: '' })
-    }
-
-    loadTodayPlan()
-    return () => { active = false }
-  }, [userId, weekOneItems])
-
-  const nextLessons = useMemo(() => {
-    const nextFor = (framework) => {
-      const frameworkItems = content
-        .filter((item) => contentFramework(item) === framework)
-        .sort((a, b) => Number(a.sort_order || 0) - Number(b.sort_order || 0))
-      return {
-        hasContent: frameworkItems.length > 0,
-        lesson: frameworkItems.find((item) => !completedItems.has(item.id)) || null,
-      }
-    }
-
-    return {
-      'Positive Intelligence': nextFor('positive-intelligence'),
-    }
-  }, [content, completedItems])
-
-  const dailySelfLove = useMemo(() => {
+  const selfLoveBookItems = useMemo(() => {
     const selfLoveItems = content
       .filter((item) => contentFramework(item) === 'self-love')
       .sort((a, b) => Number(a.sort_order || 0) - Number(b.sort_order || 0))
-    if (selfLoveItems.length === 0) return null
-    return selfLoveItems[dateNumber(localDateKey()) % selfLoveItems.length]
+    return selfLoveItems
   }, [content])
 
-  const dailyDbtSkill = useMemo(() => {
-    const dbtItems = content
-      .filter((item) => contentFramework(item) === 'dbt')
-      .sort((a, b) => Number(a.sort_order || 0) - Number(b.sort_order || 0))
-    if (dbtItems.length === 0) return null
-    return dbtItems[dateNumber(localDateKey()) % dbtItems.length]
-  }, [content])
-
-  const planItemsForToday = mergePlanWithDefaults(todayPlan?.plan_items).map((item) => {
-    if (item.label === 'DBT') {
-      return dailyDbtSkill
-        ? { ...item, title: `Try a random skill: ${dailyDbtSkill.title}`, content_id: dailyDbtSkill.id }
-        : { ...item, title: 'DBT skills will appear here when they are added.', content_id: null }
-    }
-    if (item.label === 'Self-love') {
-      return dailySelfLove
-        ? { ...item, title: dailySelfLove.title, content_id: dailySelfLove.id }
-        : { ...item, title: 'Self-love materials will appear here when they are added.', content_id: null }
-    }
-    const recommendation = nextLessons[item.label]
-    if (!recommendation) return item
-    if (recommendation.lesson) {
-      return { ...item, title: recommendation.lesson.title, content_id: recommendation.lesson.id }
-    }
-    if (recommendation.hasContent) {
-      return { ...item, title: `All current ${item.label} materials are complete.`, content_id: null }
-    }
-    return { ...item, title: `${item.label} materials will appear here when they are added.`, content_id: null }
-  })
-  const dailyCbtPlanItem = planItemsForToday.find((item) => item.label === 'CBT')
-  const dailyCbtLesson = dailyCbtPlanItem?.content_id
-    ? weekOneItems.find((item) => item.id === dailyCbtPlanItem.content_id)
-    : null
+  const cbtContinueLesson = useMemo(
+    () => cbtProgramItems.find((item) => !completedItems.has(item.id)) || null,
+    [cbtProgramItems, completedItems],
+  )
+  const selfLoveContinueLesson = useMemo(
+    () => selfLoveBookItems.find((item) => !completedItems.has(item.id)) || null,
+    [selfLoveBookItems, completedItems],
+  )
 
   async function loadAffirmationImages() {
     if (!supabase || affirmationItems.length === 0) return
@@ -408,7 +272,7 @@ export default function HomeScreen({ userId, onSignOut }) {
 
   function choosePath(pathway) {
     setNotice('')
-    if (pathway.title === 'Today’s Plan') {
+    if (pathway.title === 'Continue') {
       setView('today-plan')
       window.scrollTo({ top: 0, behavior: 'smooth' })
       return
@@ -496,11 +360,10 @@ export default function HomeScreen({ userId, onSignOut }) {
   if (view === 'today-plan') {
     return (
       <TodayPlan
-        items={planItemsForToday}
-        skillItems={skillItems}
-        dailyCbtLesson={dailyCbtLesson}
-        loading={planState.loading}
-        error={planState.error}
+        cbtLesson={cbtContinueLesson}
+        selfLoveLesson={selfLoveContinueLesson}
+        loading={contentState.loading}
+        error={contentState.error}
         onBack={() => setView('home')}
         onOpenLesson={openSkills}
       />
