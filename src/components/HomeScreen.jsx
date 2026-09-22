@@ -486,7 +486,7 @@ export default function HomeScreen({ userId, onSignOut }) {
       <section className="pathway-section home-buttons" aria-label="Home options">
         <div className="pathway-grid">
           {pathways.map((pathway) => (
-            <button className={`pathway-card ${pathway.tone}`} key={pathway.title} onClick={() => choosePath(pathway)}>
+            <button className={`pathway-card ${pathway.tone} ${pathway.title === 'Continue' ? 'is-continue' : ''}`} key={pathway.title} onClick={() => choosePath(pathway)}>
               <span className="pathway-icon"><Icon name={pathway.icon} size={25} /></span>
               <span className="pathway-title">{pathway.title}</span>
               <span className="pathway-subtitle">{pathway.subtitle}</span>
