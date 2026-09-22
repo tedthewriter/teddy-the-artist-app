@@ -337,8 +337,7 @@ export default function HomeScreen({ userId, onSignOut }) {
         loading={contentState.loading}
         error={contentState.error}
         initialItem={initialItem}
-        hiddenCategoryKeys={['self-love']}
-        hiddenSectionKeys={['cbt-program']}
+        skillCollectionOnly
         onBack={() => { setView('home'); setInitialItem(null) }}
         onToggleFavorite={toggleContentFavorite}
         onToggleComplete={toggleContentComplete}
