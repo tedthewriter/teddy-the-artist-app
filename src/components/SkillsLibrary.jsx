@@ -66,9 +66,9 @@ const tenSkillCollection = [
     use: 'Use this during a physical anxiety spiral or intense self-judgment. Gentle sensory grounding can help your nervous system return toward safety.',
   },
   {
-    title: 'Make Starting Easier',
+    title: '5-4-3-2-1 Blast Off',
     group: 'CBT · Task Support',
-    use: 'Use this when perfectionism makes beginning feel impossible. Lower the entry barrier and choose one small, supported action forward.',
+    use: 'Use this when hesitation, overthinking, or perfectionism is keeping you from a safe first step. Count down, then move before your mind talks you out of beginning.',
   },
 ]
 
