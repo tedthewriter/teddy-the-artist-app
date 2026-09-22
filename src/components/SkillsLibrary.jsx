@@ -359,7 +359,6 @@ export default function SkillsLibrary({
   const [showSaboteurResults, setShowSaboteurResults] = useState(false)
   const categories = useMemo(() => {
     const cbtItems = items.filter((item) => frameworkKey(item) === 'cbt')
-    const positiveIntelligenceItems = items.filter((item) => frameworkKey(item) === 'positive-intelligence')
     const selfLoveItems = items.filter((item) => frameworkKey(item) === 'self-love')
     const dbtItems = items.filter((item) => frameworkKey(item) === 'dbt')
 
@@ -407,16 +406,6 @@ export default function SkillsLibrary({
               items: cbtItems.filter((item) => item.content_type === 'cbt_skill' && item.body?.skill_family === section.family),
             })),
           },
-        ],
-      },
-      {
-        key: 'positive-intelligence', label: 'Positive Intelligence', description: 'Notice Saboteurs and practice Sage responses', icon: 'compass', tone: 'gold', items: positiveIntelligenceItems,
-        sections: [
-          { key: 'pi-overview', label: 'Overview', description: 'Start with the big picture', icon: 'compass', tone: 'gold', items: positiveIntelligenceItems.filter((item) => item.content_type === 'overview') },
-          { key: 'pi-foundations', label: 'Foundations', description: 'Learn the core ideas', icon: 'thought', tone: 'sage', items: positiveIntelligenceItems.filter((item) => item.content_type === 'foundation') },
-          { key: 'pi-practice', label: 'Guided Practice', description: 'Try PQ reps and short activities', icon: 'spark', tone: 'mint', items: positiveIntelligenceItems.filter((item) => item.content_type === 'practice') },
-          { key: 'pi-saboteurs', label: 'Saboteurs', description: 'Recognize protective patterns', icon: 'people', tone: 'peach', items: positiveIntelligenceItems.filter((item) => item.content_type === 'saboteur') },
-          { key: 'pi-sage-powers', label: 'Sage Powers', description: 'Practice wiser responses', icon: 'star', tone: 'lilac', items: positiveIntelligenceItems.filter((item) => item.content_type === 'sage_power') },
         ],
       },
       {
