@@ -346,6 +346,9 @@ export default function SkillsLibrary({
   loading,
   error,
   initialItem,
+  initialCategoryKey = null,
+  hiddenCategoryKeys = [],
+  sectionLabel = 'Skills library',
   onBack,
   onToggleFavorite,
   onToggleComplete,
@@ -353,7 +356,7 @@ export default function SkillsLibrary({
   onDeleteResponse,
 }) {
   const [selected, setSelected] = useState(initialItem || null)
-  const [selectedCategoryKey, setSelectedCategoryKey] = useState(initialItem ? frameworkKey(initialItem) : null)
+  const [selectedCategoryKey, setSelectedCategoryKey] = useState(initialItem ? frameworkKey(initialItem) : initialCategoryKey)
   const [selectedSectionKey, setSelectedSectionKey] = useState(null)
   const [selectedSubsectionKey, setSelectedSubsectionKey] = useState(null)
   const [showSaboteurResults, setShowSaboteurResults] = useState(false)
@@ -409,7 +412,7 @@ export default function SkillsLibrary({
         ],
       },
       {
-        key: 'self-love', label: 'Self-Love', description: 'Practice kindness, care, and self-respect', icon: 'heart', tone: 'rose', items: selfLoveItems,
+        key: 'self-love', label: 'Self-love workbook', description: 'Practice kindness, care, and self-respect', icon: 'heart', tone: 'rose', items: selfLoveItems,
         sections: [{ key: 'self-love-foundations', label: 'Foundations', items: selfLoveItems }],
       },
       {
@@ -439,6 +442,7 @@ export default function SkillsLibrary({
     ]
   }, [items])
   const selectedCategory = categories.find((category) => category.key === selectedCategoryKey)
+  const visibleCategories = categories.filter((category) => !hiddenCategoryKeys.includes(category.key))
   const selectedSection = selectedCategory?.sections.find((section) => section.key === selectedSectionKey)
   const selectedSubsection = selectedSection?.subsections?.find((section) => section.key === selectedSubsectionKey)
 
@@ -476,6 +480,8 @@ export default function SkillsLibrary({
         setSelectedSubsectionKey(null)
       } else if (usesSectionNavigation && selectedSectionKey) {
         setSelectedSectionKey(null)
+      } else if (initialCategoryKey) {
+        onBack()
       } else {
         setSelectedCategoryKey(null)
       }
@@ -490,7 +496,7 @@ export default function SkillsLibrary({
         <div className={`category-heading-icon ${selectedCategory.tone}`} aria-hidden="true">
           <Icon name={selectedCategory.icon} size={27} />
         </div>
-        <p className="eyebrow">Skills library</p>
+        <p className="eyebrow">{sectionLabel}</p>
         <h1 className="library-title">{selectedSubsection?.label || selectedSection?.label || selectedCategory.label}</h1>
         <p className="library-intro">
           {selectedSubsection?.description || selectedSection?.description || `${selectedCategory.description}. Open whichever lesson feels useful today.`}
@@ -578,7 +584,7 @@ export default function SkillsLibrary({
       <header className="library-header">
         <button className="back-button" onClick={onBack}><Icon name="back" size={19} /> Home</button>
       </header>
-      <p className="eyebrow">Skills library</p>
+      <p className="eyebrow">{sectionLabel}</p>
       <h1 className="library-title">Choose something helpful.</h1>
       <p className="library-intro">Choose a structured program to continue or an as-needed library to use whenever it feels helpful.</p>
 
@@ -587,7 +593,7 @@ export default function SkillsLibrary({
 
       {!loading && !error && (
         <div className="skill-category-grid">
-          {categories.map((category) => (
+          {visibleCategories.map((category) => (
             <button
               className={`skill-category-card ${category.tone}`}
               key={category.key}
