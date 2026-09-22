@@ -76,7 +76,8 @@ button { color: inherit; }
 .text-button { display: block; margin: 11px auto 0; border: 0; background: none; color: var(--muted); font-size: .78rem; font-weight: 700; cursor: pointer; }
 .pathway-section { margin-top: 31px; }
 .pathway-section.home-buttons { margin-top: 20px; }
-.pathway-section.home-buttons .pathway-grid { margin-top: 0; }
+.pathway-section.home-buttons .pathway-grid { margin-top: 12px; }
+.pathway-section.home-buttons.resources-section { margin-top: 27px; }
 .pathway-section.home-buttons .pathway-card { min-height: 116px; padding: 14px; }
 .pathway-section.home-buttons .pathway-icon { width: 36px; height: 36px; margin-bottom: 9px; border-radius: 12px; }
 .pathway-section.home-buttons .pathway-title { font-size: .98rem; }
