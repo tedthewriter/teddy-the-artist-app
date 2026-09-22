@@ -19,6 +19,59 @@ const typeLabels = {
   self_love_assessment: 'Self-assessment',
 }
 
+const tenSkillCollection = [
+  {
+    title: 'Consult Wise Mind',
+    group: 'DBT · Mindfulness Essentials',
+    use: 'Use this when perfectionism has you caught between overthinking and a wave of anxiety. It helps you find a grounded next step that honors both feeling and reason.',
+  },
+  {
+    title: 'Practice Radical Acceptance',
+    group: 'DBT · Distress Tolerance',
+    use: 'Use this when a mistake, outcome, or difficult reality is making you spiral into self-blame. Acceptance makes room for the next helpful choice without pretending you like what happened.',
+  },
+  {
+    title: 'Separate Facts from Interpretations',
+    group: 'CBT · Foundations',
+    use: 'Use this when the story in your mind is getting harsher than the facts. Separate what actually happened from the anxious meaning your mind added.',
+  },
+  {
+    title: 'Examine the Evidence',
+    group: 'CBT · Thought Reframing',
+    use: 'Use this when a self-critical prediction feels unquestionably true. Slow down and look fairly at the evidence for it, against it, and missing from it.',
+  },
+  {
+    title: 'Put Catastrophe in Perspective',
+    group: 'CBT · Thought Reframing',
+    use: 'Use this when “what if” thinking is taking over. It helps distinguish the worst imaginable outcome from the most likely one and remembers your ability to cope.',
+  },
+  {
+    title: 'Use a Compassionate Perspective',
+    group: 'CBT · Thought Reframing',
+    use: 'Use this when your inner taskmaster is loud. Practice the fair, supportive response you would offer a friend in the same situation.',
+  },
+  {
+    title: 'Use Opposite Action',
+    group: 'DBT · Emotion Regulation',
+    use: 'Use this when anxiety or perfectionism urges you to avoid, repeatedly check, or hold back—and a safe, effective action would be the opposite.',
+  },
+  {
+    title: 'Practice Uncertainty Safely',
+    group: 'CBT · Facing Fears',
+    use: 'Use this when you feel driven to over-prepare, re-check, or seek reassurance. Practice a small, safe good-enough risk instead.',
+  },
+  {
+    title: 'Self-Soothe with the Senses',
+    group: 'DBT · Distress Tolerance',
+    use: 'Use this during a physical anxiety spiral or intense self-judgment. Gentle sensory grounding can help your nervous system return toward safety.',
+  },
+  {
+    title: 'Make Starting Easier',
+    group: 'CBT · Task Support',
+    use: 'Use this when perfectionism makes beginning feel impossible. Lower the entry barrier and choose one small, supported action forward.',
+  },
+]
+
 function contentKindLabel(item) {
   if (item.content_type === 'cbt_skill' && item.body?.skill_family) {
     return `${item.body.skill_family} · CBT skill`
@@ -108,6 +161,8 @@ function ContentDetail({
   onToggleComplete,
   onSaveResponse,
   onDeleteResponse,
+  instructionOnly = false,
+  collectionUse = '',
 }) {
   const body = item.body || {}
   const surveyItems = Array.isArray(body.response_items)
@@ -167,6 +222,12 @@ function ContentDetail({
         <h1>{item.title}</h1>
         <p className="detail-lead">{item.short_description}</p>
 
+        {collectionUse && (
+          <DetailSection title="Use this when">
+            <p>{collectionUse}</p>
+          </DetailSection>
+        )}
+
         {completionCopy && (
           <div className={`completion-panel ${completed ? 'is-complete' : ''}`}>
             <button className="completion-button" disabled={savingCompletion} onClick={handleCompletion}>
@@ -188,7 +249,7 @@ function ContentDetail({
           <p className="gentle-callout">{body.safety_note}</p>
         )}
 
-        {body.question && (
+        {body.question && !instructionOnly && (
           <>
             <blockquote className="sage-question">{body.question}</blockquote>
             <ResponseField
@@ -216,7 +277,7 @@ function ContentDetail({
           {body.practice_steps && (
             <ol>{body.practice_steps.map((step) => <li key={step}>{step}</li>)}</ol>
           )}
-          {body.practice_steps && (
+          {body.practice_steps && !instructionOnly && (
             <ResponseField
               {...responseProps('activity-notes', `Notes for ${body.activity_title || 'this practice'}`)}
               label="Your activity notes"
@@ -225,7 +286,7 @@ function ContentDetail({
           )}
         </DetailSection>
 
-        {surveyItems.length > 0 && (
+        {!instructionOnly && surveyItems.length > 0 && (
           <DetailSection title={body.survey?.title || 'Questions'}>
             {body.survey?.instructions && <p className="survey-instructions">{body.survey.instructions}</p>}
             <div className="response-group">
@@ -270,7 +331,7 @@ function ContentDetail({
           <p className="gentle-callout">{body.repeat_note}</p>
         )}
 
-        {item.reflection_prompt && (
+        {!instructionOnly && item.reflection_prompt && (
           <DetailSection title="Reflect">
             <p className="reflection-prompt">{item.reflection_prompt}</p>
             <ResponseField
@@ -280,7 +341,7 @@ function ContentDetail({
           </DetailSection>
         )}
 
-        {item.faith_reflection && (
+        {!instructionOnly && item.faith_reflection && (
           <DetailSection title="Faith reflection">
             <p>{item.faith_reflection}</p>
             <ResponseField
@@ -318,7 +379,7 @@ function LessonList({ items, favorites, completedItems, onSelect }) {
             <span className="content-card-title">{item.title}</span>
             <span className="content-card-description">{item.short_description}</span>
             <span className="content-card-meta">
-              {item.estimated_minutes ? `${item.estimated_minutes} min` : 'Open'}
+              {item.collectionGroup ? `${item.collectionGroup}${item.estimated_minutes ? ` · ${item.estimated_minutes} min` : ''}` : item.estimated_minutes ? `${item.estimated_minutes} min` : 'Open'}
               {favorites.has(item.id) && <> · Saved</>}
             </span>
           </span>
@@ -351,6 +412,7 @@ export default function SkillsLibrary({
   hiddenCategoryKeys = [],
   hiddenSectionKeys = [],
   sectionLabel = 'Skills library',
+  skillCollectionOnly = false,
   onBack,
   onToggleFavorite,
   onToggleComplete,
@@ -362,6 +424,12 @@ export default function SkillsLibrary({
   const [selectedSectionKey, setSelectedSectionKey] = useState(initialSectionKey)
   const [selectedSubsectionKey, setSelectedSubsectionKey] = useState(null)
   const [showSaboteurResults, setShowSaboteurResults] = useState(false)
+  const collectionItems = useMemo(() => tenSkillCollection
+    .map((entry) => {
+      const item = items.find((candidate) => candidate.title === entry.title)
+      return item ? { ...item, collectionGroup: entry.group, collectionUse: entry.use } : null
+    })
+    .filter(Boolean), [items])
   const categories = useMemo(() => {
     const cbtItems = items.filter((item) => frameworkKey(item) === 'cbt')
     const selfLoveItems = items.filter((item) => frameworkKey(item) === 'self-love')
@@ -470,7 +538,26 @@ export default function SkillsLibrary({
         onToggleComplete={onToggleComplete}
         onSaveResponse={onSaveResponse}
         onDeleteResponse={onDeleteResponse}
+        instructionOnly={skillCollectionOnly}
+        collectionUse={selected.collectionUse}
       />
+    )
+  }
+
+  if (skillCollectionOnly) {
+    return (
+      <main className="app-shell library-shell">
+        <header className="library-header">
+          <button className="back-button" onClick={onBack}><Icon name="back" size={19} /> Home</button>
+        </header>
+        <p className="eyebrow">Skills</p>
+        <h1 className="library-title">The 10-skill collection</h1>
+        <p className="library-intro">Ten practical tools for perfectionism, anxious overthinking, self-criticism, and getting unstuck. Choose the one that fits the moment.</p>
+
+        {loading && <div className="library-status">Opening the skills…</div>}
+        {error && <div className="library-status error" role="alert">{error}</div>}
+        {!loading && !error && <LessonList items={collectionItems} favorites={favorites} completedItems={completedItems} onSelect={setSelected} />}
+      </main>
     )
   }
 
