@@ -1,14 +1,32 @@
 import Icon from './Icon'
 
 export default function TodayPlan({
-  items,
-  skillItems,
-  dailyCbtLesson,
+  cbtLesson,
+  selfLoveLesson,
   loading,
   error,
   onBack,
   onOpenLesson,
 }) {
+  const continueCards = [
+    {
+      label: '7-Week CBT',
+      lesson: cbtLesson,
+      icon: 'thought',
+      detail: cbtLesson?.body?.week_number && cbtLesson?.body?.day_number
+        ? `Week ${cbtLesson.body.week_number} · Day ${cbtLesson.body.day_number}`
+        : 'Continue the program',
+      complete: 'The current CBT program is complete.',
+    },
+    {
+      label: 'Self-Love Book',
+      lesson: selfLoveLesson,
+      icon: 'heart',
+      detail: 'Continue the next reading',
+      complete: 'The current Self-Love book is complete.',
+    },
+  ]
+
   return (
     <main className="app-shell library-shell today-plan-page">
       <header className="library-header">
@@ -18,43 +36,30 @@ export default function TodayPlan({
       </header>
 
       <section>
-        <p className="eyebrow">A gentle suggestion</p>
-        <h1 className="library-title">Today’s Plan</h1>
-        <p className="library-intro">Choose what feels useful today. Program lessons advance with completion, while DBT offers an optional skill from the library.</p>
+        <p className="eyebrow">Pick up where you left off</p>
+        <h1 className="library-title">Continue</h1>
+        <p className="library-intro">These are the two books with a sequence. Everything else is available whenever it feels useful.</p>
       </section>
 
-      <section className="plan-card" aria-label="Today’s suggested activities">
+      <section className="plan-card" aria-label="Continue your programs">
         <div className="plan-list">
-          {items.map((item) => {
-            const linkedLesson = item.content_id
-              ? skillItems.find((lesson) => lesson.id === item.content_id)
-              : null
-            return linkedLesson ? (
-              <button className="plan-item plan-item-action" key={item.label} onClick={() => onOpenLesson(linkedLesson)}>
-                <span className="plan-icon"><Icon name={item.icon} size={19} /></span>
-                <span className="plan-item-copy"><strong>{item.label}</strong><span>{item.title}</span></span>
+          {continueCards.map((card) => card.lesson ? (
+              <button className="plan-item plan-item-action" key={card.label} onClick={() => onOpenLesson(card.lesson)}>
+                <span className="plan-icon"><Icon name={card.icon} size={19} /></span>
+                <span className="plan-item-copy"><strong>{card.label}</strong><span>{card.detail} · {card.lesson.title}</span></span>
                 <Icon name="arrow" size={17} />
               </button>
             ) : (
-              <div className="plan-item" key={item.label}>
-                <span className="plan-icon"><Icon name={item.icon} size={19} /></span>
-                <div><p>{item.label}</p><span>{item.title}</span></div>
+              <div className="plan-item" key={card.label}>
+                <span className="plan-icon"><Icon name={card.icon} size={19} /></span>
+                <div><p>{card.label}</p><span>{loading ? 'Finding your place…' : card.complete}</span></div>
               </div>
-            )
-          })}
+            ))}
         </div>
-
-        <button
-          className="primary-button"
-          disabled={!dailyCbtLesson || loading}
-          onClick={() => dailyCbtLesson && onOpenLesson(dailyCbtLesson)}
-        >
-          {loading ? 'Finding today’s lesson…' : 'Open today’s CBT lesson'} <Icon name="arrow" size={18} />
-        </button>
         {error && <p className="plan-error" role="alert">{error}</p>}
       </section>
 
-      <p className="support-note">This is a menu, not a checklist. Come back whenever another activity feels useful.</p>
+      <p className="support-note">Use Skills anytime for DBT, mindfulness, and other as-needed support.</p>
     </main>
   )
 }
