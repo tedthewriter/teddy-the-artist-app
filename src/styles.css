@@ -91,9 +91,9 @@ button { color: inherit; }
 .pathway-card.sage { background: #dbead4; }
 .pathway-card.peach { background: #f3ddc9; }
 .pathway-card.gold { background: #f2e5ae; }
-.pathway-card.lilac { background: #e1daf0; }
+.pathway-card.lilac { background: #d6e3f7; }
 .pathway-card.blue { background: #d4e7f3; }
-.pathway-card.plum { background: #dfd5eb; }
+.pathway-card.plum { background: #d9c4e5; }
 .pathway-card.rose { background: #f4d7dc; }
 .pathway-card.mint { background: #cfeae6; }
 .support-note { margin: 27px 15px 0; text-align: center; color: var(--muted); font-size: .76rem; line-height: 1.45; }
