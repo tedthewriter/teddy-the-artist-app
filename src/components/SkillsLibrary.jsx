@@ -347,7 +347,9 @@ export default function SkillsLibrary({
   error,
   initialItem,
   initialCategoryKey = null,
+  initialSectionKey = null,
   hiddenCategoryKeys = [],
+  hiddenSectionKeys = [],
   sectionLabel = 'Skills library',
   onBack,
   onToggleFavorite,
@@ -357,7 +359,7 @@ export default function SkillsLibrary({
 }) {
   const [selected, setSelected] = useState(initialItem || null)
   const [selectedCategoryKey, setSelectedCategoryKey] = useState(initialItem ? frameworkKey(initialItem) : initialCategoryKey)
-  const [selectedSectionKey, setSelectedSectionKey] = useState(null)
+  const [selectedSectionKey, setSelectedSectionKey] = useState(initialSectionKey)
   const [selectedSubsectionKey, setSelectedSubsectionKey] = useState(null)
   const [showSaboteurResults, setShowSaboteurResults] = useState(false)
   const categories = useMemo(() => {
@@ -370,7 +372,7 @@ export default function SkillsLibrary({
         key: 'cbt', label: 'CBT', description: 'Work with thoughts, feelings, and actions', icon: 'thought', tone: 'sage', items: cbtItems,
         sections: [
           {
-            key: 'cbt-program', label: '7-Week Program', description: 'Follow the workbook from Week 1 through Week 7', icon: 'journal', tone: 'sage',
+            key: 'cbt-program', label: '7 Week CBT workbook', description: 'Follow the workbook from Week 1 through Week 7', icon: 'journal', tone: 'sage',
             items: cbtItems.filter((item) => item.content_type?.startsWith('cbt_week_')),
             subsections: Array.from({ length: 7 }, (_, index) => {
               const week = index + 1
@@ -444,6 +446,7 @@ export default function SkillsLibrary({
   const selectedCategory = categories.find((category) => category.key === selectedCategoryKey)
   const visibleCategories = categories.filter((category) => !hiddenCategoryKeys.includes(category.key))
   const selectedSection = selectedCategory?.sections.find((section) => section.key === selectedSectionKey)
+  const visibleSections = selectedCategory?.sections.filter((section) => !hiddenSectionKeys.includes(section.key)) || []
   const selectedSubsection = selectedSection?.subsections?.find((section) => section.key === selectedSubsectionKey)
 
   if (showSaboteurResults) {
@@ -478,6 +481,8 @@ export default function SkillsLibrary({
     const leaveCategory = () => {
       if (selectedSubsectionKey) {
         setSelectedSubsectionKey(null)
+      } else if (initialSectionKey) {
+        onBack()
       } else if (usesSectionNavigation && selectedSectionKey) {
         setSelectedSectionKey(null)
       } else if (initialCategoryKey) {
@@ -524,7 +529,7 @@ export default function SkillsLibrary({
                 <Icon name="arrow" size={17} />
               </button>
             )}
-            {selectedCategory.sections.map((section) => (
+            {visibleSections.map((section) => (
               <button className={`pi-section-button ${section.tone}`} key={section.key} onClick={() => setSelectedSectionKey(section.key)}>
                 <span className="pi-section-icon" aria-hidden="true"><Icon name={section.icon} size={24} /></span>
                 <span className="pi-section-copy">
