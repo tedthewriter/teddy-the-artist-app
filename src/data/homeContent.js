@@ -8,7 +8,6 @@ export const pathways = [
   { title: '7 Week CBT workbook', subtitle: 'Follow the program at your own pace', icon: 'thought', tone: 'sage' },
   { title: 'Self-love workbook', subtitle: 'Read and reflect at your own pace', icon: 'heart', tone: 'rose' },
   { title: 'Skills', subtitle: 'Find something helpful', icon: 'toolbox', tone: 'sage' },
-  { title: 'Art Studio', subtitle: 'Independent Studio Program', icon: 'palette', tone: 'plum' },
   { title: 'Alignments', subtitle: 'Settle and realign', icon: 'compass', tone: 'gold' },
   { title: 'Mindfulness', subtitle: 'Breathe, ground, and settle', icon: 'mindfulness', tone: 'lilac' },
   { title: 'Goals & Vision', subtitle: 'See the vision board and goals', icon: 'vision', tone: 'peach' },
