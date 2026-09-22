@@ -5,6 +5,7 @@ export const affirmation = {
 
 export const pathways = [
   { title: 'Continue', subtitle: 'Pick up where you left off', icon: 'arrow', tone: 'sage' },
+  { title: '7 Week CBT workbook', subtitle: 'Follow the program at your own pace', icon: 'thought', tone: 'sage' },
   { title: 'Self-love workbook', subtitle: 'Read and reflect at your own pace', icon: 'heart', tone: 'rose' },
   { title: 'Skills', subtitle: 'Find something helpful', icon: 'toolbox', tone: 'sage' },
   { title: 'Art Studio', subtitle: 'Independent Studio Program', icon: 'palette', tone: 'plum' },
