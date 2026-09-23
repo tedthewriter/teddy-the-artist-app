@@ -169,6 +169,7 @@ function ContentDetail({
     ? body.response_items
     : Array.isArray(body.survey?.questions) ? body.survey.questions : []
   const completionCopy = completionPresentation(item)
+  const showCollectionResponses = instructionOnly && Boolean(collectionUse)
   const responseRecord = (responseKey) => responses.get(`content:${item.id}:${responseKey}`)
   const scoredSurveyItems = body.survey?.show_total
     ? surveyItems.map((surveyItem, index) => ({
@@ -286,8 +287,8 @@ function ContentDetail({
           )}
         </DetailSection>
 
-        {!instructionOnly && surveyItems.length > 0 && (
-          <DetailSection title={body.survey?.title || 'Questions'}>
+        {(!instructionOnly || showCollectionResponses) && surveyItems.length > 0 && (
+          <DetailSection title={body.survey?.title || 'Write it down'}>
             {body.survey?.instructions && <p className="survey-instructions">{body.survey.instructions}</p>}
             <div className="response-group">
               {surveyItems.map((surveyItem, index) => {
@@ -331,7 +332,7 @@ function ContentDetail({
           <p className="gentle-callout">{body.repeat_note}</p>
         )}
 
-        {!instructionOnly && item.reflection_prompt && (
+        {(!instructionOnly || showCollectionResponses) && item.reflection_prompt && (
           <DetailSection title="Reflect">
             <p className="reflection-prompt">{item.reflection_prompt}</p>
             <ResponseField
