@@ -105,7 +105,7 @@ button { color: inherit; }
 .art-library-heading .library-intro { margin-bottom: 0; }
 .go-and-do-heading .art-library-icon { background: #f1d3ce; color: #8a504b; }
 .go-and-do-shell .art-idea { min-height: 66px; }
-.go-and-do-icon { flex: 0 0 auto; width: 36px; height: 38px; object-fit: contain; }
+.go-and-do-icon { flex: 0 0 auto; width: 42px; height: 44px; object-fit: contain; }
 .art-ideas { overflow: hidden; border: 1px solid var(--line); border-radius: 22px; background: var(--card); box-shadow: 0 8px 22px rgba(44,62,55,.045); }
 .art-idea { display: flex; align-items: center; gap: 13px; min-height: 61px; padding: 13px 16px; border-bottom: 1px solid var(--line); color: var(--ink); font-size: .89rem; font-weight: 650; line-height: 1.35; }
 .art-idea:last-child { border-bottom: 0; }
