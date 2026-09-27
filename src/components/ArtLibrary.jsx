@@ -40,7 +40,11 @@ export default function ArtLibrary({ onBack }) {
           const item = typeof idea === 'string' ? { title: idea } : idea
           return (
           <article className="art-idea" key={item.title}>
-            <span className="art-idea-circle" aria-hidden="true" />
+            {item.link ? (
+              <span className="art-idea-circle" aria-hidden="true" />
+            ) : (
+              <span className="art-idea-palette" aria-hidden="true"><Icon name="palette" size={19} /></span>
+            )}
             {item.link ? (
               <a
                 href={item.link}
