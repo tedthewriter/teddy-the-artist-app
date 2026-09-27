@@ -31,15 +31,7 @@ export default function GoAndDo({ onBack }) {
       <section className="art-ideas" aria-label="Go and Do ideas">
         {ideas.map((idea) => (
           <article className="art-idea" key={idea}>
-            <span className="jenni-thoughtful" aria-hidden="true">
-              <span className="jenni-thoughtful-hair" />
-              <span className="jenni-thoughtful-face">
-                <span className="jenni-thoughtful-eye" />
-                <span className="jenni-thoughtful-smile" />
-                <span className="jenni-thoughtful-hand" />
-              </span>
-              <span className="jenni-thoughtful-sparkle">✦</span>
-            </span>
+            <img className="go-and-do-icon" src="/images/jenni-thinking-icon.png" alt="" />
             <span>{idea}</span>
           </article>
         ))}
