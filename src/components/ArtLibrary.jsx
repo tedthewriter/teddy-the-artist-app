@@ -1,7 +1,7 @@
 import Icon from './Icon'
 
 const artIdeas = [
-  'Casey Childs weekly demo email',
+  { title: 'Casey Childs weekly demo email', link: 'https://caseychilds.com/studio-video-library' },
   'Casey Childs studio session',
   'Paint Coach lessons',
   'Draw from Disney character book',
@@ -36,12 +36,19 @@ export default function ArtLibrary({ onBack }) {
       </div>
 
       <section className="art-ideas" aria-label="Art ideas for today">
-        {artIdeas.map((idea) => (
-          <article className="art-idea" key={idea}>
+        {artIdeas.map((idea) => {
+          const item = typeof idea === 'string' ? { title: idea } : idea
+          return (
+          <article className="art-idea" key={item.title}>
             <span className="art-idea-circle" aria-hidden="true" />
-            <span>{idea}</span>
+            {item.link ? (
+              <a href={item.link} target="_blank" rel="noreferrer">{item.title}</a>
+            ) : (
+              <span>{item.title}</span>
+            )}
           </article>
-        ))}
+          )
+        })}
       </section>
     </main>
   )
