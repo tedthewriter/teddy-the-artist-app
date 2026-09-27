@@ -106,6 +106,7 @@ button { color: inherit; }
 .art-idea { display: flex; align-items: center; gap: 13px; min-height: 61px; padding: 13px 16px; border-bottom: 1px solid var(--line); color: var(--ink); font-size: .89rem; font-weight: 650; line-height: 1.35; }
 .art-idea:last-child { border-bottom: 0; }
 .art-idea-circle { flex: 0 0 auto; width: 22px; height: 22px; border: 2px solid #b5b7b4; border-radius: 50%; }
+.art-idea a { color: #315e62; font: inherit; text-decoration: underline; text-decoration-color: rgba(49,94,98,.32); text-underline-offset: 3px; }
 .support-note { margin: 27px 15px 0; text-align: center; color: var(--muted); font-size: .76rem; line-height: 1.45; }
 .home-notice { margin: 20px 0 0; padding: 13px 15px; border-radius: 15px; background: #e8eee9; color: var(--sage-dark); font-size: .8rem; line-height: 1.45; }
 
