@@ -16,8 +16,8 @@ const artIdeas = [
   'Stained glass',
   'Calligraphy',
   'Draw something — Disney character',
-  'Watercolor lessons on Teachable',
-  'Calligraphy lesson on Teachable',
+  { title: 'Watercolor lessons on Teachable', link: 'teachable://' },
+  { title: 'Calligraphy lesson on Teachable', link: 'teachable://' },
   { title: 'Painting lessons on Sentient', link: 'https://sentientacademy.com/start' },
 ]
 
@@ -42,7 +42,11 @@ export default function ArtLibrary({ onBack }) {
           <article className="art-idea" key={item.title}>
             <span className="art-idea-circle" aria-hidden="true" />
             {item.link ? (
-              <a href={item.link} target="_blank" rel="noreferrer">{item.title}</a>
+              <a
+                href={item.link}
+                target={item.link.startsWith('http') ? '_blank' : undefined}
+                rel={item.link.startsWith('http') ? 'noreferrer' : undefined}
+              >{item.title}</a>
             ) : (
               <span>{item.title}</span>
             )}
