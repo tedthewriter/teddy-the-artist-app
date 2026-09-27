@@ -2,7 +2,7 @@ import Icon from './Icon'
 
 const artIdeas = [
   { title: 'Casey Childs weekly demo email', link: 'https://caseychilds.com/studio-video-library' },
-  'Casey Childs studio session',
+  { title: 'Casey Childs studio session', link: 'https://caseychilds.com/model-session' },
   'Paint Coach lessons',
   'Draw from Disney character book',
   'Draw from Pixar character book',
