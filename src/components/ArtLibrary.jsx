@@ -18,7 +18,7 @@ const artIdeas = [
   'Draw something — Disney character',
   'Watercolor lessons on Teachable',
   'Calligraphy lesson on Teachable',
-  'Painting lessons on Sentient',
+  { title: 'Painting lessons on Sentient', link: 'https://sentientacademy.com/start' },
 ]
 
 export default function ArtLibrary({ onBack }) {
