@@ -5,6 +5,7 @@ import AffirmationsLibrary from './AffirmationsLibrary'
 import AlignmentsLibrary from './AlignmentsLibrary'
 import GoalsVision from './GoalsVision'
 import MindfulnessLibrary from './MindfulnessLibrary'
+import ArtLibrary from './ArtLibrary'
 import TodayPlan from './TodayPlan'
 import { supabase } from '../lib/supabase'
 import { pathways } from '../data/homeContent'
@@ -306,6 +307,12 @@ export default function HomeScreen({ userId, onSignOut }) {
       return
     }
 
+    if (pathway.title === 'Art') {
+      setView('art')
+      window.scrollTo({ top: 0, behavior: 'smooth' })
+      return
+    }
+
     if (pathway.title === 'Affirmations') {
       setView('affirmations')
       window.scrollTo({ top: 0, behavior: 'smooth' })
@@ -395,6 +402,10 @@ export default function HomeScreen({ userId, onSignOut }) {
 
   if (view === 'mindfulness') {
     return <MindfulnessLibrary onBack={() => setView('home')} />
+  }
+
+  if (view === 'art') {
+    return <ArtLibrary onBack={() => setView('home')} />
   }
 
   if (view === 'affirmations') {
