@@ -40,7 +40,7 @@ export default function GoalsVision({ onBack }) {
             </div>
             <h2>{goal.title}</h2>
             <p>{goal.detail}</p>
-            {goal.link && <a href={goal.link} target="_blank" rel="noreferrer">{goal.linkLabel} <Icon name="external" size={14} /></a>}
+            {goal.link && <a href={goal.link} target="_blank" rel="noreferrer"><Icon name="external" size={14} /> {goal.linkLabel}</a>}
           </article>
         ))}
       </section>
