@@ -98,10 +98,12 @@ button { color: inherit; }
 .pathway-card.rose { background: #f4d7dc; }
 .pathway-card.mint { background: #cfeae6; }
 .pathway-card.olive { background: #dce8c1; }
+.pathway-card.coral { background: #f1c8c0; }
 
 .art-library-heading { margin: 8px 0 23px; }
 .art-library-icon { display: grid; place-items: center; width: 50px; height: 50px; margin-bottom: 18px; border-radius: 17px; background: #f3ddc9; color: #735441; }
 .art-library-heading .library-intro { margin-bottom: 0; }
+.go-and-do-heading .art-library-icon { background: #f1d3ce; color: #8a504b; }
 .art-ideas { overflow: hidden; border: 1px solid var(--line); border-radius: 22px; background: var(--card); box-shadow: 0 8px 22px rgba(44,62,55,.045); }
 .art-idea { display: flex; align-items: center; gap: 13px; min-height: 61px; padding: 13px 16px; border-bottom: 1px solid var(--line); color: var(--ink); font-size: .89rem; font-weight: 650; line-height: 1.35; }
 .art-idea:last-child { border-bottom: 0; }
