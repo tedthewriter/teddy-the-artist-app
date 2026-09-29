@@ -100,6 +100,7 @@ button { color: inherit; }
 .pathway-card.olive { background: #dce8c1; }
 .pathway-card.coral { background: #f1c8c0; }
 .pathway-card.sky { background: #c9e1ed; }
+.pathway-card.lavender { background: #e1d6ef; }
 
 .art-library-heading { margin: 8px 0 23px; }
 .art-library-icon { display: grid; place-items: center; width: 50px; height: 50px; margin-bottom: 18px; border-radius: 17px; background: #f3ddc9; color: #735441; }
@@ -119,6 +120,12 @@ button { color: inherit; }
 .schedule-group h2 { margin: 0 0 11px; font-family: Georgia, "Times New Roman", serif; font-size: 1.3rem; font-weight: 600; }
 .schedule-group-intro { margin: -3px 0 12px; color: var(--muted); font-size: .76rem; line-height: 1.42; }
 .schedule-item-icon { display: grid; flex: 0 0 auto; place-items: center; width: 29px; height: 29px; border-radius: 10px; background: #e5f0f5; color: #3d6780; }
+.goals-heading .art-library-icon { background: #e9e0f3; color: #72568a; }
+.goals-list { display: grid; gap: 11px; }
+.goal-card { display: grid; grid-template-columns: 47px 1fr; gap: 13px; align-items: center; padding: 17px 16px; border: 1px solid var(--line); border-radius: 20px; background: var(--card); box-shadow: 0 7px 20px rgba(44,62,55,.04); }
+.goal-card-icon { display: grid; place-items: center; width: 47px; height: 47px; border-radius: 15px; background: #e9e0f3; color: #72568a; }
+.goal-card h2 { margin: 0; font-family: Georgia, "Times New Roman", serif; font-size: 1.08rem; font-weight: 600; }
+.goal-card p { margin: 4px 0 0; color: var(--muted); font-size: .76rem; line-height: 1.42; }
 .support-note { margin: 27px 15px 0; text-align: center; color: var(--muted); font-size: .76rem; line-height: 1.45; }
 .home-notice { margin: 20px 0 0; padding: 13px 15px; border-radius: 15px; background: #e8eee9; color: var(--sage-dark); font-size: .8rem; line-height: 1.45; }
 
