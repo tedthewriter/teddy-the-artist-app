@@ -99,6 +99,7 @@ button { color: inherit; }
 .pathway-card.mint { background: #cfeae6; }
 .pathway-card.olive { background: #dce8c1; }
 .pathway-card.coral { background: #f1c8c0; }
+.pathway-card.sky { background: #c9e1ed; }
 
 .art-library-heading { margin: 8px 0 23px; }
 .art-library-icon { display: grid; place-items: center; width: 50px; height: 50px; margin-bottom: 18px; border-radius: 17px; background: #f3ddc9; color: #735441; }
@@ -113,6 +114,11 @@ button { color: inherit; }
 .art-idea-link { display: grid; flex: 0 0 auto; place-items: center; width: 22px; height: 22px; color: #315e62; }
 .art-idea-palette { display: grid; flex: 0 0 auto; place-items: center; width: 22px; height: 22px; color: #8b6545; }
 .art-idea a { color: #315e62; font: inherit; text-decoration: underline; text-decoration-color: rgba(49,94,98,.32); text-underline-offset: 3px; }
+.schedule-heading .art-library-icon { background: #d6e7f0; color: #3d6780; }
+.schedule-group + .schedule-group { margin-top: 25px; }
+.schedule-group h2 { margin: 0 0 11px; font-family: Georgia, "Times New Roman", serif; font-size: 1.3rem; font-weight: 600; }
+.schedule-group-intro { margin: -3px 0 12px; color: var(--muted); font-size: .76rem; line-height: 1.42; }
+.schedule-item-icon { display: grid; flex: 0 0 auto; place-items: center; width: 29px; height: 29px; border-radius: 10px; background: #e5f0f5; color: #3d6780; }
 .support-note { margin: 27px 15px 0; text-align: center; color: var(--muted); font-size: .76rem; line-height: 1.45; }
 .home-notice { margin: 20px 0 0; padding: 13px 15px; border-radius: 15px; background: #e8eee9; color: var(--sage-dark); font-size: .8rem; line-height: 1.45; }
 
