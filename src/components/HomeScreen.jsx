@@ -510,7 +510,7 @@ export default function HomeScreen({ userId, onSignOut }) {
         </div>
       </section>
 
-      <section className="pathway-section home-buttons" aria-labelledby="to-do-heading">
+      <section className="pathway-section home-buttons todo-section" aria-labelledby="to-do-heading">
         <h2 id="to-do-heading">To do</h2>
         <div className="pathway-grid">
           {pathways.filter((pathway) => pathway.section === 'todo').map((pathway) => (
