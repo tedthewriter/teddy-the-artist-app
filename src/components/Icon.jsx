@@ -15,6 +15,7 @@ const icons = {
   dice: '<rect x="4" y="4" width="16" height="16" rx="4"/><circle cx="9" cy="9" r=".8"/><circle cx="15" cy="9" r=".8"/><circle cx="12" cy="12" r=".8"/><circle cx="9" cy="15" r=".8"/><circle cx="15" cy="15" r=".8"/>',
   play: '<path d="m9 7 8 5-8 5V7Z"/>',
   headphones: '<path d="M4 14v-2a8 8 0 0 1 16 0v2"/><path d="M4 14h3v6H5a1 1 0 0 1-1-1v-5ZM20 14h-3v6h2a1 1 0 0 0 1-1v-5Z"/>',
+  calendar: '<rect x="4" y="5" width="16" height="15" rx="2"/><path d="M8 3v4M16 3v4M4 10h16"/><path d="M8 14h.01M12 14h.01M16 14h.01"/>',
   bookmark: '<path d="M6 4h12v17l-6-4-6 4V4Z"/>',
   check: '<path d="m5 12.5 4.2 4.2L19 7"/>',
   arrow: '<path d="M5 12h14M14 7l5 5-5 5"/>',
