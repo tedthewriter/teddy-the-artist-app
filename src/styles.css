@@ -108,6 +108,11 @@ button { color: inherit; }
 .go-and-do-heading .art-library-icon { background: #f1d3ce; color: #8a504b; }
 .go-and-do-shell .art-idea { min-height: 66px; }
 .go-and-do-icon { flex: 0 0 auto; width: 42px; height: 44px; object-fit: contain; }
+.go-and-do-section + .go-and-do-section { margin-top: 28px; }
+.go-and-do-section h2 { margin: 0; font-family: Georgia, "Times New Roman", serif; font-size: 1.36rem; font-weight: 600; }
+.go-and-do-section > p { margin: 6px 0 13px; color: var(--muted); font-size: .76rem; line-height: 1.42; }
+.go-and-do-section h3 { margin: 18px 0 9px; color: var(--sage-dark); font-size: .7rem; font-weight: 850; letter-spacing: .07em; text-transform: uppercase; }
+.go-and-do-section h3:first-of-type { margin-top: 0; }
 .art-ideas { overflow: hidden; border: 1px solid var(--line); border-radius: 22px; background: var(--card); box-shadow: 0 8px 22px rgba(44,62,55,.045); }
 .art-idea { display: flex; align-items: center; gap: 13px; min-height: 61px; padding: 13px 16px; border-bottom: 1px solid var(--line); color: var(--ink); font-size: .89rem; font-weight: 650; line-height: 1.35; }
 .art-idea:last-child { border-bottom: 0; }
