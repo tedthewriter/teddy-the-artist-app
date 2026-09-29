@@ -8,7 +8,6 @@ import Goals from './Goals'
 import MindfulnessLibrary from './MindfulnessLibrary'
 import ArtLibrary from './ArtLibrary'
 import GoAndDo from './GoAndDo'
-import MySchedule from './MySchedule'
 import TodayPlan from './TodayPlan'
 import { supabase } from '../lib/supabase'
 import { pathways } from '../data/homeContent'
@@ -310,12 +309,6 @@ export default function HomeScreen({ userId, onSignOut }) {
       return
     }
 
-    if (pathway.title === 'My Schedule') {
-      setView('my-schedule')
-      window.scrollTo({ top: 0, behavior: 'smooth' })
-      return
-    }
-
     if (pathway.title === 'Art') {
       setView('art')
       window.scrollTo({ top: 0, behavior: 'smooth' })
@@ -423,10 +416,6 @@ export default function HomeScreen({ userId, onSignOut }) {
 
   if (view === 'mindfulness') {
     return <MindfulnessLibrary onBack={() => setView('home')} />
-  }
-
-  if (view === 'my-schedule') {
-    return <MySchedule onBack={() => setView('home')} />
   }
 
   if (view === 'art') {
