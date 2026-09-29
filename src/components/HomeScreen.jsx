@@ -4,6 +4,7 @@ import SkillsLibrary from './SkillsLibrary'
 import AffirmationsLibrary from './AffirmationsLibrary'
 import AlignmentsLibrary from './AlignmentsLibrary'
 import GoalsVision from './GoalsVision'
+import Goals from './Goals'
 import MindfulnessLibrary from './MindfulnessLibrary'
 import ArtLibrary from './ArtLibrary'
 import GoAndDo from './GoAndDo'
@@ -339,8 +340,14 @@ export default function HomeScreen({ userId, onSignOut }) {
       return
     }
 
-    if (pathway.title === 'Goals & Vision') {
-      setView('goals-vision')
+    if (pathway.title === 'Vision Board') {
+      setView('vision-board')
+      window.scrollTo({ top: 0, behavior: 'smooth' })
+      return
+    }
+
+    if (pathway.title === 'Goals') {
+      setView('goals')
       window.scrollTo({ top: 0, behavior: 'smooth' })
       return
     }
@@ -459,8 +466,12 @@ export default function HomeScreen({ userId, onSignOut }) {
     )
   }
 
-  if (view === 'goals-vision') {
+  if (view === 'vision-board') {
     return <GoalsVision onBack={() => setView('home')} />
+  }
+
+  if (view === 'goals') {
+    return <Goals onBack={() => setView('home')} />
   }
 
   if (view === 'today-plan') {
