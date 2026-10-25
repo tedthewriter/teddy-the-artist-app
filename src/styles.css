@@ -15,6 +15,21 @@
 }
 
 * { box-sizing: border-box; }
+.workbook-reminder-link { margin: 0 0 12px; }
+.reminder-copy { color: var(--muted); font-size: .85rem; line-height: 1.6; }
+.reminder-help { padding: 14px; background: #edf1e9; border: 1px solid var(--line); border-radius: 14px; font-size: .86rem; line-height: 1.6; }
+.reminder-card { min-width: 0; margin: 24px 0; padding: 18px; border: 1px solid var(--line); border-radius: 20px; }
+.reminder-cbt { background: #e4eddf; }
+.reminder-love { background: #f3e0e4; }
+.reminder-card legend { font-family: Georgia, serif; font-size: 1.16rem; padding: 0 6px; }
+.reminder-toggle { display: flex; align-items: center; gap: 10px; min-height: 44px; font-weight: 650; }
+.reminder-toggle input { width: 22px; height: 22px; accent-color: var(--sage-dark); }
+.reminder-time { display: flex; align-items: center; flex-wrap: wrap; gap: 12px; margin: 10px 0; font-size: .9rem; }
+.reminder-time input { max-width: 100%; padding: 10px; border: 1px solid var(--line); border-radius: 10px; background: var(--card); color: var(--ink); min-height: 44px; }
+.reminder-days { display: flex; flex-wrap: wrap; gap: 5px; margin: 15px 0; }
+.reminder-days button { flex: 1 0 34px; min-width: 34px; min-height: 44px; padding: 4px; border: 1px solid var(--line); border-radius: 10px; background: var(--card); font-size: .72rem; }
+.reminder-days button[aria-pressed="true"] { background: var(--sage-dark); color: white; }
+.reminder-stop { margin-top: 12px; }
 body { margin: 0; min-width: 320px; min-height: 100vh; background: var(--cream); }
 button, input, textarea { font: inherit; }
 button { color: inherit; }

@@ -9,6 +9,8 @@ import MindfulnessLibrary from './MindfulnessLibrary'
 import ArtLibrary from './ArtLibrary'
 import GoAndDo from './GoAndDo'
 import TodayPlan from './TodayPlan'
+import WorkbookReminders from './WorkbookReminders'
+import { stopDeviceReminders } from '../lib/reminders'
 import { supabase } from '../lib/supabase'
 import { pathways } from '../data/homeContent'
 
@@ -164,6 +166,37 @@ export default function HomeScreen({ userId, onSignOut }) {
     () => selfLoveBookItems.find((item) => !completedItems.has(item.id)) || null,
     [selfLoveBookItems, completedItems],
   )
+
+  useEffect(() => {
+    function openReminder(kind) {
+      if (kind !== 'cbt' && kind !== 'self-love') return
+      setInitialItem(kind === 'cbt' ? cbtContinueLesson : selfLoveContinueLesson)
+      setView(kind === 'cbt' ? 'cbt-workbook' : 'self-love')
+      const url = new URL(window.location.href)
+      url.searchParams.delete('workbook')
+      window.history.replaceState(null, '', url)
+      window.scrollTo({ top: 0 })
+    }
+    // Keep the URL intent through login and wait until progress is loaded.
+    if (!contentState.loading && !contentState.error && content.length) openReminder(new URLSearchParams(window.location.search).get('workbook'))
+    function receive(event) {
+      if (event.data?.type === 'OPEN_WORKBOOK') {
+        if (contentState.loading || !content.length) window.location.search = `?workbook=${event.data.kind === 'self-love' ? 'self-love' : 'cbt'}`
+        else openReminder(event.data.kind)
+      }
+    }
+    navigator.serviceWorker?.addEventListener('message', receive)
+    return () => navigator.serviceWorker?.removeEventListener('message', receive)
+  }, [contentState.loading, contentState.error, content.length, cbtContinueLesson, selfLoveContinueLesson])
+
+  async function signOutSafely() {
+    try {
+      await stopDeviceReminders()
+      await onSignOut?.()
+    } catch {
+      setNotice('Could not turn off this device’s reminders. Check your connection and try signing out again, or disable notifications in your phone settings.')
+    }
+  }
 
   async function loadAffirmationImages() {
     if (!supabase || affirmationItems.length === 0) return
@@ -348,6 +381,8 @@ export default function HomeScreen({ userId, onSignOut }) {
     setNotice(`${pathway.title} is ready for its content in the next build.`)
   }
 
+  if (view === 'reminders') return <WorkbookReminders onBack={() => setView('home')} />
+
   if (view === 'skills') {
     return (
       <SkillsLibrary
@@ -372,6 +407,7 @@ export default function HomeScreen({ userId, onSignOut }) {
   if (view === 'cbt-workbook') {
     return (
       <SkillsLibrary
+        key={`cbt-${initialItem?.id || 'library'}`}
         items={skillItems}
         favorites={favorites}
         completedItems={completedItems}
@@ -395,6 +431,7 @@ export default function HomeScreen({ userId, onSignOut }) {
   if (view === 'self-love') {
     return (
       <SkillsLibrary
+        key={`self-love-${initialItem?.id || 'library'}`}
         items={skillItems}
         favorites={favorites}
         completedItems={completedItems}
@@ -488,7 +525,7 @@ export default function HomeScreen({ userId, onSignOut }) {
           className="avatar-button"
           aria-label={onSignOut ? 'Sign out' : 'Preview profile'}
           title={onSignOut ? 'Sign out' : 'Profile'}
-          onClick={onSignOut}
+          onClick={onSignOut ? signOutSafely : undefined}
         ><Icon name="user" size={21} /></button>
       </header>
 
@@ -512,6 +549,7 @@ export default function HomeScreen({ userId, onSignOut }) {
 
       <section className="pathway-section home-buttons todo-section" aria-labelledby="to-do-heading">
         <h2 id="to-do-heading">To do</h2>
+        <button className="soft-button workbook-reminder-link" onClick={() => setView('reminders')}>Workbook reminders</button>
         <div className="pathway-grid">
           {pathways.filter((pathway) => pathway.section === 'todo').map((pathway) => (
             <button className={`pathway-card ${pathway.tone}`} key={pathway.title} onClick={() => choosePath(pathway)}>
