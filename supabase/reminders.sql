@@ -1,4 +1,7 @@
 -- Workbook reminder infrastructure. No reminders are enabled by this script.
+-- The authenticated Edge endpoint must check membership. Existing membership
+-- grants are intentionally restricted, so grant only the column it needs.
+grant select (user_id) on public.app_members to service_role;
 create extension if not exists pg_cron;
 create extension if not exists pg_net with schema extensions;
 
