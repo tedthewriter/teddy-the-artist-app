@@ -456,7 +456,7 @@ export default function HomeScreen({ userId, onSignOut }) {
   }
 
   if (view === 'mindfulness') {
-    return <MindfulnessLibrary onBack={() => setView('home')} />
+    return <MindfulnessLibrary userId={userId} onBack={() => setView('home')} />
   }
 
   if (view === 'art') {

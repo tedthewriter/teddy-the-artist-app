@@ -15,6 +15,30 @@
 }
 
 * { box-sizing: border-box; }
+.content-card.bingo-entry { width: 100%; margin: 8px 0 22px; background: #e4eddf; }
+.bingo-entry-icon { display: grid; place-items: center; flex: 0 0 36px; min-height: 42px; color: var(--sage-dark); }
+.bingo-progress { padding: 15px; border: 1px solid var(--line); background: #e8eee4; border-radius: 18px; margin: 20px 0 12px; }
+.bingo-progress strong, .bingo-progress span { display: block; }
+.bingo-progress strong { font-family: Georgia, serif; font-size: 1.05rem; }
+.bingo-progress span { margin-top: 5px; font-size: .78rem; line-height: 1.5; }
+.bingo-board { width: 100%; table-layout: fixed; border-spacing: 4px; margin: 0 -2px; }
+.bingo-caption { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
+.bingo-board th { padding: 8px 0; color: var(--sage-dark); font-family: Georgia, serif; font-size: 1.5rem; font-weight: 600; }
+.bingo-board td { padding: 0; height: 91px; vertical-align: top; }
+.bingo-square { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; width: 100%; height: 100%; min-height: 91px; padding: 6px 3px; border: 1px solid #cdd8ce; border-radius: 12px; background: #fffdf9; color: var(--ink); font-size: clamp(.64rem, 2.6vw, .77rem); font-weight: 650; line-height: 1.25; text-align: center; overflow-wrap: anywhere; cursor: pointer; }
+.bingo-check { height: 17px; font-size: 1rem; font-weight: 800; }
+.bingo-square.is-marked { background: #43645c; color: #fffdf9; border-color: #43645c; }
+.bingo-square.in-bingo { box-shadow: inset 0 0 0 2px #edca79; }
+.bingo-square.bingo-free { background: #f2e5ae; border-color: #dfcd8c; cursor: default; }
+.bingo-free small { font-size: .6rem; font-weight: 500; }
+.bingo-square:focus-visible { outline: 3px solid #ad7132; outline-offset: 2px; }
+.bingo-gentle { color: var(--muted); font-size: .8rem; line-height: 1.6; }
+.bingo-dialog { width: min(90vw, 420px); max-height: 85dvh; overflow-y: auto; padding: 24px; color: var(--ink); border: 1px solid var(--line); border-radius: 24px; background: var(--card); box-shadow: var(--shadow); }
+.bingo-dialog::backdrop { background: rgba(22, 42, 36, .45); }
+.bingo-dialog .eyebrow { margin-top: 22px; }
+.bingo-dialog h2 { margin: 8px 0; font-family: Georgia, serif; font-size: 1.6rem; font-weight: 600; }
+.bingo-dialog p { line-height: 1.65; }
+.bingo-dialog .primary-button, .bingo-dialog .soft-button { display: block; width: 100%; margin-top: 12px; }
 .workbook-reminder-link { margin: 0 0 12px; }
 .reminder-copy { color: var(--muted); font-size: .85rem; line-height: 1.6; }
 .reminder-help { padding: 14px; background: #edf1e9; border: 1px solid var(--line); border-radius: 14px; font-size: .86rem; line-height: 1.6; }

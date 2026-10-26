@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import Icon from './Icon'
+import MindfulnessBingo from './MindfulnessBingo'
 
 const practices = [
   {
@@ -184,8 +185,11 @@ function PracticeDetail({ practice, onBack }) {
   )
 }
 
-export default function MindfulnessLibrary({ onBack }) {
+export default function MindfulnessLibrary({ onBack, userId }) {
   const [selected, setSelected] = useState(null)
+  const [bingo, setBingo] = useState(false)
+
+  if (bingo) return <MindfulnessBingo key={userId || 'preview'} userId={userId} onBack={() => setBingo(false)} />
 
   if (selected) return <PracticeDetail practice={selected} onBack={() => setSelected(null)} />
 
@@ -196,7 +200,13 @@ export default function MindfulnessLibrary({ onBack }) {
       </header>
       <p className="eyebrow">Mindfulness</p>
       <h1 className="library-title">Settle your system.</h1>
-      <p className="library-intro">Ten short practices for grounding, attention, and gentle nervous-system regulation. Choose the one that fits this moment.</p>
+      <p className="library-intro">Try mindfulness bingo, or choose from ten short practices for grounding, attention, and gentle nervous-system regulation.</p>
+
+      <button className="content-card bingo-entry" onClick={() => setBingo(true)}>
+        <span className="bingo-entry-icon" aria-hidden="true"><Icon name="mindfulness" size={25} /></span>
+        <span className="content-card-copy"><span className="content-card-title">Mindfulness bingo</span><span className="content-card-description">A playful card of small mindful moments. Explore, try a practice, and mark your square.</span><span className="content-card-meta">24 tiny practices · Your own pace</span></span>
+        <Icon name="arrow" size={18} />
+      </button>
 
       <div className="content-list" aria-label="Mindfulness practices">
         {practices.map((practice) => (
