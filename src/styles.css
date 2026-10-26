@@ -38,6 +38,11 @@
 .bingo-dialog .eyebrow { margin-top: 22px; }
 .bingo-dialog h2 { margin: 8px 0; font-family: Georgia, serif; font-size: 1.6rem; font-weight: 600; }
 .bingo-dialog p { line-height: 1.65; }
+.bingo-practice-guide { margin: 18px 0; border-top: 1px solid var(--line); padding-top: 14px; }
+.bingo-practice-guide summary { cursor: pointer; font-weight: 700; line-height: 1.5; }
+.bingo-practice-guide h3 { font-size: .86rem; margin: 18px 0 6px; }
+.bingo-practice-guide ol { padding-left: 22px; }
+.bingo-practice-guide li { margin-bottom: 10px; line-height: 1.6; }
 .bingo-dialog .primary-button, .bingo-dialog .soft-button { display: block; width: 100%; margin-top: 12px; }
 .workbook-reminder-link { margin: 0 0 12px; }
 .reminder-copy { color: var(--muted); font-size: .85rem; line-height: 1.6; }

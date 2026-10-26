@@ -1,6 +1,33 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
 import { bingoPractices, bingoLines, freshBingo, restoreBingo, freeSquare } from '../src/data/mindfulnessBingo.js'
+import { mindfulnessPractices } from '../src/data/mindfulnessPractices.js'
+
+test('all ten existing Mindfulness practices have a full-practice bingo square', () => {
+  assert.equal(mindfulnessPractices.length,10)
+  const featured=bingoPractices.filter(square=>square.fullPractice)
+  assert.equal(featured.length,10)
+  assert.deepEqual(featured.map(square=>square.source.title).sort(),mindfulnessPractices.map(practice=>practice.title).sort())
+})
+test('every square uses the exact shared instructions, duration and safety notes', () => {
+  for(const square of bingoPractices) {
+    assert.ok(mindfulnessPractices.includes(square.source),square.id)
+    assert.ok(square.source.steps.length > 0)
+    assert.ok(square.source.when && square.source.minutes)
+  }
+  for(const name of ['EFT Tapping','Barefoot Grounding','Box Breathing','Cold Water Reset','Low Humming']) {
+    assert.ok(bingoPractices.find(square=>square.source.title===name && square.fullPractice).source.safety)
+  }
+})
+test('upgrades existing cards without transferring marks to a different activity', () => {
+  const card=freshBingo()
+  card.version=1
+  card.marked=['feet','breaths','stretch','sky','feeling','return','texture','leaves']
+  const restored=restoreBingo(JSON.stringify(card))
+  assert.equal(restored.version,2)
+  assert.deepEqual(restored.order,card.order)
+  assert.deepEqual(restored.marked,['feet','texture','leaves'])
+})
 
 test('a fresh card has 24 distinct practices and a free center', () => {
   const card = freshBingo()

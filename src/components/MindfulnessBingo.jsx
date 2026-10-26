@@ -16,7 +16,16 @@ function PracticePrompt({ practice, marked, onToggle, onClose }) {
     <button className="back-button" onClick={onClose} autoFocus>Close</button>
     <p className="eyebrow">A small mindful moment</p>
     <h2 id="bingo-prompt-title">{practice.title}</h2>
+    <p className="bingo-gentle">From {practice.source.title} · {practice.source.minutes}</p>
     <p>{practice.cue}</p>
+    {practice.source.safety && <p className="gentle-callout">{practice.source.safety}</p>}
+    <details className="bingo-practice-guide" open={practice.fullPractice || undefined}>
+      <summary>Instructions from Mindfulness</summary>
+      <h3>Use this when</h3>
+      <p>{practice.source.when}</p>
+      <h3>Try it now</h3>
+      <ol>{practice.source.steps.map(step => <li key={step}>{step}</li>)}</ol>
+    </details>
     <p className="bingo-gentle">A few moments are enough. You don’t have to feel calmer for your practice to count.</p>
     <button className="primary-button" onClick={onToggle}>{marked ? 'Unmark this square' : 'I tried this'}</button>
     <button className="soft-button" onClick={onClose}>{marked ? 'Keep marked' : 'Maybe another time'}</button>
@@ -50,10 +59,10 @@ export default function MindfulnessBingo({ userId, onBack }) {
     <header className="library-header"><button className="back-button" onClick={onBack}><Icon name="back" size={19} /> Mindfulness</button></header>
     <p className="eyebrow">Notice · pause · return</p>
     <h1 className="library-title">Mindfulness bingo</h1>
-    <p className="library-intro">Tap a square for a tiny practice, then mark it when you’ve tried it. Five across, down, or diagonally makes a bingo. Follow your curiosity—there’s no deadline.</p>
+    <p className="library-intro">Your ten Mindfulness practices, plus smaller ways to try them. Tap a square for its instructions, then mark it when you’ve tried it. Five across, down, or diagonally makes a bingo. There’s no deadline.</p>
     <div className="bingo-progress" role="status" aria-live="polite" aria-atomic="true">
       <strong>{card.marked.length === 24 ? 'A full card of mindful moments.' : lines.length ? `Bingo! ${lines.length === 1 ? 'One completed line.' : `${lines.length} completed lines.`}` : 'One small moment at a time.'}</strong>
-      <span>{card.marked.length} of 24 practices tried{lines.length ? ' · Keep exploring or start fresh whenever you like.' : ''}</span>
+      <span>{card.marked.length} of 24 squares tried{lines.length ? ' · Keep exploring or start fresh whenever you like.' : ''}</span>
     </div>
     <table className="bingo-board">
       <caption className="bingo-caption">Your mindfulness bingo card. The center is a free space.</caption>
