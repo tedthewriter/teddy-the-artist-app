@@ -96,6 +96,6 @@ export default function WorkbookReminders({ onBack }) {
       {connected && <button type="button" className="soft-button reminder-stop" disabled={busy} onClick={disable}>Turn off both on this device</button>}
     </form>
     {message && <p role={failed ? 'alert' : 'status'} className="reminder-help">{message}</p>}
-    <p className="reminder-copy">Notifications say “Your workbook is ready” without naming CBT or showing private reflections. Tapping one opens the next unfinished activity. Internet is needed; Focus and phone settings can delay or silence alerts. Settings apply to this device only.</p>
+    <p className="reminder-copy">Each notification names the workbook and your next unfinished activity. These titles can appear on your lock screen; your written reflections never appear. Tap to open the named activity. Internet is needed; Focus and phone settings can delay or silence alerts. Settings apply to this device only.</p>
   </main>
 }

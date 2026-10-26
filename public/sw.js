@@ -5,17 +5,20 @@ self.addEventListener('push', event => {
   let data = {}
   try { data = event.data?.json() || {} } catch { /* Always show a visible notification. */ }
   const kind = data.kind === 'self-love' ? 'self-love' : 'cbt'
-  event.waitUntil(self.registration.showNotification(data.title || 'A moment for you', {
-    body: data.body || 'Your workbook is ready whenever you are.',
+  event.waitUntil(self.registration.showNotification(data.title || (kind === 'cbt' ? '7 Week CBT workbook' : 'Self-love workbook'), {
+    body: data.body || 'Open your workbook and continue your next activity.',
     icon: 'images/app-icon-192.png',
     tag: `workbook-${kind}`,
-    data: { kind },
+    data: { kind, contentId: data.contentId },
   }))
 })
 self.addEventListener('notificationclick', event => {
   event.notification.close()
   const kind = event.notification.data?.kind === 'self-love' ? 'self-love' : 'cbt'
-  const target = new URL(`./?workbook=${kind}`, self.registration.scope).href
+  const url = new URL(`./?workbook=${kind}`, self.registration.scope)
+  const contentId = event.notification.data?.contentId
+  if (typeof contentId === 'string' && /^[0-9a-f-]{36}$/i.test(contentId)) url.searchParams.set('activity', contentId)
+  const target = url.href
   event.waitUntil((async () => {
     const windows = await self.clients.matchAll({ type: 'window', includeUncontrolled: true })
     for (const client of windows) {

@@ -2,6 +2,9 @@
 -- The authenticated Edge endpoint must check membership. Existing membership
 -- grants are intentionally restricted, so grant only the column it needs.
 grant select (user_id) on public.app_members to service_role;
+-- Specific reminder text uses approved lesson titles and completion IDs only.
+grant select (id, title, content_type, framework, sort_order, approved, active) on public.content_items to service_role;
+grant select (user_id, content_id) on public.user_content_completions to service_role;
 create extension if not exists pg_cron;
 create extension if not exists pg_net with schema extensions;
 

@@ -1,6 +1,6 @@
 import { createClient } from 'npm:@supabase/supabase-js@2.116.0'
 import webpush from 'npm:web-push@3.6.7'
-import { dueReminders, validateSchedules, validEndpoint } from './schedule.js'
+import { dueReminders, validateSchedules, validEndpoint, workbookMessage } from './schedule.js'
 
 const origin = 'https://tedthewriter.github.io'
 const cors = { 'Access-Control-Allow-Origin': origin, 'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type', 'Access-Control-Allow-Methods': 'POST, OPTIONS', 'Vary': 'Origin' }
@@ -10,11 +10,14 @@ function checked<T>(r: { data: T; error: unknown }): T { if (r.error) throw new 
 
 async function push(device: any, kind: string, config: any, test = false) {
   if (!validEndpoint(device.endpoint)) throw new Error('Invalid endpoint')
-  const details = webpush.generateRequestDetails(device.subscription, JSON.stringify({
-    title: 'A moment for you',
-    body: test ? 'Your workbook reminders are ready. Tap to open your workbook.' : 'A few gentle minutes? Your workbook is ready whenever you are.',
-    kind,
-  }), { TTL: 300, urgency: 'normal', topic: kind === 'cbt' ? 'workbook-cbt' : 'workbook-self-love',
+  // Only approved lesson metadata and completion IDs—not reflections or responses.
+  const [library, progress] = await Promise.all([
+    db.from('content_items').select('id,title,content_type,framework,sort_order').eq('approved', true).eq('active', true)
+      .or(kind === 'cbt' ? 'content_type.like.cbt_week_%' : 'framework.eq.self_love,content_type.like.self_love%'),
+    db.from('user_content_completions').select('content_id').eq('user_id', device.user_id),
+  ])
+  const message = workbookMessage(kind, checked(library), checked(progress).map((row: any) => row.content_id), test)
+  const details = webpush.generateRequestDetails(device.subscription, JSON.stringify(message), { TTL: 300, urgency: 'normal', topic: kind === 'cbt' ? 'workbook-cbt' : 'workbook-self-love',
     vapidDetails: { subject: 'https://tedthewriter.github.io/teddy-the-artist-app/', publicKey: config.public_key, privateKey: config.private_key } })
   // Fetch instead of Node HTTP: supported by the Edge runtime. Never follow redirects.
   const response = await fetch(details.endpoint, { method: 'POST', headers: details.headers, body: new Uint8Array(details.body), redirect: 'error', signal: AbortSignal.timeout(10000) })

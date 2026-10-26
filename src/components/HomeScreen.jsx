@@ -170,10 +170,14 @@ export default function HomeScreen({ userId, onSignOut }) {
   useEffect(() => {
     function openReminder(kind) {
       if (kind !== 'cbt' && kind !== 'self-love') return
-      setInitialItem(kind === 'cbt' ? cbtContinueLesson : selfLoveContinueLesson)
+      const activityId = new URLSearchParams(window.location.search).get('activity')
+      const workbook = kind === 'cbt' ? cbtProgramItems : selfLoveBookItems
+      const requested = workbook.find(item => item.id === activityId)
+      setInitialItem(requested || (kind === 'cbt' ? cbtContinueLesson : selfLoveContinueLesson))
       setView(kind === 'cbt' ? 'cbt-workbook' : 'self-love')
       const url = new URL(window.location.href)
       url.searchParams.delete('workbook')
+      url.searchParams.delete('activity')
       window.history.replaceState(null, '', url)
       window.scrollTo({ top: 0 })
     }
@@ -187,7 +191,7 @@ export default function HomeScreen({ userId, onSignOut }) {
     }
     navigator.serviceWorker?.addEventListener('message', receive)
     return () => navigator.serviceWorker?.removeEventListener('message', receive)
-  }, [contentState.loading, contentState.error, content.length, cbtContinueLesson, selfLoveContinueLesson])
+  }, [contentState.loading, contentState.error, content.length, cbtContinueLesson, selfLoveContinueLesson, cbtProgramItems, selfLoveBookItems])
 
   async function signOutSafely() {
     try {

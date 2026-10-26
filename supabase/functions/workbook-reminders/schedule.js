@@ -1,5 +1,26 @@
 export const kinds = ['cbt', 'self-love']
 
+export function workbookItems(items, kind) {
+  return items.filter(item => kind === 'cbt'
+    ? item.content_type?.startsWith('cbt_week_')
+    : item.framework === 'self_love' || item.content_type?.startsWith('self_love'))
+    .sort((a,b) => (kind === 'cbt' ? Number(a.content_type.slice(9)) - Number(b.content_type.slice(9)) : 0)
+      || Number(a.sort_order || 0) - Number(b.sort_order || 0) || a.id.localeCompare(b.id))
+}
+
+export function workbookMessage(kind, items, completedIds, test = false) {
+  const completed = new Set(completedIds)
+  const ordered = workbookItems(items, kind)
+  const next = ordered.find(item => !completed.has(item.id))
+  const name = kind === 'cbt' ? '7 Week CBT workbook' : 'Self-love workbook'
+  const prefix = next && kind === 'cbt' ? `Week ${Number(next.content_type.slice(9))} · ` : ''
+  const title = `${test ? 'Test: ' : ''}${name}`
+  if (next) return { title, body: `Continue ${prefix}${next.title}. Tap to open this activity.`, kind, contentId: next.id }
+  return { title, body: ordered.length
+    ? `You’ve completed this workbook. Revisit an activity you found helpful and try it again today.`
+    : `Open your ${name} and choose an activity to work on today.`, kind }
+}
+
 export function validateSchedules(schedules, timezone) {
   new Intl.DateTimeFormat('en-US', { timeZone: timezone }).format()
   if (typeof timezone !== 'string' || timezone.length > 100) throw new Error('Choose a valid time zone.')
