@@ -1,5 +1,8 @@
 import Icon from './Icon'
 
+// Gospel Library's officially documented app-opening URL scheme.
+const gospelLibraryUrl = 'gospellibrary://'
+
 const ideas = [
   'Go for a walk and try to get 5,000 steps',
   'Go to the temple this week',
@@ -38,7 +41,13 @@ export default function GoAndDo({ onBack, onOpenArt, onOpenBingo }) {
         <p>Gentle anchors to return to during the day and week.</p>
         <h3>Daily</h3>
         <div className="art-ideas">
-          {schedule.daily.map((item) => item === 'Make art' || item === 'Play bingo' ? (
+          {schedule.daily.map((item) => item === 'Read scriptures' ? (
+            <a className="art-idea schedule-art-link" key={item} href={gospelLibraryUrl} title="Open Gospel Library">
+              <span className="schedule-item-icon" aria-hidden="true"><Icon name="journal" size={19} /></span>
+              <span>{item}</span>
+              <span className="schedule-art-arrow" aria-hidden="true"><Icon name="arrow" size={18} /></span>
+            </a>
+          ) : item === 'Make art' || item === 'Play bingo' ? (
             <button type="button" className="art-idea schedule-art-link" key={item} onClick={item === 'Make art' ? onOpenArt : onOpenBingo}>
               <span className={item === 'Make art' ? 'art-idea-palette' : 'schedule-item-icon'} aria-hidden="true"><Icon name={item === 'Make art' ? 'palette' : 'mindfulness'} size={19} /></span>
               <span>{item}</span>
@@ -66,13 +75,19 @@ export default function GoAndDo({ onBack, onOpenArt, onOpenBingo }) {
         <h2 id="options-heading">Options</h2>
         <p>Choose one good thing that feels helpful today.</p>
         <div className="art-ideas" aria-label="Go and Do options">
-        {ideas.map((idea) => (
-          <article className="art-idea" key={idea}>
+        {ideas.map((idea) => {
+          const isScripture = idea === 'Read scriptures'
+          const Row = isScripture ? 'a' : 'article'
+          return (
+          <Row className={`art-idea${isScripture ? ' schedule-art-link' : ''}`} key={idea} href={isScripture ? gospelLibraryUrl : undefined} title={isScripture ? 'Open Gospel Library' : undefined}>
             <img className="go-and-do-icon" src={`${import.meta.env.BASE_URL}images/jenni-thinking-portrait-v2.png`} alt="" />
             <span>{idea}</span>
-          </article>
-        ))}
+            {isScripture && <span className="schedule-art-arrow" aria-hidden="true"><Icon name="arrow" size={18} /></span>}
+          </Row>
+          )
+        })}
         </div>
+        <p className="support-note">“Read scriptures” opens Gospel Library. The Gospel Library app needs to be installed on this phone.</p>
       </section>
     </main>
   )
