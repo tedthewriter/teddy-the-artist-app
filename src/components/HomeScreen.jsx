@@ -6,6 +6,7 @@ import AlignmentsLibrary from './AlignmentsLibrary'
 import GoalsVision from './GoalsVision'
 import Goals from './Goals'
 import MindfulnessLibrary from './MindfulnessLibrary'
+import MindfulnessBingo from './MindfulnessBingo'
 import ArtLibrary from './ArtLibrary'
 import GoAndDo from './GoAndDo'
 import TodayPlan from './TodayPlan'
@@ -459,12 +460,20 @@ export default function HomeScreen({ userId, onSignOut }) {
     return <MindfulnessLibrary userId={userId} onBack={() => setView('home')} />
   }
 
+  if (view === 'mindfulness-bingo') {
+    return <MindfulnessBingo key={userId || 'preview'} userId={userId} onBack={() => setView('mindfulness')} />
+  }
+
   if (view === 'art') {
     return <ArtLibrary onBack={() => setView('home')} />
   }
 
   if (view === 'go-and-do') {
-    return <GoAndDo onBack={() => setView('home')} onOpenArt={() => { setView('art'); window.scrollTo({ top: 0, behavior: 'smooth' }) }} />
+    return <GoAndDo
+      onBack={() => setView('home')}
+      onOpenArt={() => { setView('art'); window.scrollTo({ top: 0, behavior: 'smooth' }) }}
+      onOpenBingo={() => { setView('mindfulness-bingo'); window.scrollTo({ top: 0, behavior: 'smooth' }) }}
+    />
   }
 
   if (view === 'affirmations') {

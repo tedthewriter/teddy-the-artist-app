@@ -15,11 +15,11 @@ const ideas = [
 ]
 
 const schedule = {
-  daily: ['Read scriptures', 'Make art', 'Move'],
+  daily: ['Read scriptures', 'Make art', 'Move', 'Play bingo'],
   weekly: ['Go to the temple', 'Do family history work'],
 }
 
-export default function GoAndDo({ onBack, onOpenArt }) {
+export default function GoAndDo({ onBack, onOpenArt, onOpenBingo }) {
   return (
     <main className="app-shell library-shell go-and-do-shell">
       <header className="library-header">
@@ -38,9 +38,9 @@ export default function GoAndDo({ onBack, onOpenArt }) {
         <p>Gentle anchors to return to during the day and week.</p>
         <h3>Daily</h3>
         <div className="art-ideas">
-          {schedule.daily.map((item) => item === 'Make art' ? (
-            <button type="button" className="art-idea schedule-art-link" key={item} onClick={onOpenArt}>
-              <span className="art-idea-palette" aria-hidden="true"><Icon name="palette" size={19} /></span>
+          {schedule.daily.map((item) => item === 'Make art' || item === 'Play bingo' ? (
+            <button type="button" className="art-idea schedule-art-link" key={item} onClick={item === 'Make art' ? onOpenArt : onOpenBingo}>
+              <span className={item === 'Make art' ? 'art-idea-palette' : 'schedule-item-icon'} aria-hidden="true"><Icon name={item === 'Make art' ? 'palette' : 'mindfulness'} size={19} /></span>
               <span>{item}</span>
               <span className="schedule-art-arrow" aria-hidden="true"><Icon name="arrow" size={18} /></span>
             </button>
