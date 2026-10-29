@@ -464,7 +464,7 @@ export default function HomeScreen({ userId, onSignOut }) {
   }
 
   if (view === 'go-and-do') {
-    return <GoAndDo onBack={() => setView('home')} />
+    return <GoAndDo onBack={() => setView('home')} onOpenArt={() => { setView('art'); window.scrollTo({ top: 0, behavior: 'smooth' }) }} />
   }
 
   if (view === 'affirmations') {

@@ -19,7 +19,7 @@ const schedule = {
   weekly: ['Go to the temple', 'Do family history work'],
 }
 
-export default function GoAndDo({ onBack }) {
+export default function GoAndDo({ onBack, onOpenArt }) {
   return (
     <main className="app-shell library-shell go-and-do-shell">
       <header className="library-header">
@@ -38,7 +38,13 @@ export default function GoAndDo({ onBack }) {
         <p>Gentle anchors to return to during the day and week.</p>
         <h3>Daily</h3>
         <div className="art-ideas">
-          {schedule.daily.map((item) => (
+          {schedule.daily.map((item) => item === 'Make art' ? (
+            <button type="button" className="art-idea schedule-art-link" key={item} onClick={onOpenArt}>
+              <span className="art-idea-palette" aria-hidden="true"><Icon name="palette" size={19} /></span>
+              <span>{item}</span>
+              <span className="schedule-art-arrow" aria-hidden="true"><Icon name="arrow" size={18} /></span>
+            </button>
+          ) : (
             <article className="art-idea" key={item}>
               <span className="schedule-item-icon" aria-hidden="true"><Icon name="check" size={16} /></span>
               <span>{item}</span>
