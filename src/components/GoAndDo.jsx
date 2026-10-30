@@ -2,6 +2,8 @@ import Icon from './Icon'
 
 // Gospel Library's officially documented app-opening URL scheme.
 const gospelLibraryUrl = 'gospellibrary://'
+// FamilySearch's iOS app-site association includes the exact /tree path.
+const familyTreeUrl = 'https://www.familysearch.org/tree'
 
 const ideas = [
   'Go for a walk and try to get 5,000 steps',
@@ -62,13 +64,20 @@ export default function GoAndDo({ onBack, onOpenArt, onOpenBingo }) {
         </div>
         <h3>Weekly</h3>
         <div className="art-ideas">
-          {schedule.weekly.map((item) => (
+          {schedule.weekly.map((item) => item === 'Do family history work' ? (
+            <a className="art-idea schedule-art-link" key={item} href={familyTreeUrl} title="Open FamilySearch Family Tree">
+              <span className="schedule-item-icon" aria-hidden="true"><Icon name="people" size={19} /></span>
+              <span>{item}</span>
+              <span className="schedule-art-arrow" aria-hidden="true"><Icon name="arrow" size={18} /></span>
+            </a>
+          ) : (
             <article className="art-idea" key={item}>
               <span className="schedule-item-icon" aria-hidden="true"><Icon name="check" size={16} /></span>
               <span>{item}</span>
             </article>
           ))}
         </div>
+        <p className="support-note">“Do family history work” opens FamilySearch Family Tree. Install the Family Tree app to open it there; your phone may open the website instead depending on its link settings.</p>
       </section>
 
       <section className="go-and-do-section" aria-labelledby="options-heading">
