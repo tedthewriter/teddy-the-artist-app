@@ -169,6 +169,16 @@ button { color: inherit; }
 .art-ideas { overflow: hidden; border: 1px solid var(--line); border-radius: 22px; background: var(--card); box-shadow: 0 8px 22px rgba(44,62,55,.045); }
 .art-idea { display: flex; align-items: center; gap: 13px; min-height: 61px; padding: 13px 16px; border-bottom: 1px solid var(--line); color: var(--ink); font-size: .89rem; font-weight: 650; line-height: 1.35; }
 .art-idea:last-child { border-bottom: 0; }
+.checklist-row { gap: 6px; padding: 8px 12px; }
+.daily-checkbox { display: grid; place-items: center; flex: 0 0 44px; min-height: 44px; cursor: pointer; }
+.daily-checkbox input { width: 23px; height: 23px; margin: 0; accent-color: #327047; cursor: pointer; }
+.daily-checkbox input:focus-visible { outline: 3px solid #315e62; outline-offset: 4px; }
+.checklist-content { display: flex; align-items: center; gap: 11px; flex: 1; min-width: 0; min-height: 44px; padding: 4px 0; border: 0; background: transparent; color: inherit; font: inherit; text-align: left; }
+.checklist-content > span:last-child { overflow-wrap: anywhere; }
+button.checklist-content, a.checklist-content { cursor: pointer; }
+.checklist-content:focus-visible { outline: 3px solid #315e62; outline-offset: 2px; border-radius: 5px; }
+.checklist-row.is-checked { background: #e7f1e9; }
+.checklist-row.is-checked .checklist-content > span:last-child { text-decoration: line-through; }
 .art-idea-circle { flex: 0 0 auto; width: 22px; height: 22px; border: 2px solid #b5b7b4; border-radius: 50%; }
 .art-idea-link { display: grid; flex: 0 0 auto; place-items: center; width: 22px; height: 22px; color: #315e62; }
 .art-idea-palette { display: grid; flex: 0 0 auto; place-items: center; width: 22px; height: 22px; color: #8b6545; }

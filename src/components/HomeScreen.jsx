@@ -465,11 +465,13 @@ export default function HomeScreen({ userId, onSignOut }) {
   }
 
   if (view === 'art') {
-    return <ArtLibrary onBack={() => setView('home')} />
+    return <ArtLibrary key={userId || 'preview'} userId={userId} onBack={() => setView('home')} />
   }
 
   if (view === 'go-and-do') {
     return <GoAndDo
+      key={userId || 'preview'}
+      userId={userId}
       onBack={() => setView('home')}
       onOpenArt={() => { setView('art'); window.scrollTo({ top: 0, behavior: 'smooth' }) }}
       onOpenBingo={() => { setView('mindfulness-bingo'); window.scrollTo({ top: 0, behavior: 'smooth' }) }}

@@ -1,4 +1,5 @@
 import Icon from './Icon'
+import { ChecklistNote, ChecklistRow, useDailyChecklist } from './DailyChecklist'
 
 // Gospel Library's officially documented app-opening URL scheme.
 const gospelLibraryUrl = 'gospellibrary://'
@@ -21,7 +22,8 @@ const schedule = {
   weekly: ['Go to the temple', 'Do family history work'],
 }
 
-export default function GoAndDo({ onBack, onOpenArt, onOpenBingo }) {
+export default function GoAndDo({ userId, onBack, onOpenArt, onOpenBingo }) {
+  const checklist = useDailyChecklist(userId, 'go-and-do')
   return (
     <main className="app-shell library-shell go-and-do-shell">
       <header className="library-header">
@@ -40,38 +42,20 @@ export default function GoAndDo({ onBack, onOpenArt, onOpenBingo }) {
         <p>Gentle anchors to return to during the day and week.</p>
         <h3>Daily</h3>
         <div className="art-ideas">
-          {schedule.daily.map((item) => item === 'Read scriptures' ? (
-            <a className="art-idea schedule-art-link" key={item} href={gospelLibraryUrl} title="Open Gospel Library">
-              <span className="schedule-item-icon" aria-hidden="true"><Icon name="journal" size={19} /></span>
-              <span>{item}</span>
-              <span className="schedule-art-arrow" aria-hidden="true"><Icon name="arrow" size={18} /></span>
-            </a>
-          ) : item === 'Make art' || item === 'Play bingo' ? (
-            <button type="button" className="art-idea schedule-art-link" key={item} onClick={item === 'Make art' ? onOpenArt : onOpenBingo}>
-              <span className={item === 'Make art' ? 'art-idea-palette' : 'schedule-item-icon'} aria-hidden="true"><Icon name={item === 'Make art' ? 'palette' : 'mindfulness'} size={19} /></span>
-              <span>{item}</span>
-              <span className="schedule-art-arrow" aria-hidden="true"><Icon name="arrow" size={18} /></span>
-            </button>
-          ) : (
-            <article className="art-idea" key={item}>
-              <span className="schedule-item-icon" aria-hidden="true"><Icon name="check" size={16} /></span>
-              <span>{item}</span>
-            </article>
+          {schedule.daily.map(item => (
+            <ChecklistRow key={item} title={item} checklist={checklist}
+              href={item === 'Read scriptures' ? gospelLibraryUrl : undefined}
+              onClick={item === 'Make art' ? onOpenArt : item === 'Play bingo' ? onOpenBingo : undefined}>
+              <span className="schedule-item-icon" aria-hidden="true"><Icon name={item === 'Make art' ? 'palette' : item === 'Read scriptures' ? 'journal' : item === 'Play bingo' ? 'mindfulness' : 'check'} size={19} /></span>
+            </ChecklistRow>
           ))}
         </div>
         <h3>Weekly</h3>
         <div className="art-ideas">
-          {schedule.weekly.map((item) => item === 'Do family history work' ? (
-            <a className="art-idea schedule-art-link" key={item} href={familyTreeUrl} title="Open FamilySearch Family Tree">
+          {schedule.weekly.map(item => (
+            <ChecklistRow key={item} title={item} checklist={checklist} href={item === 'Do family history work' ? familyTreeUrl : undefined}>
               <span className="schedule-item-icon" aria-hidden="true"><Icon name="people" size={19} /></span>
-              <span>{item}</span>
-              <span className="schedule-art-arrow" aria-hidden="true"><Icon name="arrow" size={18} /></span>
-            </a>
-          ) : (
-            <article className="art-idea" key={item}>
-              <span className="schedule-item-icon" aria-hidden="true"><Icon name="check" size={16} /></span>
-              <span>{item}</span>
-            </article>
+            </ChecklistRow>
           ))}
         </div>
         <p className="support-note">“Do family history work” opens FamilySearch Family Tree. Install the Family Tree app to open it there; your phone may open the website instead depending on its link settings.</p>
@@ -83,13 +67,13 @@ export default function GoAndDo({ onBack, onOpenArt, onOpenBingo }) {
         <p>Choose one good thing that feels helpful today.</p>
         <div className="art-ideas" aria-label="Go and Do options">
         {ideas.map((idea) => (
-          <article className="art-idea" key={idea}>
+          <ChecklistRow key={idea} title={idea} checklist={checklist}>
             <img className="go-and-do-icon" src={`${import.meta.env.BASE_URL}images/jenni-thinking-portrait-v2.png`} alt="" />
-            <span>{idea}</span>
-          </article>
+          </ChecklistRow>
         ))}
         </div>
       </section>
+      <ChecklistNote error={checklist.error} />
     </main>
   )
 }
