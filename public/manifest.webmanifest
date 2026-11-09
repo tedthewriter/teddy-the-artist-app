@@ -8,7 +8,7 @@
   "background_color": "#f7f3ed",
   "theme_color": "#f7f3ed",
   "icons": [
-    { "src": "images/app-icon-192.png", "sizes": "192x192", "type": "image/png" },
-    { "src": "images/app-icon-512.png", "sizes": "512x512", "type": "image/png" }
+    { "src": "images/teddy-peeking-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "images/teddy-peeking-512.png", "sizes": "512x512", "type": "image/png" }
   ]
 }
