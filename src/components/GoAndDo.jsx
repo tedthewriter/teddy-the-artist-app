@@ -6,10 +6,7 @@ const gospelLibraryUrl = 'gospellibrary://'
 const familyTreeUrl = 'https://www.familysearch.org/tree'
 
 const ideas = [
-  'Go for a walk and try to get 5,000 steps',
-  'Go to the temple this week',
   'Journal',
-  'Read scriptures',
   'Take a nap',
   'Get out and do something fun',
   'Listen to your affirmations',
@@ -78,25 +75,20 @@ export default function GoAndDo({ onBack, onOpenArt, onOpenBingo }) {
           ))}
         </div>
         <p className="support-note">“Do family history work” opens FamilySearch Family Tree. Install the Family Tree app to open it there; your phone may open the website instead depending on its link settings.</p>
+        <p className="support-note">“Read scriptures” opens Gospel Library. The Gospel Library app needs to be installed on this phone.</p>
       </section>
 
       <section className="go-and-do-section" aria-labelledby="options-heading">
         <h2 id="options-heading">Options</h2>
         <p>Choose one good thing that feels helpful today.</p>
         <div className="art-ideas" aria-label="Go and Do options">
-        {ideas.map((idea) => {
-          const isScripture = idea === 'Read scriptures'
-          const Row = isScripture ? 'a' : 'article'
-          return (
-          <Row className={`art-idea${isScripture ? ' schedule-art-link' : ''}`} key={idea} href={isScripture ? gospelLibraryUrl : undefined} title={isScripture ? 'Open Gospel Library' : undefined}>
+        {ideas.map((idea) => (
+          <article className="art-idea" key={idea}>
             <img className="go-and-do-icon" src={`${import.meta.env.BASE_URL}images/jenni-thinking-portrait-v2.png`} alt="" />
             <span>{idea}</span>
-            {isScripture && <span className="schedule-art-arrow" aria-hidden="true"><Icon name="arrow" size={18} /></span>}
-          </Row>
-          )
-        })}
+          </article>
+        ))}
         </div>
-        <p className="support-note">“Read scriptures” opens Gospel Library. The Gospel Library app needs to be installed on this phone.</p>
       </section>
     </main>
   )
