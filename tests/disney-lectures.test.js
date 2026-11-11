@@ -1,6 +1,6 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
-import { disneyLectureCount, disneyLectureSections, restoreDisneyReading } from '../src/data/disneyLectures.js'
+import { disneyLectureCount, disneyLectureSections, disneyLectureSectionsTwo, restoreDisneyReading } from '../src/data/disneyLectures.js'
 
 test('Volume One includes all 149 consecutively numbered lectures in book order', () => {
   assert.equal(disneyLectureCount, 149)
@@ -9,6 +9,15 @@ test('Volume One includes all 149 consecutively numbered lectures in book order'
   ])
   assert.deepEqual(disneyLectureSections.flatMap(({ lectures }) => lectures.map(({ number }) => number)),
     Array.from({ length: 149 }, (_, i) => i + 1))
+})
+
+test('Volume Two includes all 68 lectures in book order and restores only its own valid numbers', () => {
+  assert.deepEqual(disneyLectureSectionsTwo.map(({ name, lectures }) => [name, lectures.length]), [
+    ['Innovation', 18], ['Drawing', 25], ['Expression', 25],
+  ])
+  assert.deepEqual(disneyLectureSectionsTwo.flatMap(({ lectures }) => lectures.map(({ number }) => number)),
+    Array.from({ length: 68 }, (_, i) => i + 1))
+  assert.deepEqual([...restoreDisneyReading('[1,68,69,149]', disneyLectureSectionsTwo)], [1, 68])
 })
 
 test('reading progress restores only valid unique lecture numbers', () => {

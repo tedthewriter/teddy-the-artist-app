@@ -167,10 +167,90 @@ export const disneyLectureSections = [
   lectures: titles.map((title, index) => ({ number: start + index, title })),
 }))
 
-const lectureNumbers = new Set(disneyLectureSections.flatMap(section => section.lectures.map(lecture => lecture.number)))
-export const disneyLectureCount = lectureNumbers.size
+export const disneyLectureSectionsTwo = [
+  ['Innovation', 1, [
+    'Review and New Approach',
+    'Artist/Actor',
+    'Don’t Be Ordinary',
+    'Sketcher',
+    'Plus or Minus',
+    'Mood Symbols',
+    'Breaking the Constraint Barrier',
+    'The Agony and the Ecstasy',
+    'Making All Parts Work Together to Shape a Gesture',
+    'Forces (Energy, Animation, Power, Vim, Vigor, and Vitality)',
+    'Pure Performance',
+    'Different Concepts',
+    'A Time for This and a Time for That',
+    'Look to This Day',
+    'Entertainment',
+    'Follow-Up Department',
+    'Entertainment II',
+    'Playing to the Balcony',
+  ]],
+  ['Drawing', 19, [
+    'A Sack of Flour',
+    'Pantomime (Drawing) Preparation',
+    'That Darned Neck',
+    'Crayolas?',
+    'Hands (Those Darned?)',
+    'Plight of a Gesture',
+    'Concepts for Drawing',
+    'Drawing Appropriate Gestures for Your Characters',
+    'Drawings Ain’t Just Drawing',
+    'The Importance of Sketching',
+    'Getting Emotionally Involved',
+    'Gesture Further Pursued',
+    'Caricature',
+    'Perspective',
+    'Have Something to Say and Keep It Simple',
+    'Keeping Flexibility in Your Drawing',
+    'Seeing and Drawing the Figure in Space',
+    'Don’t Let the Facts Get in the Way of a Good Drawing',
+    'Hey, Look at Me … Look at Me!',
+    'Learn From the Mistakes of Others',
+    'Quest and Fulfillment',
+    'Getting Adjusted to New Production',
+    'More Animal Talk',
+    'In Further Praise of Quick Sketching',
+    'Impression – Expression = Depression',
+  ]],
+  ['Expression', 44, [
+    'Drawing a Clear Portrayal of Your Idea',
+    'Think Caricature',
+    'Going Into That World!',
+    'Understanding What You See',
+    'An Inspirational Journey',
+    'Comic Relief',
+    'If It Needs to Lean, Then Lean It',
+    'Don’t Tell, But Show!',
+    'Mainly Mental',
+    'The Shape of a Gesture',
+    'Dreams Impossible to Resist',
+    'Short Book on Drawing',
+    'Encompassing Reality with All Your Senses',
+    'Gestures, Moons, and Tangents',
+    'Include Your Audience',
+    'The Wonders of the Right and Left Hemispheres',
+    'Making the Rules of Perspective Come to Life',
+    'In Further Praise of the Rules of Perspective',
+    'There Is No End to Thinking Overlap',
+    'Space Is Created',
+    'Words and Experience',
+    'Look, This Is What I Saw',
+    'Breaking Away',
+    'The Shape of the Gesture II',
+    'A Tribute',
+  ]],
+].map(([name, start, titles]) => ({
+  name,
+  lectures: titles.map((title, index) => ({ number: start + index, title })),
+}))
 
-export function restoreDisneyReading(raw) {
+export const disneyLectureCount = disneyLectureSections.reduce((total, section) => total + section.lectures.length, 0)
+
+export function restoreDisneyReading(raw, sections = disneyLectureSections) {
+  const lectureNumbers = new Set(sections.flatMap(section => section.lectures.map(lecture => lecture.number)))
   try {
     const value = JSON.parse(raw)
     return new Set(Array.isArray(value) ? value.filter(number => lectureNumbers.has(number)) : [])

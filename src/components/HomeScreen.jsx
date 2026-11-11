@@ -467,11 +467,11 @@ export default function HomeScreen({ userId, onSignOut }) {
 
   if (view === 'art') {
     return <ArtLibrary key={userId || 'preview'} userId={userId} onBack={() => setView('home')}
-      onOpenDisneyLectures={() => { setView('disney-lectures'); window.scrollTo(0, 0) }} />
+      onOpenDisneyLectures={volume => { setView(volume === 2 ? 'disney-lectures-two' : 'disney-lectures'); window.scrollTo(0, 0) }} />
   }
 
-  if (view === 'disney-lectures') {
-    return <DisneyLectures key={userId || 'preview'} userId={userId}
+  if (view === 'disney-lectures' || view === 'disney-lectures-two') {
+    return <DisneyLectures key={`${userId || 'preview'}:${view}`} userId={userId} volume={view === 'disney-lectures-two' ? 2 : 1}
       onBack={() => { setView('art'); window.scrollTo(0, 0) }} />
   }
 
