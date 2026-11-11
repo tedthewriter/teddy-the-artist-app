@@ -8,6 +8,7 @@ import Goals from './Goals'
 import MindfulnessLibrary from './MindfulnessLibrary'
 import MindfulnessBingo from './MindfulnessBingo'
 import ArtLibrary from './ArtLibrary'
+import DisneyLectures from './DisneyLectures'
 import GoAndDo from './GoAndDo'
 import TodayPlan from './TodayPlan'
 import WorkbookReminders from './WorkbookReminders'
@@ -465,7 +466,13 @@ export default function HomeScreen({ userId, onSignOut }) {
   }
 
   if (view === 'art') {
-    return <ArtLibrary key={userId || 'preview'} userId={userId} onBack={() => setView('home')} />
+    return <ArtLibrary key={userId || 'preview'} userId={userId} onBack={() => setView('home')}
+      onOpenDisneyLectures={() => { setView('disney-lectures'); window.scrollTo(0, 0) }} />
+  }
+
+  if (view === 'disney-lectures') {
+    return <DisneyLectures key={userId || 'preview'} userId={userId}
+      onBack={() => { setView('art'); window.scrollTo(0, 0) }} />
   }
 
   if (view === 'go-and-do') {

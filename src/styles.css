@@ -179,6 +179,11 @@ button.checklist-content, a.checklist-content { cursor: pointer; }
 .checklist-content:focus-visible { outline: 3px solid #315e62; outline-offset: 2px; border-radius: 5px; }
 .checklist-row.is-checked { background: #e7f1e9; }
 .checklist-row.is-checked .checklist-content > span:last-child { text-decoration: line-through; }
+.lecture-section { margin: 12px 0; }
+.lecture-section > summary { padding: 15px 16px; cursor: pointer; font-weight: 750; }
+.lecture-section > summary > span { float: right; color: var(--muted); font-size: .8rem; }
+.lecture-section[open] > summary { border-bottom: 1px solid var(--line); }
+.lecture-row { cursor: pointer; }
 .art-idea-circle { flex: 0 0 auto; width: 22px; height: 22px; border: 2px solid #b5b7b4; border-radius: 50%; }
 .art-idea-link { display: grid; flex: 0 0 auto; place-items: center; width: 22px; height: 22px; color: #315e62; }
 .art-idea-palette { display: grid; flex: 0 0 auto; place-items: center; width: 22px; height: 22px; color: #8b6545; }

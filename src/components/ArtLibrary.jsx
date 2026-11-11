@@ -7,7 +7,7 @@ const artIdeas = [
   'Paint Coach lessons',
   'Draw from Disney character book',
   'Draw from Pixar character book',
-  'Read from Disney Art Lectures, Volume One',
+  { title: 'Read from Disney Art Lectures, Volume One', page: 'disney-lectures' },
   'Read from Disney Art Lectures, Volume Two',
   'Paint from 50 Small Paintings and Acrylic book',
   'Paint from 50 More Small Paintings and Acrylic book',
@@ -22,7 +22,7 @@ const artIdeas = [
   { title: 'Painting lessons on Sentient', link: 'https://sentientacademy.com/start' },
 ]
 
-export default function ArtLibrary({ userId, onBack }) {
+export default function ArtLibrary({ userId, onBack, onOpenDisneyLectures }) {
   const checklist = useDailyChecklist(userId, 'art')
   return (
     <main className="app-shell library-shell art-library-shell">
@@ -43,6 +43,7 @@ export default function ArtLibrary({ userId, onBack }) {
           return (
           <ChecklistRow key={item.title} title={item.title} checklist={checklist}
             href={item.link}
+            onClick={item.page === 'disney-lectures' ? onOpenDisneyLectures : undefined}
             target={item.link?.startsWith('http') ? '_blank' : undefined}
             rel={item.link?.startsWith('http') ? 'noreferrer' : undefined}>
             <span className="art-idea-palette" aria-hidden="true"><Icon name="palette" size={19} /></span>
