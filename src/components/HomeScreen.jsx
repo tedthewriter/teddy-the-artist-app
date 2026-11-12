@@ -468,11 +468,11 @@ export default function HomeScreen({ userId, onSignOut }) {
 
   if (view === 'art') {
     return <ArtLibrary key={userId || 'preview'} userId={userId} onBack={() => setView('home')}
-      onOpenDisneyLectures={volume => { setView(volume === 'more-small-acrylic' ? 'more-small-acrylic' : volume === 'small-acrylic' ? 'small-acrylic' : volume === 'disney-characters' ? 'disney-characters' : volume === 'pixar' ? 'pixar-characters' : volume === 2 ? 'disney-lectures-two' : 'disney-lectures'); window.scrollTo(0, 0) }} />
+      onOpenDisneyLectures={volume => { setView(volume === 'watercolor' ? 'watercolor' : volume === 'more-small-acrylic' ? 'more-small-acrylic' : volume === 'small-acrylic' ? 'small-acrylic' : volume === 'disney-characters' ? 'disney-characters' : volume === 'pixar' ? 'pixar-characters' : volume === 2 ? 'disney-lectures-two' : 'disney-lectures'); window.scrollTo(0, 0) }} />
   }
 
-  if (view === 'small-acrylic' || view === 'more-small-acrylic') {
-    return <SmallAcrylicPaintings key={`${userId || 'preview'}:${view}`} userId={userId} more={view === 'more-small-acrylic'}
+  if (view === 'watercolor' || view === 'small-acrylic' || view === 'more-small-acrylic') {
+    return <SmallAcrylicPaintings key={`${userId || 'preview'}:${view}`} userId={userId} more={view === 'more-small-acrylic'} watercolor={view === 'watercolor'}
       onBack={() => { setView('art'); window.scrollTo(0, 0) }} />
   }
 
