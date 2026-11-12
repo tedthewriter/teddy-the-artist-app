@@ -1,14 +1,17 @@
 import { useState } from 'react'
 import Icon from './Icon'
+import { disneyCharacterSections } from '../data/disneyCharacters'
 import { pixarCharacterSections } from '../data/pixarCharacters'
 import { disneyLectureSections, disneyLectureSectionsTwo, restoreDisneyReading } from '../data/disneyLectures'
 
 export default function DisneyLectures({ userId, onBack, volume }) {
+  const isDisney = volume === 'disney-characters'
   const isPixar = volume === 'pixar'
+  const isCharacterBook = isDisney || isPixar
   const isTwo = volume === 2
-  const sections = isPixar ? pixarCharacterSections : isTwo ? disneyLectureSectionsTwo : disneyLectureSections
+  const sections = isDisney ? disneyCharacterSections : isPixar ? pixarCharacterSections : isTwo ? disneyLectureSectionsTwo : disneyLectureSections
   const lectureCount = sections.reduce((total, section) => total + section.lectures.length, 0)
-  const storageKey = isPixar ? `teddy-pixar-characters-v1:${userId || 'preview'}` : `teddy-disney-lectures-volume-${isTwo ? 'two' : 'one'}-v1:${userId || 'preview'}`
+  const storageKey = isDisney ? `teddy-disney-characters-v1:${userId || 'preview'}` : isPixar ? `teddy-pixar-characters-v1:${userId || 'preview'}` : `teddy-disney-lectures-volume-${isTwo ? 'two' : 'one'}-v1:${userId || 'preview'}`
   const [read, setRead] = useState(() => {
     try { return restoreDisneyReading(localStorage.getItem(storageKey), sections) }
     catch { return new Set() }
@@ -36,21 +39,21 @@ export default function DisneyLectures({ userId, onBack, volume }) {
       </header>
       <div className="art-library-heading">
         <span className="art-library-icon" aria-hidden="true"><Icon name="palette" size={27} /></span>
-        <p className="eyebrow">Art · {isPixar ? 'Drawing' : 'Reading'} checklist</p>
-        <h1 className="library-title">{isPixar ? 'Pixar Character Book' : `Disney Art Lectures, Volume ${isTwo ? 'Two' : 'One'}`}</h1>
-        <p className="library-intro">{isPixar ? 'Check off each character after you draw it.' : 'Check off each lecture after you read it.'} Your progress saves on this device and doesn’t reset daily.</p>
+        <p className="eyebrow">Art · {isCharacterBook ? 'Drawing' : 'Reading'} checklist</p>
+        <h1 className="library-title">{isDisney ? 'Disney Character Book' : isPixar ? 'Pixar Character Book' : `Disney Art Lectures, Volume ${isTwo ? 'Two' : 'One'}`}</h1>
+        <p className="library-intro">{isCharacterBook ? 'Check off each character after you draw it.' : 'Check off each lecture after you read it.'} Your progress saves on this device and doesn’t reset daily.</p>
       </div>
-      <p className="bingo-progress" role="status">{read.size} of {lectureCount} {isPixar ? 'characters drawn' : 'lectures read'}</p>
+      <p className="bingo-progress" role="status">{read.size} of {lectureCount} {isCharacterBook ? 'characters drawn' : 'lectures read'}</p>
       {saveError && <p className="support-note" role="alert">This browser couldn’t save your checkmarks. They may be lost when you leave.</p>}
       {sections.map(({ name, lectures }) => (
         <details className="art-ideas lecture-section" key={name} open={name === initialSection}>
           <summary>
-            {name} <span>{lectures.filter(({ number }) => read.has(number)).length}/{lectures.length} {isPixar ? 'drawn' : 'read'}</span>
+            {name} <span>{lectures.filter(({ number }) => read.has(number)).length}/{lectures.length} {isCharacterBook ? 'drawn' : 'read'}</span>
           </summary>
-          {lectures.map(({ number, title }) => (
+          {lectures.map(({ number, title, page }) => (
             <label key={number} className={`art-idea checklist-row lecture-row${read.has(number) ? ' is-checked' : ''}`}>
               <span className="daily-checkbox"><input type="checkbox" checked={read.has(number)} onChange={() => toggle(number)} /></span>
-              <span className="checklist-content"><span>{isPixar ? `p. ${number} · ${title}` : `${number}. ${title}`}</span></span>
+              <span className="checklist-content"><span>{isCharacterBook ? `p. ${page ?? number} · ${title}` : `${number}. ${title}`}</span></span>
             </label>
           ))}
         </details>

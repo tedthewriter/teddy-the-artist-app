@@ -467,11 +467,11 @@ export default function HomeScreen({ userId, onSignOut }) {
 
   if (view === 'art') {
     return <ArtLibrary key={userId || 'preview'} userId={userId} onBack={() => setView('home')}
-      onOpenDisneyLectures={volume => { setView(volume === 'pixar' ? 'pixar-characters' : volume === 2 ? 'disney-lectures-two' : 'disney-lectures'); window.scrollTo(0, 0) }} />
+      onOpenDisneyLectures={volume => { setView(volume === 'disney-characters' ? 'disney-characters' : volume === 'pixar' ? 'pixar-characters' : volume === 2 ? 'disney-lectures-two' : 'disney-lectures'); window.scrollTo(0, 0) }} />
   }
 
-  if (view === 'pixar-characters' || view === 'disney-lectures' || view === 'disney-lectures-two') {
-    return <DisneyLectures key={`${userId || 'preview'}:${view}`} userId={userId} volume={view === 'pixar-characters' ? 'pixar' : view === 'disney-lectures-two' ? 2 : 1}
+  if (view === 'disney-characters' || view === 'pixar-characters' || view === 'disney-lectures' || view === 'disney-lectures-two') {
+    return <DisneyLectures key={`${userId || 'preview'}:${view}`} userId={userId} volume={view === 'disney-characters' ? 'disney-characters' : view === 'pixar-characters' ? 'pixar' : view === 'disney-lectures-two' ? 2 : 1}
       onBack={() => { setView('art'); window.scrollTo(0, 0) }} />
   }
 

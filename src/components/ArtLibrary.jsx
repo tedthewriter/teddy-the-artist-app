@@ -5,7 +5,7 @@ const artIdeas = [
   { title: 'Casey Childs weekly demo email', link: 'https://caseychilds.com/studio-video-library' },
   { title: 'Casey Childs studio session', link: 'https://caseychilds.com/model-session' },
   'Paint Coach lessons',
-  'Draw from Disney character book',
+  { title: 'Draw from Disney character book', volume: 'disney-characters' },
   { title: 'Draw from Pixar character book', volume: 'pixar' },
   { title: 'Read from Disney Art Lectures, Volume One', volume: 1 },
   { title: 'Read from Disney Art Lectures, Volume Two', volume: 2 },
