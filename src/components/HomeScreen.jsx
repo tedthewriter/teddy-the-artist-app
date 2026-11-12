@@ -9,6 +9,7 @@ import MindfulnessLibrary from './MindfulnessLibrary'
 import MindfulnessBingo from './MindfulnessBingo'
 import ArtLibrary from './ArtLibrary'
 import DisneyLectures from './DisneyLectures'
+import SmallAcrylicPaintings from './SmallAcrylicPaintings'
 import GoAndDo from './GoAndDo'
 import TodayPlan from './TodayPlan'
 import WorkbookReminders from './WorkbookReminders'
@@ -467,7 +468,12 @@ export default function HomeScreen({ userId, onSignOut }) {
 
   if (view === 'art') {
     return <ArtLibrary key={userId || 'preview'} userId={userId} onBack={() => setView('home')}
-      onOpenDisneyLectures={volume => { setView(volume === 'disney-characters' ? 'disney-characters' : volume === 'pixar' ? 'pixar-characters' : volume === 2 ? 'disney-lectures-two' : 'disney-lectures'); window.scrollTo(0, 0) }} />
+      onOpenDisneyLectures={volume => { setView(volume === 'small-acrylic' ? 'small-acrylic' : volume === 'disney-characters' ? 'disney-characters' : volume === 'pixar' ? 'pixar-characters' : volume === 2 ? 'disney-lectures-two' : 'disney-lectures'); window.scrollTo(0, 0) }} />
+  }
+
+  if (view === 'small-acrylic') {
+    return <SmallAcrylicPaintings key={userId || 'preview'} userId={userId}
+      onBack={() => { setView('art'); window.scrollTo(0, 0) }} />
   }
 
   if (view === 'disney-characters' || view === 'pixar-characters' || view === 'disney-lectures' || view === 'disney-lectures-two') {
