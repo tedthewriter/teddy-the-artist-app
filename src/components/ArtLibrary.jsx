@@ -10,7 +10,7 @@ const artIdeas = [
   { title: 'Read from Disney Art Lectures, Volume One', volume: 1 },
   { title: 'Read from Disney Art Lectures, Volume Two', volume: 2 },
   { title: 'Paint from 50 Small Paintings and Acrylic book', volume: 'small-acrylic' },
-  'Paint from 50 More Small Paintings and Acrylic book',
+  { title: 'Paint from 50 More Small Paintings and Acrylic book', volume: 'more-small-acrylic' },
   'Paint from 50 Paintings and Watercolor book',
   'Read from a random art book',
   'Paint',

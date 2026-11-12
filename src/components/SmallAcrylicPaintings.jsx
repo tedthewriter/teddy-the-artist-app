@@ -1,12 +1,13 @@
+import { moreSmallAcrylicPaintingSections } from '../data/moreSmallAcrylicPaintings'
 import { useState } from 'react'
 import Icon from './Icon'
 import { smallAcrylicPaintingSections } from '../data/smallAcrylicPaintings'
 import { restoreDisneyReading } from '../data/disneyLectures'
 
-export default function SmallAcrylicPaintings({ userId, onBack }) {
-  const sections = smallAcrylicPaintingSections
+export default function SmallAcrylicPaintings({ userId, onBack, more = false }) {
+  const sections = more ? moreSmallAcrylicPaintingSections : smallAcrylicPaintingSections
   const paintingCount = sections.reduce((total, section) => total + section.paintings.length, 0)
-  const storageKey = `teddy-small-acrylic-paintings-v1:${userId || 'preview'}`
+  const storageKey = `teddy-${more ? 'more-small' : 'small'}-acrylic-paintings-v1:${userId || 'preview'}`
   const [completed, setCompleted] = useState(() => {
     try { return restoreDisneyReading(localStorage.getItem(storageKey), sections.map(section => ({ lectures: section.paintings }))) }
     catch { return new Set() }
@@ -35,7 +36,7 @@ export default function SmallAcrylicPaintings({ userId, onBack }) {
       <div className="art-library-heading">
         <span className="art-library-icon" aria-hidden="true"><Icon name="palette" size={27} /></span>
         <p className="eyebrow">Art · Painting checklist</p>
-        <h1 className="library-title">50 Small Paintings in Acrylic</h1>
+        <h1 className="library-title">{more ? '50 More Small Paintings in Acrylic' : '50 Small Paintings in Acrylic'}</h1>
         <p className="library-intro">Check off each painting after you finish it. Your progress saves on this device and doesn’t reset daily.</p>
       </div>
       <p className="bingo-progress" role="status">{completed.size} of {paintingCount} paintings completed</p>
