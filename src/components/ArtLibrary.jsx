@@ -6,7 +6,7 @@ const artIdeas = [
   { title: 'Casey Childs studio session', link: 'https://caseychilds.com/model-session' },
   'Paint Coach lessons',
   'Draw from Disney character book',
-  'Draw from Pixar character book',
+  { title: 'Draw from Pixar character book', volume: 'pixar' },
   { title: 'Read from Disney Art Lectures, Volume One', volume: 1 },
   { title: 'Read from Disney Art Lectures, Volume Two', volume: 2 },
   'Paint from 50 Small Paintings and Acrylic book',
