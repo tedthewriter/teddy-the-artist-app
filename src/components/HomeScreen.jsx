@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import Icon from './Icon'
+import { importBookProgress } from '../lib/importBookProgress'
 import SkillsLibrary from './SkillsLibrary'
 import AffirmationsLibrary from './AffirmationsLibrary'
 import AlignmentsLibrary from './AlignmentsLibrary'
@@ -36,6 +37,16 @@ function contentFramework(item) {
 }
 
 export default function HomeScreen({ userId, onSignOut }) {
+  useEffect(() => {
+    const migrate = () => { void importBookProgress(userId) }
+    migrate()
+    window.addEventListener('online', migrate)
+    window.addEventListener('focus', migrate)
+    return () => {
+      window.removeEventListener('online', migrate)
+      window.removeEventListener('focus', migrate)
+    }
+  }, [userId])
   const [view, setView] = useState('home')
   const [initialItem, setInitialItem] = useState(null)
   const [content, setContent] = useState([])

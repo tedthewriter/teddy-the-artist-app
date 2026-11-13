@@ -1,34 +1,21 @@
 import { moreSmallAcrylicPaintingSections } from '../data/moreSmallAcrylicPaintings'
 import { watercolorPaintingSections } from '../data/watercolorPaintings'
+import { useBookProgress, BookProgressNote } from './BookProgress'
 import { useState } from 'react'
 import Icon from './Icon'
 import { smallAcrylicPaintingSections } from '../data/smallAcrylicPaintings'
-import { restoreDisneyReading } from '../data/disneyLectures'
 
 export default function SmallAcrylicPaintings({ userId, onBack, more = false, watercolor = false }) {
   const sections = watercolor ? watercolorPaintingSections : more ? moreSmallAcrylicPaintingSections : smallAcrylicPaintingSections
   const paintingCount = sections.reduce((total, section) => total + section.paintings.length, 0)
   const storageKey = watercolor ? `teddy-watercolor-paintings-v1:${userId || 'preview'}` : `teddy-${more ? 'more-small' : 'small'}-acrylic-paintings-v1:${userId || 'preview'}`
-  const [completed, setCompleted] = useState(() => {
-    try { return restoreDisneyReading(localStorage.getItem(storageKey), sections.map(section => ({ lectures: section.paintings }))) }
-    catch { return new Set() }
-  })
+  const bookId = watercolor ? 'watercolor' : more ? 'more-small-acrylic' : 'small-acrylic'
+  const progress = useBookProgress(userId, bookId, storageKey, sections.flatMap(s => s.paintings.map(p => p.number)))
+  const completed = progress.completed
+  const toggle = progress.toggle
   const [initialSection] = useState(() => sections.find(
     section => section.paintings.some(({ number }) => !completed.has(number)),
   )?.name)
-  const [saveError, setSaveError] = useState(false)
-
-  function toggle(number) {
-    const next = new Set(completed)
-    if (next.has(number)) next.delete(number)
-    else next.add(number)
-    setCompleted(next)
-    try {
-      localStorage.setItem(storageKey, JSON.stringify([...next]))
-      setSaveError(false)
-    } catch { setSaveError(true) }
-  }
-
   return (
     <main className="app-shell library-shell art-library-shell">
       <header className="library-header">
@@ -38,10 +25,10 @@ export default function SmallAcrylicPaintings({ userId, onBack, more = false, wa
         <span className="art-library-icon" aria-hidden="true"><Icon name="palette" size={27} /></span>
         <p className="eyebrow">Art · Painting checklist</p>
         <h1 className="library-title">{watercolor ? '50 Paintings in Watercolor' : more ? '50 More Small Paintings in Acrylic' : '50 Small Paintings in Acrylic'}</h1>
-        <p className="library-intro">Check off each painting after you finish it. Your progress saves on this device and doesn’t reset daily.</p>
+        <p className="library-intro">Check off each painting after you finish it. Your progress saves to your account, appears on your other devices, and doesn’t reset daily.</p>
       </div>
       <p className="bingo-progress" role="status">{completed.size} of {paintingCount} paintings completed</p>
-      {saveError && <p className="support-note" role="alert">This browser couldn’t save your checkmarks. They may be lost when you leave.</p>}
+      <BookProgressNote progress={progress} />
       {sections.map(({ name, paintings }) => (
         <details className="art-ideas lecture-section" key={name} open={name === initialSection}>
           <summary>
