@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import Icon from './Icon'
+import HomeMenu from './HomeMenu'
 import { importBookProgress } from '../lib/importBookProgress'
 import SkillsLibrary from './SkillsLibrary'
 import AffirmationsLibrary from './AffirmationsLibrary'
@@ -560,12 +561,8 @@ export default function HomeScreen({ userId, onSignOut }) {
           <p className="date-line">{today}</p>
           <h1>Welcome back</h1>
         </div>
-        <button
-          className="avatar-button"
-          aria-label={onSignOut ? 'Sign out' : 'Preview profile'}
-          title={onSignOut ? 'Sign out' : 'Profile'}
-          onClick={onSignOut ? signOutSafely : undefined}
-        ><Icon name="user" size={21} /></button>
+        <HomeMenu onSignOut={onSignOut ? signOutSafely : undefined}
+          onNotifications={() => setView('reminders')} />
       </header>
 
       <section className={`affirmation-card ${dailyAffirmation && imageUrls[dailyAffirmation.asset_path] ? 'has-pin' : ''}`} aria-label="Affirmation">
@@ -588,7 +585,6 @@ export default function HomeScreen({ userId, onSignOut }) {
 
       <section className="pathway-section home-buttons todo-section" aria-labelledby="to-do-heading">
         <h2 id="to-do-heading">To do</h2>
-        <button className="soft-button workbook-reminder-link" onClick={() => setView('reminders')}>Workbook reminders</button>
         <div className="pathway-grid">
           {pathways.filter((pathway) => pathway.section === 'todo').map((pathway) => (
             <button className={`pathway-card ${pathway.tone}`} key={pathway.title} onClick={() => choosePath(pathway)}>

@@ -44,7 +44,14 @@
 .bingo-practice-guide ol { padding-left: 22px; }
 .bingo-practice-guide li { margin-bottom: 10px; line-height: 1.6; }
 .bingo-dialog .primary-button, .bingo-dialog .soft-button { display: block; width: 100%; margin-top: 12px; }
-.workbook-reminder-link { margin: 0 0 12px; }
+.home-menu { position: relative; flex-shrink: 0; }
+.home-menu-toggle { list-style: none; cursor: pointer; }
+.home-menu-toggle::-webkit-details-marker { display: none; }
+.home-menu-toggle:focus-visible { outline: 3px solid var(--sage); outline-offset: 3px; }
+.home-menu-options { position: absolute; top: calc(100% + 8px); right: 0; z-index: 20; width: 196px; padding: 6px; border: 1px solid var(--line); border-radius: 15px; background: var(--card); box-shadow: var(--shadow); }
+.home-menu-options button { display: block; width: 100%; min-height: 46px; padding: 11px 12px; border: 0; border-radius: 10px; background: transparent; color: var(--ink); font: inherit; font-size: .86rem; text-align: left; cursor: pointer; }
+.home-menu-options button:hover, .home-menu-options button:focus-visible { background: #e4eddf; }
+.home-menu-options button:disabled { opacity: .45; cursor: default; }
 .reminder-copy { color: var(--muted); font-size: .85rem; line-height: 1.6; }
 .reminder-help { padding: 14px; background: #edf1e9; border: 1px solid var(--line); border-radius: 14px; font-size: .86rem; line-height: 1.6; }
 .reminder-card { min-width: 0; margin: 24px 0; padding: 18px; border: 1px solid var(--line); border-radius: 20px; }
