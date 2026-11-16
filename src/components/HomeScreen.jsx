@@ -13,12 +13,11 @@ import MindfulnessBingo from './MindfulnessBingo'
 import ArtLibrary from './ArtLibrary'
 import DisneyLectures from './DisneyLectures'
 import SmallAcrylicPaintings from './SmallAcrylicPaintings'
-import GoAndDo from './GoAndDo'
+import GoAndDo, { GoAndDoContents } from './GoAndDo'
 import TodayPlan from './TodayPlan'
 import WorkbookReminders from './WorkbookReminders'
 import { stopDeviceReminders } from '../lib/reminders'
 import { supabase } from '../lib/supabase'
-import { pathways } from '../data/homeContent'
 
 const lastHomeAffirmationKey = 'teddy-last-home-affirmation'
 
@@ -588,20 +587,12 @@ export default function HomeScreen({ userId, onSignOut }) {
         </div>
       </section>
 
-      <section className="pathway-section home-buttons todo-section" aria-labelledby="to-do-heading">
-        <h2 id="to-do-heading">To do</h2>
-        <div className="pathway-grid">
-          {pathways.filter((pathway) => pathway.section === 'todo').map((pathway) => (
-            <button className={`pathway-card ${pathway.tone}`} key={pathway.title} onClick={() => choosePath(pathway)}>
-              <span className="pathway-icon"><Icon name={pathway.icon} size={25} /></span>
-              <span className="pathway-title">{pathway.title}</span>
-              <span className="pathway-subtitle">{pathway.subtitle}</span>
-            </button>
-          ))}
-        </div>
-      </section>
-
-
+      <div className="home-go-and-do">
+        <GoAndDoContents key={userId || 'preview'} userId={userId}
+          onOpenArt={() => { setView('art'); window.scrollTo(0, 0) }}
+          onOpenCbtWorkbook={() => openCbtWorkbook()}
+          onOpenSelfLove={() => openSelfLove()} />
+      </div>
 
       {notice && <p className="home-notice" role="status">{notice}</p>}
     </main>

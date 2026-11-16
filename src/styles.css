@@ -168,6 +168,7 @@ button { color: inherit; }
 .schedule-art-link:focus-visible { outline: 3px solid var(--sage-dark); outline-offset: 3px; }
 .schedule-art-arrow { margin-left: auto; display: inline-flex; }
 .go-and-do-icon { flex: 0 0 auto; width: 42px; height: 44px; object-fit: contain; }
+.home-go-and-do { margin-top: 24px; }
 .go-and-do-section + .go-and-do-section { margin-top: 28px; }
 .go-and-do-section h2 { margin: 0; font-family: Georgia, "Times New Roman", serif; font-size: 1.36rem; font-weight: 600; }
 .go-and-do-section > p { margin: 6px 0 13px; color: var(--muted); font-size: .76rem; line-height: 1.42; }

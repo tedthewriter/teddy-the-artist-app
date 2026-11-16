@@ -28,21 +28,9 @@ const schedule = {
   weekly: ['Go to the temple', 'Do family history work'],
 }
 
-export default function GoAndDo({ userId, onBack, onOpenArt, onOpenCbtWorkbook, onOpenSelfLove }) {
+export function GoAndDoContents({ userId, onOpenArt, onOpenCbtWorkbook, onOpenSelfLove }) {
   const checklist = useDailyChecklist(userId, 'go-and-do')
-  return (
-    <main className="app-shell library-shell go-and-do-shell">
-      <header className="library-header">
-        <button className="back-button" onClick={onBack}><Icon name="back" size={19} /> Home</button>
-      </header>
-
-      <div className="art-library-heading go-and-do-heading">
-        <span className="art-library-icon" aria-hidden="true"><Icon name="sun" size={27} /></span>
-        <p className="eyebrow">Go and Do</p>
-        <h1 className="library-title">Choose one good thing.</h1>
-        <p className="library-intro">Choose what feels helpful today—something that lets you move, rest, connect, or enjoy the day. One small thing counts.</p>
-      </div>
-
+  return <>
       <section className="go-and-do-section" aria-labelledby="schedule-heading">
         <h2 id="schedule-heading">Schedule</h2>
         <p>Gentle anchors to return to during the day and week.</p>
@@ -80,6 +68,25 @@ export default function GoAndDo({ userId, onBack, onOpenArt, onOpenCbtWorkbook, 
         </div>
       </section>
       <ChecklistNote error={checklist.error} />
+  </>
+}
+
+export default function GoAndDo({ userId, onBack, onOpenArt, onOpenCbtWorkbook, onOpenSelfLove }) {
+  return (
+    <main className="app-shell library-shell go-and-do-shell">
+      <header className="library-header">
+        <button className="back-button" onClick={onBack}><Icon name="back" size={19} /> Home</button>
+      </header>
+
+      <div className="art-library-heading go-and-do-heading">
+        <span className="art-library-icon" aria-hidden="true"><Icon name="sun" size={27} /></span>
+        <p className="eyebrow">Go and Do</p>
+        <h1 className="library-title">Choose one good thing.</h1>
+        <p className="library-intro">Choose what feels helpful today—something that lets you move, rest, connect, or enjoy the day. One small thing counts.</p>
+      </div>
+
+      <GoAndDoContents userId={userId} onOpenArt={onOpenArt}
+        onOpenCbtWorkbook={onOpenCbtWorkbook} onOpenSelfLove={onOpenSelfLove} />
     </main>
   )
 }
