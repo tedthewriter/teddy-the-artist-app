@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import Icon from './Icon'
 import HomeMenu from './HomeMenu'
+import Resources from './Resources'
 import { importBookProgress } from '../lib/importBookProgress'
 import SkillsLibrary from './SkillsLibrary'
 import AffirmationsLibrary from './AffirmationsLibrary'
@@ -400,6 +401,8 @@ export default function HomeScreen({ userId, onSignOut }) {
     setNotice(`${pathway.title} is ready for its content in the next build.`)
   }
 
+  if (view === 'resources') return <Resources onBack={() => { setView('home'); setNotice(''); window.scrollTo(0, 0) }} onChoose={choosePath} notice={notice} />
+
   if (view === 'reminders') return <WorkbookReminders onBack={() => setView('home')} />
 
   if (view === 'skills') {
@@ -562,7 +565,8 @@ export default function HomeScreen({ userId, onSignOut }) {
           <h1>Welcome back</h1>
         </div>
         <HomeMenu onSignOut={onSignOut ? signOutSafely : undefined}
-          onNotifications={() => setView('reminders')} />
+          onNotifications={() => setView('reminders')}
+          onResources={() => { setNotice(''); setView('resources'); window.scrollTo(0, 0) }} />
       </header>
 
       <section className={`affirmation-card ${dailyAffirmation && imageUrls[dailyAffirmation.asset_path] ? 'has-pin' : ''}`} aria-label="Affirmation">
@@ -596,18 +600,7 @@ export default function HomeScreen({ userId, onSignOut }) {
         </div>
       </section>
 
-      <section className="pathway-section home-buttons resources-section" aria-labelledby="resources-heading">
-        <h2 id="resources-heading">Resources</h2>
-        <div className="pathway-grid">
-          {pathways.filter((pathway) => pathway.section === 'resources').map((pathway) => (
-            <button className={`pathway-card ${pathway.tone}`} key={pathway.title} onClick={() => choosePath(pathway)}>
-              <span className="pathway-icon"><Icon name={pathway.icon} size={25} /></span>
-              <span className="pathway-title">{pathway.title}</span>
-              <span className="pathway-subtitle">{pathway.subtitle}</span>
-            </button>
-          ))}
-        </div>
-      </section>
+
 
       {notice && <p className="home-notice" role="status">{notice}</p>}
     </main>

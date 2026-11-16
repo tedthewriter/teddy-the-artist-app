@@ -1,7 +1,7 @@
 import { useEffect, useRef } from 'react'
 import Icon from './Icon'
 
-export default function HomeMenu({ onSignOut, onNotifications }) {
+export default function HomeMenu({ onSignOut, onNotifications, onResources }) {
   const menuRef = useRef(null)
   useEffect(() => {
     function dismiss(event) {
@@ -34,6 +34,7 @@ export default function HomeMenu({ onSignOut, onNotifications }) {
       <Icon name="menu" size={22} />
     </summary>
     <div className="home-menu-options">
+      <button type="button" onClick={() => choose(onResources)}>Resources</button>
       <button type="button" disabled={!onSignOut} onClick={() => choose(onSignOut)}>Sign out</button>
       <button type="button" onClick={() => choose(onNotifications)}>Set notifications</button>
     </div>
