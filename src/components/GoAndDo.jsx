@@ -3,11 +3,11 @@ import { ChecklistNote, ChecklistRow, useDailyChecklist } from './DailyChecklist
 
 // Gospel Library's officially documented app-opening URL scheme.
 const gospelLibraryUrl = 'gospellibrary://'
+const notesUrl = 'mobilenotes://'
 // FamilySearch's iOS app-site association includes the exact /tree path.
 const familyTreeUrl = 'https://www.familysearch.org/tree'
 
 const ideas = [
-  'Journal',
   'Take a nap',
   'Get out and do something fun',
   'Listen to your affirmations',
@@ -18,11 +18,11 @@ const ideas = [
 ]
 
 const schedule = {
-  daily: ['Read scriptures', 'Make art', 'Move', 'Play bingo'],
+  daily: ['Read scriptures', 'Make art', 'Move', 'Journal'],
   weekly: ['Go to the temple', 'Do family history work'],
 }
 
-export default function GoAndDo({ userId, onBack, onOpenArt, onOpenBingo }) {
+export default function GoAndDo({ userId, onBack, onOpenArt }) {
   const checklist = useDailyChecklist(userId, 'go-and-do')
   return (
     <main className="app-shell library-shell go-and-do-shell">
@@ -44,9 +44,9 @@ export default function GoAndDo({ userId, onBack, onOpenArt, onOpenBingo }) {
         <div className="art-ideas">
           {schedule.daily.map(item => (
             <ChecklistRow key={item} title={item} checklist={checklist}
-              href={item === 'Read scriptures' ? gospelLibraryUrl : undefined}
-              onClick={item === 'Make art' ? onOpenArt : item === 'Play bingo' ? onOpenBingo : undefined}>
-              <span className="schedule-item-icon" aria-hidden="true"><Icon name={item === 'Make art' ? 'palette' : item === 'Read scriptures' ? 'journal' : item === 'Play bingo' ? 'mindfulness' : 'check'} size={19} /></span>
+              href={item === 'Read scriptures' ? gospelLibraryUrl : item === 'Journal' ? notesUrl : undefined}
+              onClick={item === 'Make art' ? onOpenArt : undefined}>
+              <span className="schedule-item-icon" aria-hidden="true"><Icon name={item === 'Make art' ? 'palette' : item === 'Read scriptures' || item === 'Journal' ? 'journal' : 'check'} size={19} /></span>
             </ChecklistRow>
           ))}
         </div>
