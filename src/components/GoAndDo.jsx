@@ -4,6 +4,11 @@ import { ChecklistNote, ChecklistRow, useDailyChecklist } from './DailyChecklist
 // Gospel Library's officially documented app-opening URL scheme.
 const gospelLibraryUrl = 'gospellibrary://'
 const notesUrl = 'mobilenotes://'
+const optionAppLinks = {
+  'Listen to a book on Deseret Bookshelf': 'deseretbookshelf://',
+  'Listen to music on Spotify': 'spotify://',
+  'Listen to a podcast on Spotify': 'spotify://',
+}
 // FamilySearch's iOS app-site association includes the exact /tree path.
 const familyTreeUrl = 'https://www.familysearch.org/tree'
 
@@ -11,6 +16,7 @@ const ideas = [
   'Take a nap',
   'Get out and do something fun',
   'Listen to your affirmations',
+  'Listen to a book on Deseret Bookshelf',
   'Listen to music on Spotify',
   'Listen to a podcast on Spotify',
   'Service',
@@ -67,7 +73,7 @@ export default function GoAndDo({ userId, onBack, onOpenArt, onOpenCbtWorkbook, 
         <p>Choose one good thing that feels helpful today.</p>
         <div className="art-ideas" aria-label="Go and Do options">
         {ideas.map((idea) => (
-          <ChecklistRow key={idea} title={idea} checklist={checklist}>
+          <ChecklistRow key={idea} title={idea} checklist={checklist} href={optionAppLinks[idea]}>
             <img className="go-and-do-icon" src={`${import.meta.env.BASE_URL}images/jenni-thinking-portrait-v2.png`} alt="" />
           </ChecklistRow>
         ))}
