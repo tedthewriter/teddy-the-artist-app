@@ -502,7 +502,8 @@ export default function HomeScreen({ userId, onSignOut }) {
       userId={userId}
       onBack={() => setView('home')}
       onOpenArt={() => { setView('art'); window.scrollTo({ top: 0, behavior: 'smooth' }) }}
-      onOpenBingo={() => { setView('mindfulness-bingo'); window.scrollTo({ top: 0, behavior: 'smooth' }) }}
+      onOpenCbtWorkbook={() => openCbtWorkbook()}
+      onOpenSelfLove={() => openSelfLove()}
     />
   }
 

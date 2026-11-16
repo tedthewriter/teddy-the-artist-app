@@ -18,11 +18,11 @@ const ideas = [
 ]
 
 const schedule = {
-  daily: ['Read scriptures', 'Make art', 'Move', 'Journal'],
+  daily: ['Read scriptures', 'Make art', 'Move', 'Journal', '7 Week CBT workbook', 'Self-love workbook'],
   weekly: ['Go to the temple', 'Do family history work'],
 }
 
-export default function GoAndDo({ userId, onBack, onOpenArt }) {
+export default function GoAndDo({ userId, onBack, onOpenArt, onOpenCbtWorkbook, onOpenSelfLove }) {
   const checklist = useDailyChecklist(userId, 'go-and-do')
   return (
     <main className="app-shell library-shell go-and-do-shell">
@@ -45,8 +45,8 @@ export default function GoAndDo({ userId, onBack, onOpenArt }) {
           {schedule.daily.map(item => (
             <ChecklistRow key={item} title={item} checklist={checklist}
               href={item === 'Read scriptures' ? gospelLibraryUrl : item === 'Journal' ? notesUrl : undefined}
-              onClick={item === 'Make art' ? onOpenArt : undefined}>
-              <span className="schedule-item-icon" aria-hidden="true"><Icon name={item === 'Make art' ? 'palette' : item === 'Read scriptures' || item === 'Journal' ? 'journal' : 'check'} size={19} /></span>
+              onClick={item === 'Make art' ? onOpenArt : item === '7 Week CBT workbook' ? onOpenCbtWorkbook : item === 'Self-love workbook' ? onOpenSelfLove : undefined}>
+              <span className="schedule-item-icon" aria-hidden="true"><Icon name={item === '7 Week CBT workbook' ? 'thought' : item === 'Self-love workbook' ? 'heart' : item === 'Make art' ? 'palette' : item === 'Read scriptures' || item === 'Journal' ? 'journal' : 'check'} size={19} /></span>
             </ChecklistRow>
           ))}
         </div>
